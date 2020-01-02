@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/clearTemplate2.xhtml">
+	<ui:define name="tituloPagina">Cambio Contraseña</ui:define>
+	<ui:define name="tituloFormulario">Cambio Contraseña - Contraseña Caducada</ui:define>
+	<ui:define name="autor">HC-CONSULTORES</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formSesion">
+			<p:growl />
+			<h:panelGrid columns="2">
+
+				<p:outputLabel for="txtContraseña" value="Contraseña Nueva: " />
+				<p:password id="txtContraseña"
+					value="#{controladorCambioContrasena.nuevaContrasena}"
+					required="true" />
+				<p:outputLabel for="txtContraseñar" value="Repita la Contraseña: " />
+				<p:password id="txtContraseñar"
+					value="#{controladorCambioContrasena.contrasenaRepetida}"
+					required="true" />
+
+			</h:panelGrid>
+			<h:panelGrid columns="1">
+				<p:commandButton value="Guardar Contraseña"
+					action="#{controladorCambioContrasena.guardarContrasena()}"/>
+				
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Riesgo Clave</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formRiesgoClave">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaRiesgoClave"
+				value="Añadir Nuevo Riesgo Clave"
+				action="#{controladorCrudRoRiesgoClave.nuevoRiesgoClaveVista()}"
+				icon="ui-icon-plus" update="formRiesgoClave"
+				disabled="#{controladorCrudRoRiesgoClave.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlRiesgoClave"
+				rendered="#{controladorCrudRoRiesgoClave.pnlRiesgoClave}">
+
+				<p:outputLabel for="txtNombreRiesgoClave"
+					value="Nombre de Riesgo Clave" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreRiesgoClave"
+						value="#{controladorCrudRoRiesgoClave.roRiesgoClaveVista.nombreRicl}"
+						required="true"
+						requiredMessage="El Nombre de Riesgo Clave es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreRiesgoClave" />
+				</h:panelGrid>
+				
+				<p:outputLabel for="cmbProcesos"
+					value="Proceso" />
+				<p:selectOneMenu id="cmbProcesos"
+					value="#{controladorCrudRoRiesgoClave.idProcesoSeleccionado}">
+					<f:selectItems
+						value="#{controladorCrudRoRiesgoClave.procesosTodos}" var="var"
+						itemValue="#{var.codigoPros}" itemLabel="#{var.nombrePros}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtObservacionRiesgoClave" value="Observación" />
+				<p:inputTextarea id="txtObservacionRiesgoClave"
+					value="#{controladorCrudRoRiesgoClave.roRiesgoClaveVista.observacionRicl}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarRiesgoClave" value="Guardar"
+					actionListener="#{controladorCrudRoRiesgoClave.guardarRiesgoClave()}"
+					icon="ui-icon-disk" update="formRiesgoClave">
+					<p:confirm header="Guardar Riesgo Clave"
+						message="¿Desea guardar este Riesgo Clave?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarRiesgoClave" value="Cancelar"
+					action="#{controladorCrudRoRiesgoClave.cancelar()}"
+					icon="ui-icon-disk" update="formRiesgoClave" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlRiesgoClave"
+				value="#{controladorCrudRoRiesgoClave.riesgoClavesTodos}"
+				var="varRiesgoClave"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>					 
+						<f:facet name="header">Nombre</f:facet>				 
+					<h:outputText value="#{varRiesgoClave.nombreRicl}" />
+				</p:column>
+				
+				<p:column>				 
+						<f:facet name="header">Proceso</f:facet>					 
+					<h:outputText value="#{varRiesgoClave.roProceso.nombrePros}" />
+				</p:column>
+
+
+				<p:column>				 
+						<f:facet name="header">Observación</f:facet>					 
+					<h:outputText value="#{varRiesgoClave.observacionRicl}" />
+				</p:column>
+
+
+				<!-- *********************************************************
+				 			ACCIONES RiesgoClave
+				************************************************************* -->
+
+				<p:column exportable="false">
+				 
+						<f:facet name="header">Acciones</f:facet>
+					 
+
+					<p:commandButton id="btnEditar" update=":formRiesgoClave"
+						action="#{controladorCrudRoRiesgoClave.editarRiesgoClaveVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoRiesgoClave.roRiesgoClaveVista}"
+							value="#{varRiesgoClave}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formRiesgoClave"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoRiesgoClave.eliminarRiesgoClave()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoRiesgoClave.roRiesgoClaveVista}"
+							value="#{varRiesgoClave}">
+						</f:setPropertyActionListener>
+						<p:confirm header="Eliminar RiesgoClave"
+							message="¿Desea eliminar esta Riesgo Clave?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			
+				<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlRiesgoClave"
+							fileName="riesgoClave" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlRiesgoClave" fileName="riesgoClave" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlRiesgoClave"
+							fileName="riesgoClave" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlRiesgoClave"
+							fileName="riesgoClave" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlRiesgoClave" fileName="riesgoClave" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlRiesgoClave"
+							fileName="riesgoClave" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

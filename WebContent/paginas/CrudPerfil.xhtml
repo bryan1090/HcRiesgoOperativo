@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">PERFIL</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+		<h:form id="formPerfil">
+			<p:growl id="growl" showDetail="true" />
+
+
+			<p:commandButton id="btnNuevaPerfil" value="Añadir Nuevo Perfil"
+				action="#{controladorCrudSisPerfil.nuevoSisPerfilVista()}"
+				icon="ui-icon-plus" update="formPerfil"
+				disabled="#{controladorCrudSisPerfil.btnAnadir}" />
+
+			<h:panelGrid columns="3" id="pnlPerfil"
+				rendered="#{controladorCrudSisPerfil.pnlSisPerfil}">
+
+				<p:outputLabel for="txtNombrePerfil" value="Nombre del Perfil" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombrePerfil"
+						value="#{controladorCrudSisPerfil.sisPerfilVista.nombrePerf}"
+						required="true"
+						requiredMessage="El Nombre de Perfil es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtNombrePerfil" />
+				</h:panelGrid>
+				<p:outputLabel />
+
+				<p:outputLabel for="txtHoraInicialPerfil"
+					value="Hora Inicial (hh:mm)" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtHoraInicialPerfil"
+						value="#{controladorCrudSisPerfil.sisPerfilVista.horaInicialPerf}"
+						required="true"
+						requiredMessage="La Hora Inicial es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtHoraInicialPerfil" />
+				</h:panelGrid>
+				<p:outputLabel />
+
+				<p:outputLabel for="txtHoraFinalPerfil" value="Hora Final (hh:mm)" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtHoraFinalPerfil"
+						value="#{controladorCrudSisPerfil.sisPerfilVista.horaFinalPerf}"
+						required="true"
+						requiredMessage="La Hora Final es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtHoraFinalPerfil" />
+				</h:panelGrid>
+				<p:outputLabel />
+
+
+
+				<p:outputLabel for="cmbMenusSeleccionadosPerfil"
+					value="Menús Autorizados" style="font-weight:bold" />
+				<p:outputLabel for="cmbDemesSeleccionadosPerfil"
+					value="Detalles Restringidos" style="font-weight:bold" />
+				<p:outputLabel />
+
+				<p:panel>
+					<p:selectBooleanButton id="selTodosMenus"
+						value="#{controladorCrudSisPerfil.bTodosMenus}"
+						offLabel="Seleccionar Todos" onLabel="Quitar Selección"
+						onIcon="ui-icon-close" offIcon="ui-icon-check">
+
+						<p:ajax update="@form:cmbMenusSeleccionadosPerfil"
+							listener="#{controladorCrudSisPerfil.seleccionarTodosMenus}" />
+					</p:selectBooleanButton>
+
+					<p:selectManyMenu id="cmbMenusSeleccionadosPerfil"
+						value="#{controladorCrudSisPerfil.menusSeleccionados}"
+						style="width:150px;height:220px;" showCheckbox="true">
+						<f:selectItems value="#{controladorCrudSisPerfil.sisMenusTodos}"
+							var="menu" itemLabel="#{menu.nombreMenu}"
+							itemValue="#{menu.codigoMenu}" />
+					</p:selectManyMenu>
+				</p:panel>
+				<p:panelGrid columns="2">
+
+					<p:selectOneMenu id="cmbMenuDeme"
+						value="#{controladorCrudSisPerfil.idMenuSeleccionado}">
+						<f:selectItems value="#{controladorCrudSisPerfil.sisMenusTodos}"
+							var="varMenu" itemValue="#{varMenu.codigoMenu}"
+							itemLabel="#{varMenu.nombreMenu}" />
+						<p:ajax update="cmbDemesSeleccionadosPerfil"
+							listener="#{controladorCrudSisPerfil.desMarcar()}"
+							process="cmbDemesSeleccionadosPerfil @this" />
+					</p:selectOneMenu>
+					<p:selectManyMenu id="cmbDemesSeleccionadosPerfil"
+						value="#{controladorCrudSisPerfil.detallesSeleccionadosPorMenu}"
+						style="width:200px;height:240px" showCheckbox="true">
+						<f:selectItems
+							value="#{controladorCrudSisPerfil.sisDetallesPorMenu}"
+							var="deMenu" itemLabel="#{deMenu.nombreDeme}"
+							itemValue="#{deMenu.codigoDeme}" />
+					</p:selectManyMenu>
+
+				</p:panelGrid>
+				<p:outputLabel />
+
+				<p:outputLabel value="Campos Visibles" style="font-weight:bold" />
+				<p:outputLabel value="Campos Solo Lectura" style="font-weight:bold" />
+				<p:outputLabel />
+
+				<p:panel>
+					<p:selectBooleanButton id="selTodosCamposVisibles"
+						value="#{controladorCrudSisPerfil.bTodosCamposVisibles}"
+						offLabel="Seleccionar Todos" onLabel="Quitar Selección"
+						onIcon="ui-icon-close" offIcon="ui-icon-check">
+
+						<p:ajax update="@form:cmbCamposAutorizados"
+							listener="#{controladorCrudSisPerfil.seleccionarTodosCamposVisiblesDetalleEvento}" />
+					</p:selectBooleanButton>
+					<p:selectManyMenu id="cmbCamposAutorizados"
+						value="#{controladorCrudSisPerfil.camposVisiblesSeleccionados}"
+						style="width:150px;height:220px" showCheckbox="true" tabindex="2">
+						<f:selectItem itemLabel="Código" itemValue="1" />
+						<f:selectItem itemLabel="Agencia" itemValue="3" />
+						<f:selectItem itemLabel="Evento" itemValue="4" />
+						<f:selectItem itemLabel="Proceso" itemValue="5" />
+						<f:selectItem itemLabel="Negocio" itemValue="7" />
+						<f:selectItem itemLabel="Departamento" itemValue="8" />
+						<f:selectItem itemLabel="Factor de Riesgo" itemValue="9" />
+						<f:selectItem itemLabel="Punto de Control" itemValue="10" />
+						<f:selectItem itemLabel="Monto Recuperado" itemValue="11" />
+						<f:selectItem itemLabel="Fecha de Ocurrencia" itemValue="13" />
+						<f:selectItem itemLabel="Fecha de Descubrimiento" itemValue="14" />
+						<f:selectItem itemLabel="Fecha de Registro" itemValue="15" />
+						<f:selectItem itemLabel="Costo de Recuperación" itemValue="16" />
+						<f:selectItem itemLabel="Recuperación Real" itemValue="17" />
+						<f:selectItem itemLabel="Valor de la Pérdida" itemValue="19" />
+						<f:selectItem itemLabel="Pérdida" itemValue="33" />
+						<f:selectItem itemLabel="Opciones" itemValue="21" />
+						<f:selectItem itemLabel="Tipo de Pérdida" itemValue="22" />
+						<f:selectItem itemLabel="Causa Probable" itemValue="23" />
+						<f:selectItem itemLabel="Descripción" itemValue="24" />
+						<f:selectItem itemLabel="Descripción Detallada" itemValue="25" />
+						<f:selectItem itemLabel="Bloqueo" itemValue="26" />
+						<f:selectItem itemLabel="Pérdida Residual" itemValue="28" />
+						<f:selectItem itemLabel="Usuario" itemValue="29" />
+						<f:selectItem itemLabel="Panel Características Adicionales"
+							itemValue="30" />
+						<f:selectItem itemLabel="Controles Cualitativos" itemValue="50" />
+						<f:selectItem itemLabel="Panel Costos" itemValue="31" />
+						<f:selectItem itemLabel="Panel Recuperaciones" itemValue="32" />
+						<!-- 	<p:ajax update="cmbCamposAutorizados"
+						listener="#{controladorCrudSisPerfil.selNego()}" /> -->
+
+					</p:selectManyMenu>
+				</p:panel>
+
+				<p:panel>
+					<p:selectBooleanButton id="selTodosCamposEditables"
+						value="#{controladorCrudSisPerfil.bTodosCamposEditables}"
+						offLabel="Seleccionar Todos" onLabel="Quitar Selección"
+						onIcon="ui-icon-close" offIcon="ui-icon-check">
+
+						<p:ajax update="@form:cmbCamposEditables"
+							listener="#{controladorCrudSisPerfil.seleccionarTodosCamposEditablesDetalleEvento}" />
+					</p:selectBooleanButton>
+					<p:selectManyMenu id="cmbCamposEditables"
+						value="#{controladorCrudSisPerfil.camposEditablesSeleccionados}"
+						style="width:200px;height:220px" showCheckbox="true">
+						<f:selectItem itemLabel="Código" itemValue="1" />
+						<f:selectItem itemLabel="Agencia" itemValue="3" />
+						<f:selectItem itemLabel="Evento" itemValue="4" />
+						<f:selectItem itemLabel="Proceso" itemValue="5" />
+						<f:selectItem itemLabel="Negocio" itemValue="7" />
+						<f:selectItem itemLabel="Departamento" itemValue="8" />
+						<f:selectItem itemLabel="Factor de Riesgo" itemValue="9" />
+						<f:selectItem itemLabel="Punto de Control" itemValue="10" />
+						<f:selectItem itemLabel="Monto Recuperado" itemValue="11" />
+						<f:selectItem itemLabel="Fecha de Ocurrencia" itemValue="13" />
+						<f:selectItem itemLabel="Fecha de Descubrimiento" itemValue="14" />
+						<f:selectItem itemLabel="Fecha de Registro" itemValue="15" />
+						<f:selectItem itemLabel="Costo de Recuperación" itemValue="16" />
+						<f:selectItem itemLabel="Recuperación Real" itemValue="17" />
+						<f:selectItem itemLabel="Valor de la Pérdida" itemValue="19" />
+						<f:selectItem itemLabel="Pérdida" itemValue="33" />
+						<f:selectItem itemLabel="Boton Editar" itemValue="21" />
+						<f:selectItem itemLabel="Tipo de Pérdida" itemValue="22" />
+						<f:selectItem itemLabel="Causa Probable" itemValue="23" />
+						<f:selectItem itemLabel="Descripción" itemValue="24" />
+						<f:selectItem itemLabel="Descripción Detallada" itemValue="25" />
+						<f:selectItem itemLabel="Bloqueo" itemValue="26" />
+						<f:selectItem itemLabel="Pérdida Residual" itemValue="28" />
+						<f:selectItem itemLabel="Usuario" itemValue="29" />
+						<f:selectItem itemLabel="Panel Características Adicionales"
+							itemValue="30" />
+						<f:selectItem itemLabel="Controles Cualitativos" itemValue="50" />
+						<f:selectItem itemLabel="Panel Costos" itemValue="31" />
+						<f:selectItem itemLabel="Panel Recuperaciones" itemValue="32" />
+					</p:selectManyMenu>
+
+				</p:panel>
+				<p:outputLabel value="_" />
+
+				<p:commandButton id="btnGuardarPerfil" value="Guardar"
+					actionListener="#{controladorCrudSisPerfil.guardarSisPerfil()}"
+					icon="ui-icon-disk" update="formPerfil"
+					onstart="PF('dlg2').show();" oncomplete="PF('dlg2').hide;">
+					<p:confirm header="Guardar Perfil"
+						message="¿Desea guardar esta Perfil?" icon="ui-icon-disk" />
+				</p:commandButton>
+				<p:commandButton id="btnCancelarPerfil" value="Cancelar"
+					action="#{controladorCrudSisPerfil.cancelar()}" icon="ui-icon-disk"
+					update="formPerfil" process="@this" />
+			</h:panelGrid>
+
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlPerfil"
+				value="#{controladorCrudSisPerfil.sisPerfilsTodos}" var="varPerfil"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+					<center>
+						<f:facet name="header">Nombre de Perfil</f:facet>
+					</center>
+					<h:outputText value="#{varPerfil.nombrePerf}" />
+				</p:column>
+
+
+
+
+				<!-- *********************************************************
+				 			ACCIONES Perfil
+				************************************************************* -->
+
+				<p:column>
+					<center>
+						<f:facet name="header">Acciones</f:facet>
+					</center>
+
+					<p:commandButton id="btnEditar" update=":formPerfil"
+						action="#{controladorCrudSisPerfil.editarSisPerfil()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudSisPerfil.sisPerfilVista}"
+							value="#{varPerfil}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formPerfil"
+						icon="ui-icon-trash"
+						action="#{controladorCrudSisPerfil.eliminarSisPerfil()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudSisPerfil.sisPerfilVista}"
+							value="#{varPerfil}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Perfil"
+							message="¿Desea eliminar este Perfil?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+				</p:column>
+			</p:dataTable>
+			<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+				modal="true" height="40" width="400" resizable="false">
+				<h:outputText
+					value="Actualizando permisos, esta operacion puede tardar....." />
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,1158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Matriz de Riesgo</ui:define>
+	<ui:define name="tituloFormulario">Matriz de Riesgo</ui:define>
+
+	<!-- <ui:define name="tituloPagina">Mapas de Riesgo Cualitativo</ui:define> -->
+	<!-- 	<ui:define name="tituloFormulario">Mapas de Riesgo Cualitativo</ui:define> -->
+
+
+	<ui:define name="contenido">
+		<h:form id="formReporteMatrizRiesgo">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<h:outputScript name="calendar_es.js" />
+
+			<div style="padding-left: 50px;">
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+					<p:outputLabel for="console" value="Filtrar por:" />
+					<p:selectOneRadio id="console"
+						value="#{controladorMatrizDeRiesgo.tipoFiltro}">
+						<f:selectItem itemLabel="Fecha de Registro" itemValue="1" />
+						<f:selectItem itemLabel="Fecha de Ocurrencia" itemValue="2" />
+						<f:selectItem itemLabel="Fecha de Descubrimiento" itemValue="3" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+				<h:panelGrid columns="5">
+
+					<h:outputText value="Fecha de Inicio" />
+					<p:calendar value="#{controladorMatrizDeRiesgo.fechaInicio}"
+						navigator="true" locale="es" />
+
+					<h:outputText value="Fecha de Fin" />
+					<p:calendar value="#{controladorMatrizDeRiesgo.fechaFin}"
+						navigator="true" locale="es" />
+					<h:outputText value="" />
+
+					<h:outputText value="Agencias:" />
+					<h:outputText value="Departamentos:" />
+					<h:outputText value="Procesos:" />
+					<h:outputText value="Usuarios:" />
+					<h:outputText value="Negocios:" />
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}" value="#{controladorMatrizDeRiesgo.agenciasVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMatrizDeRiesgo.agenciasSeleccionadas}"
+							id="arbAgencia">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}" value="#{controladorMatrizDeRiesgo.departamentosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMatrizDeRiesgo.departamentosSeleccionadas}"
+							id="arbDepartamento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}" value="#{controladorMatrizDeRiesgo.procesosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMatrizDeRiesgo.procesosSeleccionadas}"
+							id="arbProceso">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollUsuarios">
+
+						<p:selectBooleanButton id="selTodosUsuarios"
+							value="#{controladorMatrizDeRiesgo.btodosUsuarios}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollUsuarios"
+								listener="#{controladorMatrizDeRiesgo.seleccionarTodosUsuarios}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorMatrizDeRiesgo.usuariosFiltro}" layout="grid"
+							columns="1">
+							<f:selectItems value="#{controladorMatrizDeRiesgo.usuariosTodos}"
+								var="responsable" itemLabel="#{responsable.nombreUsua}"
+								itemValue="#{responsable.codigoUsua}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}" value="#{controladorMatrizDeRiesgo.negociosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMatrizDeRiesgo.negociosSeleccionadas}"
+							id="arbNegocio">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+					<h:outputText value="Nivel de Agrupación de Negocio" />
+					<h:outputText value="Eventos:" />
+					<h:outputText value="Nivel de Agrupación de Evento" />
+					<h:outputText value="Factor de Riesgos:" />
+					<h:outputText value="Tipo de Pérdida:" />
+
+
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:selectOneListbox
+							value="#{controladorMatrizDeRiesgo.nivelNegocioFiltro}"
+							layout="grid">
+							<f:selectItems
+								value="#{controladorMatrizDeRiesgo.nivelNegocioTodos}"
+								var="nivelNegocio" itemLabel="#{nivelNegocio}"
+								itemValue="#{nivelNegocio}" />
+						</p:selectOneListbox>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}" value="#{controladorMatrizDeRiesgo.eventosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMatrizDeRiesgo.eventosSeleccionadas}"
+							id="arbEvento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:selectOneListbox
+							value="#{controladorMatrizDeRiesgo.nivelEventoFiltro}"
+							layout="grid">
+							<f:selectItems
+								value="#{controladorMatrizDeRiesgo.nivelEventoTodos}"
+								var="nivelEvento" itemLabel="#{nivelEvento}"
+								itemValue="#{nivelEvento}" />
+						</p:selectOneListbox>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollFactor">
+						<p:selectBooleanButton
+							value="#{controladorMatrizDeRiesgo.btodosFactorRiesgo}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollFactor"
+								listener="#{controladorMatrizDeRiesgo.seleccionarTodosFactorRiesgo()}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorMatrizDeRiesgo.factorRiesgosFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorMatrizDeRiesgo.factorRiesgosTodos}"
+								var="factorRiesgo" itemLabel="#{factorRiesgo.nombreFaro}"
+								itemValue="#{factorRiesgo.codigoFaro}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollTipo">
+						<p:selectBooleanButton
+							value="#{controladorMatrizDeRiesgo.btodosTipoPerdida}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollTipo"
+								listener="#{controladorMatrizDeRiesgo.seleccionarTodosTipoPerdida()}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorMatrizDeRiesgo.tipoPerdidasFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorMatrizDeRiesgo.tipoPerdidasTodos}"
+								var="tipoPerdida" itemLabel="#{tipoPerdida.nombreTipe}"
+								itemValue="#{tipoPerdida.codigoTipe}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+					<h:outputText value="Tipo de Valor de Pérdida:" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<p:selectOneMenu
+						value="#{controladorMatrizDeRiesgo.tipoValorPerdida}"
+						layout="grid">
+						<f:selectItem itemLabel="Perdida Inherente" itemValue="1" />
+						<f:selectItem itemLabel="Perdida residual" itemValue="2" />
+
+					</p:selectOneMenu>
+				</h:panelGrid>
+			</div>
+
+			<div style="padding-left: 460px;">
+				<p:commandButton id="btnGenerarMapa" value="Generar Matrices"
+					actionListener="#{controladorMatrizDeRiesgo.generarMapa()}"
+					icon="ui-icon-check" update="@form" onstart="PF('dlg2').show();"
+					oncomplete="PF('dlg2').hide;">
+				</p:commandButton>
+			</div>
+
+			<div style="padding-left: 25px;">
+				<!-- MATRIZ DE FRECUENCIA -->
+				<h:panelGrid columns="3" widgetVar="matrizFreq"
+					rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+					<f:facet name="header">
+						<h:outputText value="Matriz de Frecuencia" />
+					</f:facet>
+					<h:outputText value="" />
+
+					<p:dataGrid var="negocio"
+						value="#{controladorMatrizDeRiesgo.negociosFinales}"
+						columns="#{controladorMatrizDeRiesgo.columnas}" id="pconis">
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+							<h:outputText value="#{negocio.nombreNego}" />
+						</h:panelGrid>
+					</p:dataGrid>
+
+					<h:outputText value="Total" />
+
+					<p:dataGrid var="evento"
+						value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+							<h:panelGrid columns="1">
+								<h:outputText value="#{evento.nombreEven}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:dataGrid>
+
+					<p:dataGrid var="cruceMapa"
+						value="#{controladorMatrizDeRiesgo.cruceMapaTodos}"
+						columns="#{controladorMatrizDeRiesgo.columnas}" id="ariesgos"
+						style="height:100%; width:100%;">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;">
+							<p:commandLink
+								action="#{controladorMatrizDeRiesgo.seleccionarCruce()}"
+								update="@form" onstart="PF('dlg2').show();"
+								oncomplete="PF('dlg2').hide;">
+								<h:panelGrid columns="2">
+									<h:outputText
+										style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(cruceMapa.numeroOcurrencias)}"
+										value="#{cruceMapa.numeroOcurrencias} - #{cruceMapa.porcentajeCruce} % " />
+
+								</h:panelGrid>
+								<f:setPropertyActionListener value="#{cruceMapa}"
+									target="#{controladorMatrizDeRiesgo.cruceMapaVista}" />
+							</p:commandLink>
+						</h:panelGrid>
+
+
+					</p:dataGrid>
+					<p:dataGrid var="evento"
+						value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+							<h:panelGrid columns="1">
+								<h:outputText var="totalEvento"
+									style="#{controladorMatrizDeRiesgo.resaltarTotalEventoMasAlto('frecuencia',evento)}"
+									value="#{evento.totalOcurrencias} - #{evento.porcentajeOcurrencias} %">
+								</h:outputText>
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:dataGrid>
+					<h:outputText value="Total" />
+
+					<p:dataGrid var="negocio"
+						value="#{controladorMatrizDeRiesgo.negociosFinales}"
+						columns="#{controladorMatrizDeRiesgo.columnas}">
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+							<h:outputText
+								style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(negocio.totalOcurrencias)}"
+								value="#{negocio.totalOcurrencias} - #{negocio.porcentajeOcurrencias} %" />
+						</h:panelGrid>
+					</p:dataGrid>
+					<h:outputText
+						style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(controladorMatrizDeRiesgo.totalDetalleEventos)}"
+						value="#{controladorMatrizDeRiesgo.totalDetalleEventos}" />
+				</h:panelGrid>
+
+				<!-- MATRIZ DE SEVERIDAD -->
+				<h:panelGrid columns="3"
+					rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+					<f:facet name="header">
+						<h:outputText value="Matriz de Severidad" />
+					</f:facet>
+					<h:outputText value="" />
+
+					<p:dataGrid var="negocio"
+						value="#{controladorMatrizDeRiesgo.negociosFinales}"
+						columns="#{controladorMatrizDeRiesgo.columnas}" id="pconis2">
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+							<h:outputText value="#{negocio.nombreNego}" />
+						</h:panelGrid>
+					</p:dataGrid>
+
+					<h:outputText value="Total" />
+
+
+					<p:dataGrid var="evento"
+						value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+							<h:panelGrid columns="1">
+								<h:outputText value="#{evento.nombreEven}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:dataGrid>
+
+					<p:dataGrid var="cruceMapa"
+						value="#{controladorMatrizDeRiesgo.cruceMapaTodos}"
+						columns="#{controladorMatrizDeRiesgo.columnas}" id="ariesgos2"
+						style="height:100%; width:100%;">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;">
+							<p:commandLink
+								action="#{controladorMatrizDeRiesgo.seleccionarCruce()}"
+								update="@form" onstart="PF('dlg2').show();"
+								oncomplete="PF('dlg2').hide;">
+								<h:panelGrid columns="2">
+									<h:outputText
+										style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(cruceMapa.severidadCruce)}"
+										value="#{cruceMapa.severidadCruce} - #{cruceMapa.porcentajeSeveridadCruce} %" />
+								</h:panelGrid>
+								<f:setPropertyActionListener value="#{cruceMapa}"
+									target="#{controladorMatrizDeRiesgo.cruceMapaVista}" />
+							</p:commandLink>
+						</h:panelGrid>
+					</p:dataGrid>
+
+					<p:dataGrid var="evento"
+						value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+							<h:panelGrid columns="1">
+								<h:outputText
+									style="#{controladorMatrizDeRiesgo.resaltarTotalEventoMasAlto('severidad',evento)}"
+									value="#{evento.totalSeveridad} - #{evento.porcentajeSeveridad} %" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:dataGrid>
+
+
+					<h:outputText value="Total" />
+
+					<p:dataGrid var="negocio"
+						value="#{controladorMatrizDeRiesgo.negociosFinales}"
+						columns="#{controladorMatrizDeRiesgo.columnas}">
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+							<h:outputText
+								style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(negocio.totalSeveridad.intValue())}"
+								value="#{negocio.totalSeveridad} - #{negocio.porcentajeSeveridad} %" />
+						</h:panelGrid>
+					</p:dataGrid>
+					<h:outputText
+						style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(controladorMatrizDeRiesgo.totalSeveridadEventos.intValue())}"
+						value="#{controladorMatrizDeRiesgo.totalSeveridadEventos}" />
+				</h:panelGrid>
+
+
+
+
+
+
+				<h:panelGrid columns="2"
+					rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+					<f:facet name="header">Calificación</f:facet>
+					<h:outputText value="" />
+
+					<p:dataGrid var="negocio"
+						value="#{controladorMatrizDeRiesgo.negociosFinales}"
+						columns="#{controladorMatrizDeRiesgo.columnas}">
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+							<h:outputText value="#{negocio.nombreNego}" />
+						</h:panelGrid>
+						<h:panelGrid columns="3"
+							style="width:108px;height:100%;font-size:10px">
+
+							<h:panelGrid
+								style="border:1px dotted;width:30px;text-align:center;">
+								<h:outputText value="cons." />
+							</h:panelGrid>
+							<h:panelGrid
+								style="border:1px dotted;width:30px;text-align:center;">
+								<h:outputText value="prob." />
+							</h:panelGrid>
+
+							<h:panelGrid
+								style="border:1px dotted;width:32px;text-align:center;">
+								<h:outputText value="calif." />
+							</h:panelGrid>
+
+
+						</h:panelGrid>
+					</p:dataGrid>
+
+					<p:dataGrid var="evento"
+						value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+							<h:panelGrid columns="1">
+								<h:outputText value="#{evento.nombreEven}" />
+
+							</h:panelGrid>
+
+						</h:panelGrid>
+					</p:dataGrid>
+
+					<p:dataGrid var="cruceMapa"
+						value="#{controladorMatrizDeRiesgo.cruceMapaTodos}"
+						columns="#{controladorMatrizDeRiesgo.columnas}"
+						style="height:100%; width:100%;">
+
+						<h:panelGrid columns="3"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; min-height:15;width:108px;">
+
+							<h:panelGrid columns="1"
+								style="border: 0px dotted #a1a1a1;width:30px;text-align:center">
+								<h:outputText
+									value="#{cruceMapa.roAriesgo.paramConsecuenciaImpacto.numeroPconi}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1"
+								style="border:height:100%;width:30px;text-align:center;">
+								<h:outputText
+									value="#{cruceMapa.roAriesgo.paramProbabilidadRiesgo.numeroPprr}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1"
+								style="height:100%;width:32px;text-align:center;background-color: ##{cruceMapa.roAriesgo.roCalifRiesgo.colorClrs};">
+								<h:outputText
+									value="#{cruceMapa.roAriesgo.roCalifRiesgo.nombreClrs} " />
+							</h:panelGrid>
+
+						</h:panelGrid>
+					</p:dataGrid>
+
+				</h:panelGrid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				<!-- el carrousel tiene un problema con el ancho -->
+
+
+				<!-- HISTORIAL -->
+				<h:panelGrid rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+					<p:panel header="Opciones">
+						<p:commandButton type="button" value="Exportar Mapa"
+							icon="ui-icon-extlink" onclick="PF('dlg').show();" />
+					</p:panel>
+				</h:panelGrid>
+
+				<h:panelGrid columns="1"
+					rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+
+
+					<p:panel header="Historial">
+						<h:panelGrid columns="2">
+							<h:outputText value="Seleccione la periodicidad del Historial:" />
+							<p:selectOneRadio
+								value="#{controladorMatrizDeRiesgo.periodicidad}">
+								<f:selectItem itemLabel="Mensual" itemValue="mensual" />
+								<f:selectItem itemLabel="Anual" itemValue="anual" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+						<p:commandButton value="Generar Historial"
+							actionListener="#{controladorMatrizDeRiesgo.generarHistorial()}"
+							icon="ui-icon-check" update="@form" onstart="PF('dlg2').show();"
+							oncomplete="PF('dlg2').hide;" />
+
+
+						<!-- <h:panelGrid id="pnlCarousel" columns="1"> -->
+
+
+						<p:carousel value="#{controladorMatrizDeRiesgo.listaCrucesTodos}"
+							headerText="Historial" var="lista" circular="true" numVisible="1"
+							easing="easeOutBounce"
+							style="max-width:1100px;text-align:center;">
+
+
+							<!-- MATRIZ DE FRECUENCIA -->
+							<h:panelGrid columns="1">
+								<center>
+									<h:outputLabel value="#{lista.periodo}"
+										style="width:100%;font-weight: bold;" />
+								</center>
+								<h:panelGrid columns="2" widgetVar="matrizFreqH">
+									<f:facet name="header">
+										<h:outputText value="Matriz de Frecuencia" />
+									</f:facet>
+									<h:outputText value="" />
+
+									<p:dataGrid var="negocio"
+										value="#{controladorMatrizDeRiesgo.negociosFinales}"
+										columns="#{controladorMatrizDeRiesgo.columnas}" id="pconisH">
+										<h:panelGrid columns="1"
+											style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+											<h:outputText value="#{negocio.nombreNego}" />
+										</h:panelGrid>
+									</p:dataGrid>
+
+									<p:dataGrid var="evento"
+										value="#{controladorMatrizDeRiesgo.eventosFinales}"
+										columns="1">
+
+										<h:panelGrid columns="1"
+											style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+											<h:panelGrid columns="1">
+												<h:outputText value="#{evento.nombreEven}" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</p:dataGrid>
+
+									<p:dataGrid var="cruceMapa" value="#{lista.cruces}"
+										columns="#{controladorMatrizDeRiesgo.columnas}" id="ariesgosH"
+										style="height:100%; width:100%;">
+
+										<h:panelGrid columns="1"
+											style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;">
+
+											<h:panelGrid columns="2">
+												<h:outputText var="cruce"
+													style="#{controladorMatrizDeRiesgo.resaltarCruceHistorialPorMes('frecuencia',cruceMapa)}"
+													value="#{cruceMapa.numeroOcurrencias} - #{cruceMapa.porcentajeCruce} %">
+												</h:outputText>
+											</h:panelGrid>
+
+										</h:panelGrid>
+									</p:dataGrid>
+								</h:panelGrid>
+
+
+								<!-- MATRIZ DE SEVERIDAD -->
+
+								<h:panelGrid columns="2">
+									<f:facet name="header">
+										<h:outputText value="Matriz de Severidad" />
+									</f:facet>
+									<h:outputText value="" />
+
+									<p:dataGrid var="negocio"
+										value="#{controladorMatrizDeRiesgo.negociosFinales}"
+										columns="#{controladorMatrizDeRiesgo.columnas}" id="pconis2">
+										<h:panelGrid columns="1"
+											style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+											<h:outputText value="#{negocio.nombreNego}" />
+										</h:panelGrid>
+									</p:dataGrid>
+
+									<p:dataGrid var="evento"
+										value="#{controladorMatrizDeRiesgo.eventosFinales}"
+										columns="1">
+
+										<h:panelGrid columns="1"
+											style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+											<h:panelGrid columns="1">
+												<h:outputText value="#{evento.nombreEven}" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</p:dataGrid>
+
+									<p:dataGrid var="cruceMapa" value="#{lista.cruces}"
+										columns="#{controladorMatrizDeRiesgo.columnas}" id="ariesgos2"
+										style="height:100%; width:100%;">
+
+										<h:panelGrid columns="1"
+											style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;">
+											<h:panelGrid columns="2">
+												<h:outputText
+													style="#{controladorMatrizDeRiesgo.resaltarCruceHistorialPorMes('severidad',cruceMapa)}"
+													value="#{cruceMapa.severidadCruce} - #{cruceMapa.porcentajeSeveridadCruce} %" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</p:dataGrid>
+								</h:panelGrid>
+							</h:panelGrid>
+						</p:carousel>
+
+						<p:dataGrid id="lineModels" var="varLineModel"
+							value="#{controladorMatrizDeRiesgo.lineModelTodos}" columns="2"
+							layout="grid" rows="12" paginator="true"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="6,12,16">
+
+							<p:chart id="line1" binding="#{lineChart}" type="line"
+								model="#{varLineModel}" style="height:240px;width:500px"
+								widgetVar="">
+							</p:chart>
+							<p:commandButton type="button" value="Exportar"
+								icon="ui-icon-extlink"
+								onclick="exportGrafico('#{lineChart.clientId}')">
+
+							</p:commandButton>
+
+						</p:dataGrid>
+
+
+						<!-- 						</h:panelGrid> -->
+
+
+					</p:panel>
+
+					<!-- EXPORTACIÓN -->
+
+					<p:panel header="Exportar Detalle" rendered="false">
+						<h:commandLink
+							actionListener="#{controladorMatrizDeRiesgo.exportarPDF}">
+							<p:graphicImage value="/utils/images/pdf.png" />
+						</h:commandLink>
+						<h:commandLink
+							actionListener="#{controladorMatrizDeRiesgo.exportarXLS}">
+							<p:graphicImage value="/utils/images/excel.png" />
+						</h:commandLink>
+						<h:commandLink
+							actionListener="#{controladorMatrizDeRiesgo.exportarDOC}">
+							<p:graphicImage value="/utils/images/word.png"
+								style="width:32px;" />
+						</h:commandLink>
+					</p:panel>
+				</h:panelGrid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+				<!-- TABLA -->
+
+				<p:dataTable id="dtlDetalleEvento"
+					rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}"
+					value="#{controladorMatrizDeRiesgo.detallesEventoSeleccionados}"
+					var="varDetalleEvento"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+					scrollable="true" scrollWidth="978" resizableColumns="true">
+
+					<p:column headerText="Plan de Acción" style="width:200px;">
+						<p:commandButton process="@this" id="btnPlanDeAccion"
+							value="Plan de Acción"
+							action="#{controladorMatrizDeRiesgo.planDeAccion()}"
+							icon="ui-icon-pencil"
+							oncomplete="window.open('/hcRiesgoOperativo/paginas/CrudAccion.jsf', '_blank');">
+							<f:setPropertyActionListener
+								target="#{controladorMatrizDeRiesgo.roDetalleEventoVista}"
+								value="#{varDetalleEvento}"></f:setPropertyActionListener>
+							<p:tooltip for="btnPlanDeAccion"
+								value="Haga click para abrir la ventana de Planes de Acción de este registro" />
+						</p:commandButton>
+					</p:column>
+					<!-- Codigo detalle de evento, no editable-->
+					<p:column headerText="Codigo" style="width:50px;">
+						<h:outputText value="#{varDetalleEvento.codigoDeve}"
+							title="#{varDetalleEvento.codigoDeve}" />
+					</p:column>
+
+					<!-- Agencia,editable-->
+					<p:column headerText="Agencia" style="width:200px;">
+
+						<h:outputText value="#{varDetalleEvento.roAgencia.nombreAgia}"
+							title="#{varDetalleEvento.roAgencia.nombreAgia}" />
+
+					</p:column>
+
+					<!-- Evento,editable-->
+					<p:column headerText="Evento" style="width:200px;">
+
+						<h:outputText value="#{varDetalleEvento.roEvento.nombreEven}"
+							title="#{varDetalleEvento.roEvento.nombreEven}" />
+
+					</p:column>
+
+					<!-- Proceso,editable-->
+					<p:column headerText="Proceso" style="width:200px;">
+
+						<h:outputText value="#{varDetalleEvento.roProceso.nombrePros}"
+							title="#{varDetalleEvento.roProceso.nombrePros}" />
+
+					</p:column>
+
+					<!-- Negocio,editable-->
+					<p:column headerText="Negocio" style="width:200px;">
+						<h:outputText value="#{varDetalleEvento.roNegocio1.nombreNego}"
+							title="#{varDetalleEvento.roNegocio1.nombreNego}" />
+					</p:column>
+
+					<!-- Departamento, editable-->
+					<p:column headerText="Departamento" style="width:200px;">
+
+						<h:outputText
+							value="#{varDetalleEvento.roDepartamento.nombreDept}"
+							title="#{varDetalleEvento.roDepartamento.nombreDept}" />
+
+					</p:column>
+
+
+
+					<!-- Factor de Riesgo, editable-->
+					<p:column headerText="Factor de Riesgo" style="width:200px;">
+
+						<h:outputText
+							value="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+							title="#{varDetalleEvento.roFactorRiesgo.nombreFaro}" />
+
+					</p:column>
+
+					<p:column headerText="Tipo de Pérdida" style="width:200px;">
+
+						<h:outputText value="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+							title="#{varDetalleEvento.roTipoPerdida.nombreTipe}" />
+
+					</p:column>
+
+
+					<!-- Pto Control, editable-->
+					<p:column headerText="Punto de Control" style="width:160px;">
+						<h:outputText value="#{varDetalleEvento.ptoCtrlProcDeve}"
+							title="#{varDetalleEvento.ptoCtrlProcDeve}" />
+
+					</p:column>
+
+					<p:column headerText="Fecha de Ocurrencia" style="width:60px;">
+						<h:outputText value="#{varDetalleEvento.fechaOcurDeve}"
+							title="#{varDetalleEvento.fechaOcurDeve}" />
+					</p:column>
+
+					<p:column headerText="Fecha de Descubrimiento" style="width:60px;">
+						<h:outputText value="#{varDetalleEvento.fechaDescDeve}"
+							title="#{varDetalleEvento.fechaDescDeve}" />
+					</p:column>
+
+					<p:column headerText="Fecha de Registro" style="width:60px;">
+						<h:outputText value="#{varDetalleEvento.fechaRegisDeve}"
+							title="#{varDetalleEvento.fechaRegisDeve}" />
+					</p:column>
+
+					<p:column headerText="Pérdida" style="width:180px;">
+						<h:outputText value="#{varDetalleEvento.valorDeve}"
+							title="#{varDetalleEvento.valorDeve}" />
+					</p:column>
+
+					<!-- Monto Recuperado, editable-->
+					<p:column headerText="Monto Recuperado" style="width:120px;">
+
+						<h:outputText value="#{varDetalleEvento.montoRecupDeve}"
+							title="#{varDetalleEvento.montoRecupDeve}" />
+
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column headerText="Costo de Recuperación" style="width:130px;">
+						<h:outputText value="#{varDetalleEvento.costoRecupDeve}"
+							title="#{varDetalleEvento.costoRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column headerText="Recuperación Real" style="width:130px;">
+						<h:outputText value="#{varDetalleEvento.realRecupDeve}"
+							title="#{varDetalleEvento.realRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column headerText="Perdida Residual" style="width:130px;">
+						<h:outputText value="#{varDetalleEvento.perdidaResidualDeve}"
+							title="#{varDetalleEvento.perdidaResidualDeve}" />
+					</p:column>
+
+
+
+					<!-- Fecha, editable-->
+
+					<p:column headerText="Usuario" style="width:150px;">
+						<h:outputText value="#{varDetalleEvento.sisUsuario.nombreUsua}"
+							title="#{varDetalleEvento.sisUsuario.nombreUsua}" />
+					</p:column>
+
+
+				</p:dataTable>
+
+
+
+				<!-- DIÁLOGOS -->
+
+				<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+					modal="true" height="30" width="100" resizable="false"
+					draggable="false">
+					<h:outputText value="Espere....." />
+				</p:dialog>
+
+
+
+				<p:dialog id="dlgg" widgetVar="dlg" showEffect="fade" modal="true" 
+					header="Matrices" draggable="true" closeOnEscape="true" height="500px"
+					resizable="true">
+					<p:commandButton value="Print" type="button" icon="ui-icon-print"
+						style="display:block;margin-bottom: 20px">
+						<p:printer target="image" />
+					</p:commandButton>
+					<p:panel id="image" >
+						<center>
+							<h:panelGrid columns="2">
+								<h1>Matriz de Riesgo</h1>
+								<h:graphicImage value="/utils/images/logoJEP.png" />
+							</h:panelGrid>
+							<h:panelGrid columns="3" widgetVar="matrizFreq"
+								rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+								<f:facet name="header">
+									<h:outputText value="Matriz de Frecuencia" />
+								</f:facet>
+								<h:outputText value="" />
+
+								<p:dataGrid var="negocio"
+									value="#{controladorMatrizDeRiesgo.negociosFinales}"
+									columns="#{controladorMatrizDeRiesgo.columnas}">
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+										<h:outputText value="#{negocio.nombreNego}" />
+									</h:panelGrid>
+								</p:dataGrid>
+
+								<h:outputText value="Total" />
+
+								<p:dataGrid var="evento"
+									value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+										<h:panelGrid columns="1">
+											<h:outputText value="#{evento.nombreEven}" />
+										</h:panelGrid>
+									</h:panelGrid>
+								</p:dataGrid>
+
+								<p:dataGrid var="cruceMapa"
+									value="#{controladorMatrizDeRiesgo.cruceMapaTodos}"
+									columns="#{controladorMatrizDeRiesgo.columnas}"
+									style="height:100%; width:100%;">
+
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;">
+										<p:commandLink
+											action="#{controladorMatrizDeRiesgo.seleccionarCruce()}"
+											update="@form" onstart="PF('dlg2').show();"
+											oncomplete="PF('dlg2').hide;">
+											<h:panelGrid columns="2">
+												<h:outputText
+													style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(cruceMapa.numeroOcurrencias)}"
+													value="#{cruceMapa.detalleEventos.size()} - #{cruceMapa.porcentajeCruce} %" />
+											</h:panelGrid>
+											<f:setPropertyActionListener value="#{cruceMapa}"
+												target="#{controladorMatrizDeRiesgo.cruceMapaVista}" />
+										</p:commandLink>
+									</h:panelGrid>
+								</p:dataGrid>
+								<p:dataGrid var="evento"
+									value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+										<h:panelGrid columns="1">
+											<h:outputText
+												style="#{controladorMatrizDeRiesgo.resaltarTotalEventoMasAlto('frecuencia',evento)}"
+												value="#{evento.totalOcurrencias} - #{evento.porcentajeOcurrencias} %" />
+										</h:panelGrid>
+									</h:panelGrid>
+								</p:dataGrid>
+								<h:outputText value="Total" />
+
+								<p:dataGrid var="negocio"
+									value="#{controladorMatrizDeRiesgo.negociosFinales}"
+									columns="#{controladorMatrizDeRiesgo.columnas}">
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+										<h:outputText
+											style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(negocio.totalOcurrencias)}"
+											value="#{negocio.totalOcurrencias} - #{negocio.porcentajeOcurrencias} %" />
+									</h:panelGrid>
+								</p:dataGrid>
+								<h:outputText
+									style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(controladorMatrizDeRiesgo.totalDetalleEventos)}"
+									value="#{controladorMatrizDeRiesgo.totalDetalleEventos}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="3"
+								rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+								<f:facet name="header">
+									<h:outputText value="Matriz de Severidad" />
+								</f:facet>
+								<h:outputText value="" />
+
+								<p:dataGrid var="negocio"
+									value="#{controladorMatrizDeRiesgo.negociosFinales}"
+									columns="#{controladorMatrizDeRiesgo.columnas}">
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+										<h:outputText value="#{negocio.nombreNego}" />
+									</h:panelGrid>
+								</p:dataGrid>
+
+								<h:outputText value="Total" />
+
+								<p:dataGrid var="evento"
+									value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+										<h:panelGrid columns="1">
+											<h:outputText value="#{evento.nombreEven}" />
+										</h:panelGrid>
+									</h:panelGrid>
+								</p:dataGrid>
+
+								<p:dataGrid var="cruceMapa"
+									value="#{controladorMatrizDeRiesgo.cruceMapaTodos}"
+									columns="#{controladorMatrizDeRiesgo.columnas}"
+									style="height:100%; width:100%;">
+
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;">
+										<p:commandLink
+											action="#{controladorMatrizDeRiesgo.seleccionarCruce()}"
+											update="@form" onstart="PF('dlg2').show();"
+											oncomplete="PF('dlg2').hide;">
+											<h:panelGrid columns="2">
+												<h:outputText
+													style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(cruceMapa.severidadCruce)}"
+													value="#{cruceMapa.severidadCruce} - #{cruceMapa.porcentajeSeveridadCruce} %" />
+											</h:panelGrid>
+											<f:setPropertyActionListener value="#{cruceMapa}"
+												target="#{controladorMatrizDeRiesgo.cruceMapaVista}" />
+										</p:commandLink>
+									</h:panelGrid>
+								</p:dataGrid>
+								<p:dataGrid var="evento"
+									value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+										<h:panelGrid columns="1">
+											<h:outputText
+												style="#{controladorMatrizDeRiesgo.resaltarTotalEventoMasAlto('severidad',evento)}"
+												value="#{evento.totalSeveridad} - #{evento.porcentajeSeveridad} %" />
+										</h:panelGrid>
+									</h:panelGrid>
+								</p:dataGrid>
+								<h:outputText value="Total" />
+
+								<p:dataGrid var="negocio"
+									value="#{controladorMatrizDeRiesgo.negociosFinales}"
+									columns="#{controladorMatrizDeRiesgo.columnas}">
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+										<h:outputText
+											style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(negocio.totalSeveridad.intValue())}"
+											value="#{negocio.totalSeveridad} - #{negocio.porcentajeSeveridad} %" />
+									</h:panelGrid>
+								</p:dataGrid>
+								<h:outputText
+									style="#{controladorMatrizDeRiesgo.resaltarValoresNoVacíos(controladorMatrizDeRiesgo.totalSeveridadEventos.intValue())}"
+									value="#{controladorMatrizDeRiesgo.totalSeveridadEventos}" />
+							</h:panelGrid>
+
+
+
+							<h:panelGrid columns="2"
+								rendered="#{controladorMatrizDeRiesgo.mostrarMatrices}">
+								<f:facet name="header">Calificación</f:facet>
+								<h:outputText value="" />
+
+								<p:dataGrid var="negocio"
+									value="#{controladorMatrizDeRiesgo.negociosFinales}"
+									columns="#{controladorMatrizDeRiesgo.columnas}">
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+										<h:outputText value="#{negocio.nombreNego}" />
+									</h:panelGrid>
+									<h:panelGrid columns="3"
+										style="width:108px;height:100%;font-size:10px">
+
+										<h:panelGrid
+											style="border:1px dotted;width:30px;text-align:center;">
+											<h:outputText value="cons." />
+										</h:panelGrid>
+										<h:panelGrid
+											style="border:1px dotted;width:30px;text-align:center;">
+											<h:outputText value="prob." />
+										</h:panelGrid>
+
+										<h:panelGrid
+											style="border:1px dotted;width:32px;text-align:center;">
+											<h:outputText value="calif." />
+										</h:panelGrid>
+
+
+									</h:panelGrid>
+								</p:dataGrid>
+
+								<p:dataGrid var="evento"
+									value="#{controladorMatrizDeRiesgo.eventosFinales}" columns="1">
+
+									<h:panelGrid columns="1"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+										<h:panelGrid columns="1">
+											<h:outputText value="#{evento.nombreEven}" />
+
+										</h:panelGrid>
+
+									</h:panelGrid>
+								</p:dataGrid>
+
+								<p:dataGrid var="cruceMapa"
+									value="#{controladorMatrizDeRiesgo.cruceMapaTodos}"
+									columns="#{controladorMatrizDeRiesgo.columnas}"
+									style="height:100%; width:100%;">
+
+									<h:panelGrid columns="3"
+										style="border: 1px dotted #a1a1a1;border-radius: 5px; min-height:15;width:108px;">
+
+										<h:panelGrid columns="1"
+											style="border: 0px dotted #a1a1a1;width:30px;text-align:center">
+											<h:outputText
+												value="#{cruceMapa.roAriesgo.paramConsecuenciaImpacto.numeroPconi}" />
+										</h:panelGrid>
+										<h:panelGrid columns="1"
+											style="border:height:100%;width:30px;text-align:center;">
+											<h:outputText
+												value="#{cruceMapa.roAriesgo.paramProbabilidadRiesgo.numeroPprr}" />
+										</h:panelGrid>
+										<h:panelGrid columns="1"
+											style="height:100%;width:32px;text-align:center;background-color: ##{cruceMapa.roAriesgo.roCalifRiesgo.colorClrs};">
+											<h:outputText
+												value="#{cruceMapa.roAriesgo.roCalifRiesgo.nombreClrs} " />
+										</h:panelGrid>
+
+									</h:panelGrid>
+								</p:dataGrid>
+
+							</h:panelGrid>
+
+						</center>
+						<p:outputPanel id="output" layout="block" style="height:500px" />
+					</p:panel>
+				</p:dialog>
+
+
+				<!-- 				DIALOGO EXPORTAR GRAFICO -->
+				<p:dialog widgetVar="dlg3" showEffect="fade" modal="true"
+					header="Gráfico" resizable="false" closeOnEscape="true"
+					onShow="PF('dlg3').initPosition()" draggable="false" 
+					height="460px">
+
+					<p:commandButton value="Print" type="button" icon="ui-icon-print"
+						style="display:block;margin-bottom: 20px;">
+						<p:printer target="grafico" />
+					</p:commandButton>
+
+					<p:panel id="grafico">
+						<center>
+							<h:panelGrid columns="2">
+								<h1>Reporte Matriz De Riesgo - Gráfico</h1>
+								<h:graphicImage value="/utils/images/logoJEP.png" />
+							</h:panelGrid>
+						</center>
+						<p:outputPanel id="outputGrafico" layout="block"
+							style="height:500px">
+						</p:outputPanel>
+					</p:panel>
+				</p:dialog>
+
+			</div>
+
+
+
+
+
+			<!-- 		JAVASCRIPT -->
+
+			<script type="text/javascript">
+					function exportar1() {
+					
+    				PF('dlg').show();
+					}
+
+				</script>
+
+			<script type="text/javascript">
+					function exportGrafico(id){
+						//export image
+							var link = "";
+							var id=id.toString(); 
+							id=id.replace(/:/g,'_');
+							link=link.concat("widget_");
+							link=link.concat(id);
+							
+							
+							// 	 	   			 	$('#formReporteIndicadores\\:output').empty().append(PF('widget_formReporteIndicadores_lineModels_0_line1').exportAsImage());
+							// 	 	   				$('#formReporteIndicadores\\:output').empty().append(PF('widget_formReporteIndicadores_lineModels_line').exportAsImage());
+							
+							$('#formReporteMatrizRiesgo\\:outputGrafico').empty().append(PF(link).exportAsImage());
+								 	   			 
+						//show the dialog
+							PF('dlg3').show();
+						}
+					</script>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

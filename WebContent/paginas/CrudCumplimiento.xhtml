@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Nivel de Cumplimiento</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formNivelCumplimiento">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaCumplimiento"
+				value="Añadir Nuevo Nivel de Cumplimiento"
+				action="#{controladorCrudRoCumplimiento.nuevoCumplimientoVista()}"
+				icon="ui-icon-plus" update="formNivelCumplimiento"
+				disabled="#{controladorCrudRoCumplimiento.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlNivelCumplimiento"
+				rendered="#{controladorCrudRoCumplimiento.pnlCumplimiento}">
+
+				<p:outputLabel for="txtNombreNivelCumplimiento" value="Nombre" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreNivelCumplimiento"
+						value="#{controladorCrudRoCumplimiento.roCumplimientoVista.nombreCump}"
+						required="true"
+						requiredMessage="El Nombre es un campo Obligatorio"
+						maxlength="200" />
+					<p:message for="txtNombreNivelCumplimiento" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtObservacionNivelCumplimiento"
+					value="Observación" />
+				<p:inputTextarea id="txtObservacionNivelCumplimiento"
+					value="#{controladorCrudRoCumplimiento.roCumplimientoVista.descripcionCump}"
+					maxlength="2000" rows="7" cols="70" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarNivelCumplimiento" value="Guardar"
+					actionListener="#{controladorCrudRoCumplimiento.guardarCumplimiento()}"
+					icon="ui-icon-disk" update="formNivelCumplimiento">
+					<p:confirm header="Guardar NivelCumplimiento"
+						message="¿Desea guardar este Nivel de Cumplimiento?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarNivelCumplimiento" value="Cancelar"
+					action="#{controladorCrudRoCumplimiento.cancelar()}"
+					icon="ui-icon-disk" update="formNivelCumplimiento" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlNivelCumplimiento"
+				value="#{controladorCrudRoCumplimiento.cumplimientosTodos}"
+				style="width:50%"
+				var="varNivelCumplimiento"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+
+					<f:facet name="header">Nombre</f:facet>
+
+					<h:outputText value="#{varNivelCumplimiento.nombreCump}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES NivelCumplimiento
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar" update=":formNivelCumplimiento"
+						action="#{controladorCrudRoCumplimiento.editarCumplimientoVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoCumplimiento.roCumplimientoVista}"
+							value="#{varNivelCumplimiento}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formNivelCumplimiento"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoCumplimiento.eliminarCumplimiento()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoCumplimiento.roCumplimientoVista}"
+							value="#{varNivelCumplimiento}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar NivelCumplimiento"
+							message="¿Desea eliminar este Nivel de Cumplimiento?"
+							icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlNivelCumplimiento"
+							fileName="nivelCumplimiento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlNivelCumplimiento" fileName="nivelCumplimiento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlNivelCumplimiento"
+							fileName="nivelCumplimiento" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlNivelCumplimiento"
+							fileName="nivelCumplimiento" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlNivelCumplimiento" fileName="nivelCumplimiento"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlNivelCumplimiento"
+							fileName="nivelCumplimiento" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

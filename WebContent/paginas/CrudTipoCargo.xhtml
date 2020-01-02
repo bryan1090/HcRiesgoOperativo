@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Tipo Cargo</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formRoTipoCargo">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevoCargo" value="Añadir Nuevo Cargo"
+				action="#{controladorCrudTipoCargo.nuevoRoTipoCargo()}"
+				update="formRoTipoCargo"
+				disabled="#{controladorCrudTipoCargo.btnAñadir}" />
+
+			<h:panelGrid columns="2" id="pnlRoTipoCargo" border="1"
+				rendered="#{controladorCrudTipoCargo.pnlRoTipoCargo}">
+
+				<p:outputLabel for="txtCargo" value="Cargo" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtCargo"
+						value="#{controladorCrudTipoCargo.roTipoCargoVista.nombreCargo}"
+						required="true" requiredMessage="El Cargo es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtCargo" />
+				</h:panelGrid>
+
+				<p:commandButton value="Guardar" icon="ui-icon-disk"
+					action="#{controladorCrudTipoCargo.guardarRoTipoCargo()}"
+					update="formRoTipoCargo">
+					<p:confirm header="Guardar Cargo"
+						message="¿Desea guardar este Cargo?" icon="ui-icon-disk" />
+				</p:commandButton>
+				<p:commandButton value="Cancelar" icon="ui-icon-close"
+					action="#{controladorCrudTipoCargo.cancelar()}"
+					update="formRoTipoCargo" process="@this" />
+			</h:panelGrid>
+
+			<p:dataTable id="RoTipoCargo" border="1"
+				value="#{controladorCrudTipoCargo.roTipoCargoLista}" var="cargos"
+				
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} "
+				paginator="true" rows="12" style="margin-bottom:20px; width:40%;"
+				rowsPerPageTemplate="4,8,12">
+
+				<p:column id="CARGO-USUARIO">
+					<f:facet name="header">
+						<p:outputLabel value="CARGO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{cargos.nombreCargo}"></p:outputLabel>
+				</p:column>
+
+				<p:column exportable="false" style="width:30%">
+
+					<f:facet name="header">Acciones</f:facet>
+
+					<p:commandButton id="btnEditar" update=":formRoTipoCargo"
+						action="#{controladorCrudTipoCargo.editarRoTipoCargo()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudTipoCargo.roTipoCargoVista}"
+							value="#{cargos}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formRoTipoCargo"
+						icon="ui-icon-trash"
+						action="#{controladorCrudTipoCargo.borrarCargo()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudTipoCargo.roTipoCargoVista}"
+							value="#{cargos}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Cargo"
+							message="¿Desea eliminar este Cargo?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

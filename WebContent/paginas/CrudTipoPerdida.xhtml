@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Tipo de Pérdida</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formTipoPerdida">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaTipoPerdida"
+				value="Añadir Nuevo Tipo de Pérdida"
+				action="#{controladorCrudRoTipoPerdida.nuevoTipoPerdidaVista()}"
+				icon="ui-icon-plus" update="formTipoPerdida"
+				disabled="#{controladorCrudRoTipoPerdida.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlTipoPerdida"
+				rendered="#{controladorCrudRoTipoPerdida.pnlTipoPerdida}">
+
+				<p:outputLabel for="txtNombreTipoPerdida"
+					value="Nombre del TipoPerdida" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreTipoPerdida"
+						value="#{controladorCrudRoTipoPerdida.roTipoPerdidaVista.nombreTipe}"
+						required="true"
+						requiredMessage="El Nombre de TipoPerdida es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreTipoPerdida" />
+				</h:panelGrid>
+
+				<p:outputLabel for="cmbEstadoTipoPerdida" value="Estado" />
+				<p:selectOneMenu id="cmbEstadoTipoPerdida"
+					value="#{controladorCrudRoTipoPerdida.idEstadoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado del TipoPerdida">
+					<f:selectItems value="#{controladorCrudRoTipoPerdida.estadosTodos}"
+						var="varEstados" itemValue="#{varEstados.codigoEsta}"
+						itemLabel="#{varEstados.nombreEsta}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbTipoRegistro" value="Tipo de Registro" />
+				<p:selectOneMenu id="cmbTipoRegistro"
+					value="#{controladorCrudRoTipoPerdida.roTipoPerdidaVista.tipoRegistro}"
+					required="true"
+					requiredMessage="Debe seleccionar el Tipo de Registro">
+					<f:selectItem itemLabel="Cuantitativo" itemValue="1" />
+					<f:selectItem itemLabel="Cualitativo" itemValue="0" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtObservacionTipoPerdida" value="Descripción" />
+				<p:inputTextarea id="txtObservacionTipoPerdida"
+					value="#{controladorCrudRoTipoPerdida.roTipoPerdidaVista.descripcionTipe}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarTipoPerdida" value="Guardar"
+					actionListener="#{controladorCrudRoTipoPerdida.guardarTipoPerdida()}"
+					icon="ui-icon-disk" update="formTipoPerdida">
+					<p:confirm header="Guardar TipoPerdida"
+						message="¿Desea guardar esta TipoPerdida?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarTipoPerdida" value="Cancelar"
+					action="#{controladorCrudRoTipoPerdida.cancelar()}"
+					icon="ui-icon-disk" update="formTipoPerdida" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlTipoPerdida"
+				value="#{controladorCrudRoTipoPerdida.tipoPerdidasTodos}"
+				var="varTipoPerdida"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+
+					<f:facet name="header">Nombre</f:facet>
+
+					<h:outputText value="#{varTipoPerdida.nombreTipe}" />
+				</p:column>
+
+
+				<p:column>
+
+					<f:facet name="header">Estado</f:facet>
+
+					<h:outputText value="#{varTipoPerdida.genEstado.nombreEsta}" />
+				</p:column>
+
+
+
+				<!-- *********************************************************
+				 			ACCIONES TipoPerdida
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar" update=":formTipoPerdida"
+						action="#{controladorCrudRoTipoPerdida.editarTipoPerdidaVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoPerdida.roTipoPerdidaVista}"
+							value="#{varTipoPerdida}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formTipoPerdida"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoTipoPerdida.eliminarTipoPerdida()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoPerdida.roTipoPerdidaVista}"
+							value="#{varTipoPerdida}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar TipoPerdida"
+							message="¿Desea eliminar este TipoPerdida?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoPerdida"
+							fileName="tipoPerdida" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoPerdida" fileName="tipoPerdida" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoPerdida"
+							fileName="tipoPerdida" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoPerdida"
+							fileName="tipoPerdida" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoPerdida" fileName="tipoPerdida" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoPerdida"
+							fileName="tipoPerdida" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

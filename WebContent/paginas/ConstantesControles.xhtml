@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Constantes de Controles</ui:define>
+	<ui:define name="tituloFormulario">Constantes de Controles</ui:define>
+	<ui:define name="contenido">
+
+		<h:form id="formConstantesControles">
+
+			<p:growl id="growl" showDetail="true" />
+
+			<div align="center">
+
+				<div style="height: 40px"></div>
+
+				<p:commandButton id="btnNuevaConstante"
+					value="Añadir Nueva Constante de Control"
+					action="#{controladorConstantesControles.nuevo()}" update="@form">
+				</p:commandButton>
+
+
+				<h:panelGrid columns="2" id="pnlEditar"
+					rendered="#{controladorConstantesControles.mostrarPnlEditar}">
+
+					<h:outputText value="Constante: " />
+					<p:inputText id="nombreCte"
+						value="#{controladorConstantesControles.roConstanteControlVista.nombreCte}" disabled="true"/>
+					<p:focus for="valorCte" ></p:focus>
+					<p:inputText id="valorCte"  
+						value="#{controladorConstantesControles.roConstanteControlVista.valorCte}" />
+
+					<p:commandButton value="Guardar"
+						action="#{controladorConstantesControles.guardar()}"
+						update=":formConstantesControles">
+					</p:commandButton>
+
+					<p:commandButton value="Cancelar"
+						action="#{controladorConstantesControles.cancelar()}"
+						update=":formConstantesControles" process="@this">
+					</p:commandButton>
+
+				</h:panelGrid>
+
+
+
+				<!-- TABLA -->
+				<p:dataTable style="min-width:250px;max-width:350px"
+					value="#{controladorConstantesControles.constantesControlesTodas}"
+					var="constante">
+
+					<p:column headerText="Nombre" style="min-width:50%"
+						filterBy="#{constante.nombreCte}" sortBy="#{constante.nombreCte}" filterStyle="width:80%">
+						<h:outputText value="#{constante.nombreCte}" />
+					</p:column>
+
+					<p:column headerText="Valor" style="min-width:30%"
+						filterBy="#{constante.valorCte}" sortBy="#{constante.valorCte}" filterStyle="width:80%" >
+						<h:outputText value="#{constante.valorCte*100} %" />
+					</p:column>
+
+					<p:column exportable="false" style="min-width:20%">
+						<f:facet name="header">Acciones</f:facet>
+						<p:commandButton id="btnModificar"
+							action="#{controladorConstantesControles.editar()}"
+							update="@form" icon="ui-icon-pencil" process="@this">
+							<f:setPropertyActionListener
+								target="#{controladorConstantesControles.roConstanteControlVista}"
+								value="#{constante}"></f:setPropertyActionListener>
+							<p:tooltip for="btnModificar"
+								value="Haga click para MODIFICAR este registro" />
+						</p:commandButton>
+
+						<p:commandButton id="btnEliminar"
+							action="#{controladorConstantesControles.eliminar()}"
+							update="@form" icon="ui-icon-trash" disabled="true">
+							<f:setPropertyActionListener
+								target="#{controladorConstantesControles.roConstanteControlVista}"
+								value="#{constante}"></f:setPropertyActionListener>
+							<!-- 							<p:tooltip for="btnEliminar" -->
+							<!-- 								value="Haga click para ELIMINAR este registro" /> -->
+							<p:confirm header="Eliminar Constante"
+								message="¿Desea eliminar esta Constante?" icon="ui-icon-disk" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Si" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

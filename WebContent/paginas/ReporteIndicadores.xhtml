@@ -1,0 +1,734 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Reporte de Indicadores</ui:define>
+	<ui:define name="tituloFormulario">Reporte de Indicadores de Riesgo (KRIs)</ui:define>
+
+	<ui:define name="contenido">
+
+
+
+		<h:form id="formReporteIndicadores">
+
+			<p:growl id="growl" showDetail="true" for="mensaje"/>
+
+			<p:confirmDialog>
+				<p:commandButton value="si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check">
+				</p:commandButton>
+				<p:commandButton value="no" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close">
+				</p:commandButton>
+			</p:confirmDialog>
+
+			<div align="center">
+
+
+
+				<h:outputScript name="calendar_es.js" />
+
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+					<p:outputLabel for="console" value="Filtrar por:" />
+					<p:selectOneRadio id="console"
+						value="#{controladorReporteIndicadores.tipoFiltro}">
+						<f:selectItem itemLabel="Fecha de Registro" itemValue="1" />
+						<f:selectItem itemLabel="Fecha de Ocurrencia" itemValue="2" />
+						<f:selectItem itemLabel="Fecha de Descubrimiento" itemValue="3" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+
+
+				<h:panelGrid>
+					<h:outputText style="font-weight:bold;"
+						value="Filtros para los Detalle Evento" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="5">
+
+
+					<h:outputText value="Fecha de Inicio" />
+					<p:calendar value="#{controladorReporteIndicadores.fechaInicio}"
+						navigator="true" locale="es">
+						<p:ajax event="dateSelect"
+							listener="#{controladorReporteIndicadores.defaultFechaInicioInri}"
+							update="@form:fechaInri" />
+					</p:calendar>
+					<h:outputText value="Fecha de Fin" />
+					<p:calendar value="#{controladorReporteIndicadores.fechaFin}"
+						navigator="true" locale="es">
+						<p:ajax event="dateSelect"
+							listener="#{controladorReporteIndicadores.defaultFechaFinInri}"
+							update="@form:fechaInri" />
+					</p:calendar>
+
+					<h:outputText value="" />
+
+					<h:outputText value="Agencias:" />
+					<h:outputText value="Departamentos:" />
+					<h:outputText value="Procesos:" />
+					<h:outputText value="Negocios:" />
+					<h:outputText value="Usuarios:" />
+
+
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}" id="arbAgencia"
+							value="#{controladorReporteIndicadores.agenciasVista}" var="node"
+							dynamic="false" selectionMode="checkbox"
+							selection="#{controladorReporteIndicadores.agenciasSeleccionadas}"
+							required="true" requiredMessage="Debe seleccionar una Agencia">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}" id="arbDepartamento"
+							value="#{controladorReporteIndicadores.departamentosVista}"
+							var="node" selectionMode="checkbox"
+							selection="#{controladorReporteIndicadores.departamentosSeleccionadas}"
+							required="true"
+							requiredMessage="Debe seleccionar un Departamento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+					<p:scrollPanel id="arbProceso" mode="native"
+						style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteIndicadores.procesosVista}" var="node"
+							selectionMode="checkbox" dynamic="false"
+							selection="#{controladorReporteIndicadores.procesosSeleccionados}"
+							required="true" requiredMessage="Debe seleccionar un Proceso">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+							<p:ajax
+								listener="#{controladorReporteIndicadores.cargarIndicadoresPorProcesosSeleccionados()}"
+								event="select" update="@form:scrollTipoInri">
+							</p:ajax>
+						</p:tree>
+
+					</p:scrollPanel>
+
+					<p:scrollPanel id="arbNegocio" mode="native"
+						style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteIndicadores.negociosVista}" var="node"
+							dynamic="false" selectionMode="checkbox"
+							selection="#{controladorReporteIndicadores.negociosSeleccionadas}"
+							required="true" requiredMessage="Debe seleccionar un Negocio">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+
+						</p:tree>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollUsuarios">
+
+						<p:selectBooleanButton id="selTodosUsuarios"
+							value="#{controladorReporteIndicadores.btodosUsuarios}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollUsuarios"
+								listener="#{controladorReporteIndicadores.seleccionarTodosUsuarios}" />
+						</p:selectBooleanButton>
+						<p:selectManyCheckbox
+							value="#{controladorReporteIndicadores.usuariosFiltro}"
+							layout="grid" columns="1" required="true"
+							requiredMessage="Debe seleccionar un Usuario">
+
+							<f:selectItems
+								value="#{controladorReporteIndicadores.usuariosTodos}"
+								var="responsable" itemLabel="#{responsable.nombreUsua}"
+								itemValue="#{responsable.codigoUsua}">
+
+
+							</f:selectItems>
+						</p:selectManyCheckbox>
+
+					</p:scrollPanel>
+
+					<h:outputText value="Eventos:" />
+					<h:outputText value="Factor de Riesgos:" />
+					<h:outputText value="Tipo de Pérdida:" />
+					<h:outputText value="Tipo de Registro:" />
+					<h:outputText value="" />
+
+					<p:scrollPanel id="arbEvento" mode="native"
+						style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteIndicadores.eventosVista}" var="node"
+							dynamic="false" selectionMode="checkbox"
+							selection="#{controladorReporteIndicadores.eventosSeleccionadas}">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollFactor">
+						<p:selectBooleanButton
+							value="#{controladorReporteIndicadores.btodosFactorRiesgo}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollFactor"
+								listener="#{controladorReporteIndicadores.seleccionarTodosFactorRiesgo()}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorReporteIndicadores.factorRiesgosFiltro}"
+							layout="grid" columns="1" required="true"
+							requiredMessage="Debe seleccionar un Factor">
+							<f:selectItems
+								value="#{controladorReporteIndicadores.factorRiesgosTodos}"
+								var="factorRiesgo" itemLabel="#{factorRiesgo.nombreFaro}"
+								itemValue="#{factorRiesgo.codigoFaro}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollTipo">
+						<p:selectBooleanButton
+							value="#{controladorReporteIndicadores.btodosTipoPerdida}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollTipo"
+								listener="#{controladorReporteIndicadores.seleccionarTodosTipoPerdida()}" />
+						</p:selectBooleanButton>
+						<p:selectManyCheckbox
+							value="#{controladorReporteIndicadores.tipoPerdidasFiltro}"
+							layout="grid" columns="1" required="true"
+							requiredMessage="Debe seleccionar un Tipo de Pérdida">
+							<f:selectItems
+								value="#{controladorReporteIndicadores.tipoPerdidasTodos}"
+								var="tipoPerdida" itemLabel="#{tipoPerdida.nombreTipe}"
+								itemValue="#{tipoPerdida.codigoTipe}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:selectManyCheckbox
+							value="#{controladorReporteIndicadores.tipoRegistroFiltros}"
+							layout="grid" columns="1" required="true"
+							requiredMessage="Debe seleccionar un Tipo de Registro">
+							<f:selectItem itemLabel="Cualitativo" itemValue="Cualitativo" />
+							<f:selectItem itemLabel="Cuantitativo" itemValue="Cuantitativo" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+
+
+
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+
+				</h:panelGrid>
+
+
+				<h:panelGrid>
+					<h:outputText style="font-weight:bold;"
+						value="Filtros para los Indicadores" />
+				</h:panelGrid>
+
+				<h:panelGrid id="fechaInri" columns="5" cellspacing="15px">
+					<h:outputText value="Fecha de Inicio" />
+					<p:calendar
+						value="#{controladorReporteIndicadores.fechaInicioInri}"
+						navigator="true" locale="es"></p:calendar>
+					<h:outputText value="Fecha de Fin" />
+					<p:calendar value="#{controladorReporteIndicadores.fechaFinInri}"
+						navigator="true" locale="es"></p:calendar>
+				</h:panelGrid>
+
+
+				<h:panelGrid columns="1" cellspacing="15px">
+					<h:outputText value="Tipos de Indicador:" />
+
+					<p:scrollPanel id="scrollTipoInri" mode="native"
+						style="width:925px;height:140px">
+						<p:selectBooleanButton
+							value="#{controladorReporteIndicadores.btodosTipoIndicadores}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollTipoInri"
+								listener="#{controladorReporteIndicadores.seleccionarTodosTipoIndicadores()}" />
+						</p:selectBooleanButton>
+						<p:selectManyMenu
+							value="#{controladorReporteIndicadores.tipoIndicadoresFiltro}"
+							filter="true" filterMatchMode="contains" showCheckbox="true"
+							layout="grid" columns="1" style="width:900px;" required="true"
+							requiredMessage="Debe seleccionar un Tipo de Indicador">
+							<f:selectItems itemDescription="hola "
+								value="#{controladorReporteIndicadores.tipoIndicadoresTodos}"
+								var="tipoIndicador"
+								itemLabel=" #{tipoIndicador.codigoTinri} - #{tipoIndicador.nombreTinri} (#{tipoIndicador.roProceso.nombrePros})"
+								itemValue="#{tipoIndicador.codigoTinri}" />
+						</p:selectManyMenu>
+					</p:scrollPanel>
+
+
+
+				</h:panelGrid>
+
+
+
+
+
+				<p:commandButton id="btnGenerarReporte" value="Generar Reporte"
+					action="#{controladorReporteIndicadores.filtrar()}"
+					icon="ui-icon-check" update="@form"
+					onstart="PF('dlgModal').show();" oncomplete="PF('dlgModal').hide;">
+
+				</p:commandButton>
+				<!-- 						</div> -->
+				
+				<p:messages closable="true" style="width:30%;position:absolute;top: 0px;right:0px;text-align:left" />
+				
+				<div style="height: 10px"></div>
+				<center>
+					<h:outputText style="font-weight:bold;"
+						value="Tabla de Detalles Evento" />
+				</center>
+				<div style="height: 5px"></div>
+
+				<!--TABLA EVENTO -->
+				<p:dataTable id="dtlDetalleEvento"
+					value="#{controladorReporteIndicadores.roDetalleEventosVisibles}"
+					var="varDetalleEvento"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+					scrollable="true" scrollWidth="1178" widgetVar="1178px"
+					resizableColumns="true"
+					selection="#{controladorReporteIndicadores.roDetalleEventoVista}"
+					selectionMode="single" rowKey="#{varDetalleEvento.codigoDeve}">
+					<p:ajax event="rowSelect"
+						listener="#{controladorReporteIndicadores.seleccionar()}"
+						update="@form:dtlIndicadoresRiesgo" />
+
+					<!-- onstart="PF('dlg2').show();" -->
+					<!-- 					onsuccess="PF('dlg2').hide;" -->
+					<!-- Codigo detalle de evento, no editable-->
+					<p:column style="width:50px;" disabledSelection="true"
+						sortBy="#{varDetalleEvento.codigoDeve}">
+						<f:facet name="header">Código</f:facet>
+						<h:outputText value="#{varDetalleEvento.codigoDeve}"
+							title="#{varDetalleEvento.codigoDeve}" />
+					</p:column>
+
+					<p:column style="width:80px;" disabledSelection="true"
+						sortBy="#{varDetalleEvento.tipoCalifDeve}">
+						<f:facet name="header">Tipo</f:facet>
+						<h:outputText value="#{varDetalleEvento.tipoCalifDeve}"
+							title="#{varDetalleEvento.tipoCalifDeve}" />
+					</p:column>
+
+					<!-- Agencia,editable-->
+					<p:column style="width:200px;"
+						sortBy="#{varDetalleEvento.roAgencia.nombreAgia}">
+						<f:facet name="header">Agencia</f:facet>
+						<h:outputText value="#{varDetalleEvento.roAgencia.nombreAgia}"
+							title="#{varDetalleEvento.roAgencia.nombreAgia}" />
+
+					</p:column>
+
+					<!-- Evento,editable-->
+					<p:column style="width:200px;"
+						filterBy="#{varDetalleEvento.roEvento.nombreEven}"
+						sortBy="#{varDetalleEvento.roEvento.nombreEven}">
+						<f:facet name="header">Evento</f:facet>
+						<h:outputText value="#{varDetalleEvento.roEvento.nombreEven}"
+							title="#{varDetalleEvento.roEvento.nombreEven}" />
+					</p:column>
+
+					<!-- Proceso,editable-->
+					<p:column style="width:200px;"
+						sortBy="#{varDetalleEvento.roProceso.nombrePros}"
+						filterBy="#{varDetalleEvento.roProceso.nombrePros}">
+						<f:facet name="header">Proceso</f:facet>
+						<h:outputText value="#{varDetalleEvento.roProceso.nombrePros}"
+							title="#{varDetalleEvento.roProceso.nombrePros}" />
+					</p:column>
+
+					<!-- Negocio,editable-->
+					<p:column style="width:200px;"
+						sortBy="#{varDetalleEvento.roNegocio1.nombreNego}">
+						<f:facet name="header">Negocio</f:facet>
+						<h:outputText value="#{varDetalleEvento.roNegocio1.nombreNego}"
+							title="#{varDetalleEvento.roNegocio1.nombreNego}" />
+					</p:column>
+
+					<!-- Departamento, editable-->
+					<p:column style="width:200px;"
+						sortBy="#{varDetalleEvento.roDepartamento.nombreDept}">
+						<f:facet name="header">Departamento</f:facet>
+						<h:outputText
+							value="#{varDetalleEvento.roDepartamento.nombreDept}"
+							title="#{varDetalleEvento.roDepartamento.nombreDept}" />
+					</p:column>
+
+
+					<!-- Factor de Riesgo, editable-->
+					<p:column style="width:200px;"
+						filterBy="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+						sortBy="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+						disabledSelection="true">
+						<f:facet name="header">Factor de Riesgo</f:facet>
+						<h:outputText
+							value="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+							title="#{varDetalleEvento.roFactorRiesgo.nombreFaro}" />
+
+					</p:column>
+
+					<p:column style="width:200px;" disabledSelection="true"
+						sortBy="#{varDetalleEvento.roTipoPerdida.nombreTipe}">
+						<f:facet name="header">Tipo de Pérdida</f:facet>
+						<h:outputText value="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+							title="#{varDetalleEvento.roTipoPerdida.nombreTipe}" />
+					</p:column>
+
+
+					<!-- Pto Control, editable-->
+					<p:column style="width:160px;"
+						sortBy="#{varDetalleEvento.ptoCtrlProcDeve}">
+						<f:facet name="header">Punto de Control</f:facet>
+						<h:outputText value="#{varDetalleEvento.ptoCtrlProcDeve}"
+							title="#{varDetalleEvento.ptoCtrlProcDeve}" />
+
+					</p:column>
+
+					<!-- Valor, editable-->
+
+					<p:column style="width:60px;"
+						sortBy="#{varDetalleEvento.fechaOcurDeve}">
+						<f:facet name="header">Fecha de Ocurrencia</f:facet>
+						<h:outputText value="#{varDetalleEvento.fechaOcurDeve}"
+							title="#{varDetalleEvento.fechaOcurDeve}" />
+					</p:column>
+
+					<p:column style="width:60px;"
+						sortBy="#{varDetalleEvento.fechaDescDeve}">
+						<f:facet name="header">Fecha de Descubrimiento</f:facet>
+						<h:outputText value="#{varDetalleEvento.fechaDescDeve}"
+							title="#{varDetalleEvento.fechaDescDeve}" />
+					</p:column>
+
+					<p:column style="width:60px;"
+						sortBy="#{varDetalleEvento.fechaRegisDeve}">
+						<f:facet name="header">Fecha de Registro</f:facet>
+						<h:outputText value="#{varDetalleEvento.fechaRegisDeve}"
+							title="#{varDetalleEvento.fechaRegisDeve}" />
+					</p:column>
+
+					<p:column style="width:180px;"
+						sortBy="#{varDetalleEvento.valorDeve}">
+						<f:facet name="header">Pérdida</f:facet>
+						<h:outputText value="#{varDetalleEvento.valorDeve}"
+							title="#{varDetalleEvento.valorDeve}" />
+					</p:column>
+
+					<!-- Monto Recuperado, editable-->
+					<p:column style="width:120px;"
+						sortBy="#{varDetalleEvento.montoRecupDeve}">
+						<f:facet name="header">Monto Recuperado</f:facet>
+						<h:outputText value="#{varDetalleEvento.montoRecupDeve}"
+							title="#{varDetalleEvento.montoRecupDeve}" />
+
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column style="width:130px;"
+						sortBy="#{varDetalleEvento.costoRecupDeve}">
+						<f:facet name="header">Costo de Recuperación</f:facet>
+						<h:outputText value="#{varDetalleEvento.costoRecupDeve}"
+							title="#{varDetalleEvento.costoRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column style="width:130px;"
+						sortBy="#{varDetalleEvento.realRecupDeve}">
+						<f:facet name="header">Recuperación Real</f:facet>
+						<h:outputText value="#{varDetalleEvento.realRecupDeve}"
+							title="#{varDetalleEvento.realRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column style="width:130px;"
+						sortBy="#{varDetalleEvento.perdidaResidualDeve}">
+						<f:facet name="header">Pérdida Residual</f:facet>
+						<h:outputText value="#{varDetalleEvento.perdidaResidualDeve}"
+							title="#{varDetalleEvento.perdidaResidualDeve}" />
+					</p:column>
+
+					<p:column style="width:150px;"
+						sortBy="#{varDetalleEvento.sisUsuario.nombreUsua}">
+						<f:facet name="header">Usuario</f:facet>
+						<h:outputText value="#{varDetalleEvento.sisUsuario.nombreUsua}"
+							title="#{varDetalleEvento.sisUsuario.nombreUsua}" />
+					</p:column>
+
+					<p:column style="width:550px;text-align:center;"
+						sortBy="#{varDetalleEvento.causaDeve}">
+						<f:facet name="header">Causa Probable</f:facet>
+						<h:outputText value="#{varDetalleEvento.causaDeve}"
+							title="#{varDetalleEvento.causaDeve}" />
+					</p:column>
+
+					<p:column style="width:550px;text-align:center;"
+						sortBy="#{varDetalleEvento.descripcionDeve}">
+						<f:facet name="header">Descripción</f:facet>
+						<h:outputText value="#{varDetalleEvento.descripcionDeve}"
+							title="#{varDetalleEvento.descripcionDeve}" />
+					</p:column>
+
+					<p:column style="width:550px;text-align:center;"
+						sortBy="#{varDetalleEvento.descripcionDetalladaDeve}">
+						<f:facet name="header">Descripción detallada</f:facet>
+						<h:outputText value="#{varDetalleEvento.descripcionDetalladaDeve}"
+							title="#{varDetalleEvento.descripcionDetalladaDeve}" />
+					</p:column>
+
+					<p:column style="width:100px;text-align:center;"
+						sortBy="#{varDetalleEvento.promedio}">
+						<f:facet name="header">
+							<p:outputLabel value="Promedio"></p:outputLabel>
+						</f:facet>
+						<h:outputLabel value="#{varDetalleEvento.promedio}"
+							title="#{varDetalleEvento.promedio}"></h:outputLabel>
+					</p:column>
+
+					<p:column id="DENOMINACION" style="width:120px;"
+						sortBy="#{varDetalleEvento.denominacion}">
+						<f:facet name="header">
+							<p:outputLabel value="Denominacion"></p:outputLabel>
+						</f:facet>
+						<h:outputLabel value="#{varDetalleEvento.denominacion}"
+							title="#{varDetalleEvento.denominacion}"></h:outputLabel>
+					</p:column>
+
+					<p:column id="RIESGO-RESIDUAL" style="width:100px;"
+						sortBy="#{varDetalleEvento.riesgoResidual}">
+						<f:facet name="header">
+							<p:outputLabel value="Riesgo residual"></p:outputLabel>
+						</f:facet>
+						<h:outputLabel value="#{varDetalleEvento.riesgoResidual}"
+							title="#{varDetalleEvento.riesgoResidual}"></h:outputLabel>
+					</p:column>
+
+					<p:column id="CLASIFICACION" style="width:120px;"
+						sortBy="#{varDetalleEvento.clasificacion}">
+						<f:facet name="header">
+							<p:outputLabel value="Clasificacion"></p:outputLabel>
+						</f:facet>
+						<h:outputLabel value="#{varDetalleEvento.clasificacion}"
+							title="#{varDetalleEvento.clasificacion}"></h:outputLabel>
+					</p:column>
+
+
+					<p:column id="NUMERO-OCURRENCIAS" style="width:120px;"
+						sortBy="#{varDetalleEvento.numOcur}">
+						<f:facet name="header">
+							<p:outputLabel value="Numero de Ocurrencias"></p:outputLabel>
+						</f:facet>
+						<h:outputLabel value="#{varDetalleEvento.numOcur}"
+							title="#{varDetalleEvento.numOcur}"></h:outputLabel>
+					</p:column>
+
+
+					<p:column style="width:130px;"
+						sortBy="#{varDetalleEvento.perdidaResidualDeve}">
+						<f:facet name="header">Pérdida Residual</f:facet>
+						<h:outputText value="#{varDetalleEvento.perdidaResidualDeve}"
+							title="#{varDetalleEvento.perdidaResidualDeve}" />
+					</p:column>
+
+				</p:dataTable>
+
+
+
+
+				<div style="height: 10px"></div>
+				<center>
+					<h:outputText style="font-weight:bold;"
+						value="Tabla de Indicadores de Riesgo" />
+				</center>
+				<div style="height: 5px"></div>
+
+				<!-- 		TABLA INDICADORES -->
+
+				<p:dataTable id="dtlIndicadoresRiesgo"
+					value="#{controladorReporteIndicadores.indicadoresEventoVista}"
+					var="varIndicadorRiesgo" paginator="true" rows="4"
+					rowsPerPageTemplate="4,8,12"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					scrollable="true" resizableColumns="false"
+					selection="#{controladorReporteIndicadores.roDetalleEventoVista}">
+
+					<p:column style="width:40px;"
+						sortBy="#{varIndicadorRiesgo.codigoEvin}"
+						filterBy="#{varIndicadorRiesgo.codigoEvin}">
+						<f:facet name="header">Codigo</f:facet>
+						<h:outputText value="#{varIndicadorRiesgo.codigoEvin}"
+							title="#{varIndicadorRiesgo.codigoEvin}" />
+					</p:column>
+
+					<p:column style="width:40px;"
+						sortBy="#{varIndicadorRiesgo.roTipoIndicadorRiesgo.nombreTinri}"
+						filterBy="#{varIndicadorRiesgo.roTipoIndicadorRiesgo.nombreTinri}">
+						<f:facet name="header">Indicador</f:facet>
+						<h:outputText
+							value="#{varIndicadorRiesgo.roTipoIndicadorRiesgo.nombreTinri}"
+							title="#{varIndicadorRiesgo.roTipoIndicadorRiesgo.nombreTinri}" />
+					</p:column>
+
+					<p:column headerText="Unidad" style="width:20px;"
+						sortBy="#{varIndicadorRiesgo.roTipoIndicadorRiesgo.unidad}"
+						filterBy="#{varIndicadorRiesgo.roTipoIndicadorRiesgo.unidad}"
+						filterStyle="width:80px;">
+						<h:outputText
+							value="#{varIndicadorRiesgo.roTipoIndicadorRiesgo.unidad}" />
+					</p:column>
+
+					<p:column headerText="Valor" style="width:50px;"
+						sortBy="#{varIndicadorRiesgo.valorEvin}">
+						<h:outputText value="#{varIndicadorRiesgo.valorEvin}" />
+					</p:column>
+
+					<p:column headerText="Fecha" style="width:100px;"
+						sortBy="#{varIndicadorRiesgo.fechaEvin}">
+						<h:outputText value="#{varIndicadorRiesgo.fechaEvin}" />
+					</p:column>
+
+				</p:dataTable>
+
+
+				<!-- 		GRÁFICO -->
+
+				<p:dataGrid id="lineModels" var="varLineModel"
+					value="#{controladorReporteIndicadores.lineModelTodos}" columns="2"
+					layout="grid" rows="12" paginator="true"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="6,12,16">
+
+
+					<p:chart id="line1" binding="#{line123}" type="line"
+						model="#{varLineModel}" style="height:340px;width:450px">
+
+					</p:chart>
+					<p:commandButton type="button" value="Exportar"
+						icon="ui-icon-extlink"
+						onclick="exportIndicador('#{line123.clientId}')">
+
+					</p:commandButton>
+					<!-- 					<h:outputText value="#{line123.clientId}" /> -->
+				</p:dataGrid>
+
+
+				<!-- 		Diálogos -->
+
+				<p:dialog id="modalDialog" widgetVar="dlgModal" closable="false"
+					modal="true" height="30" width="100" resizable="false">
+					<h:outputText value="Espere....." />
+				</p:dialog>
+
+				<p:dialog widgetVar="dlg" showEffect="fade" modal="true"
+					header="Gráfico" resizable="false" closeOnEscape="true"
+					onShow="PF('dlg').initPosition()" draggable="false" width="800px"
+					height="500px">
+
+					<p:commandButton value="Print" type="button" icon="ui-icon-print"
+						style="display:block;margin-bottom: 20px;">
+						<p:printer target="image" />
+					</p:commandButton>
+
+					<p:panel id="image">
+						<center>
+							<h:panelGrid columns="2">
+								<h1>Reporte Indicadores - Gráfico</h1>
+								<h:graphicImage value="/utils/images/logoJEP.png" />
+							</h:panelGrid>
+						</center>
+						<p:outputPanel id="output" layout="block" style="height:500px">
+						</p:outputPanel>
+					</p:panel>
+				</p:dialog>
+
+
+				<!-- 		JAVASCRIPT -->
+
+
+				<script type="text/javascript">
+					function exportIndicador(id){
+						//export image
+							var link = "";
+							var id=id.toString(); //formReporteIndicadores:lineModels:0:line1
+							id=id.replace(/:/g,'_');
+							link=link.concat("widget_");
+							link=link.concat(id);
+							// document.write(link);
+							
+							// 	 	   			 	$('#formReporteIndicadores\\:output').empty().append(PF('widget_formReporteIndicadores_lineModels_0_line1').exportAsImage());
+							// 	 	   				$('#formReporteIndicadores\\:output').empty().append(PF('widget_formReporteIndicadores_lineModels_line').exportAsImage());
+							
+							$('#formReporteIndicadores\\:output').empty().append(PF(link).exportAsImage());
+								 	   			 
+						//show the dialog
+							PF('dlg').show();
+						}
+
+					function extLegend() 
+ 					{
+ 					    this.cfg.legend= {
+ 					        show: true,
+ 					        renderer: $.jqplot.EnhancedLegendRenderer,
+ 					        location: 'no',
+ 					        placement: 'outsideGrid',  
+ 					          
+ 					    };
+ 					}
+					function extLegend2() 
+ 					{
+ 			 	
+ 					    this.cfg.legend= {
+ 					    		show: true,
+ 	 					        renderer: $.jqplot.EnhancedLegendRenderer,
+ 	 					        location: 'n',
+ 	 					        placement: 'outsideGrid',  
+ 	 					          
+ 					      
+ 					    };
+ 					    
+ 					}
+					</script>
+
+			</div>
+
+
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
+
+
+</html>

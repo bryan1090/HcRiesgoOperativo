@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Tipo de Agencia</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formTipoAgencia">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaTipoAgencia"
+				value="Añadir Nuevo Tipo de Agencia"
+				action="#{controladorCrudRoTipoAgencia.nuevoTipoAgenciaVista()}"
+				icon="ui-icon-plus" update="formTipoAgencia"
+				disabled="#{controladorCrudRoTipoAgencia.btnAnadir}" />
+
+			<h:panelGrid  columns="2" id="pnlTipoAgencia"
+				
+				rendered="#{controladorCrudRoTipoAgencia.pnlTipoAgencia}">
+
+				<p:outputLabel for="txtNombreTipoAgencia"
+					value="Nombre del TipoAgencia" />
+				<h:panelGrid  columns="2">
+					<p:inputText id="txtNombreTipoAgencia"
+						value="#{controladorCrudRoTipoAgencia.roTipoAgenciaVista.nombreTiag}"
+						required="true"
+						requiredMessage="El Nombre de TipoAgencia es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreTipoAgencia" />
+				</h:panelGrid>
+
+
+				<p:commandButton id="btnGuardarTipoAgencia" value="Guardar"
+					actionListener="#{controladorCrudRoTipoAgencia.guardarTipoAgencia()}"
+					icon="ui-icon-disk" update="formTipoAgencia">
+					<p:confirm header="Guardar TipoAgencia"
+						message="¿Desea guardar esta TipoAgencia?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarTipoAgencia" value="Cancelar"
+					action="#{controladorCrudRoTipoAgencia.cancelar()}"
+					icon="ui-icon-disk" update="formTipoAgencia" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlTipoAgencia"
+				value="#{controladorCrudRoTipoAgencia.tipoAgenciasTodos}"
+				var="varTipoAgencia"
+				style="width:400px"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+
+					<f:facet name="header">Nombre</f:facet>
+
+					<h:outputText value="#{varTipoAgencia.nombreTiag}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES TipoAgencia
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar" update=":formTipoAgencia"
+						action="#{controladorCrudRoTipoAgencia.editarTipoAgenciaVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoAgencia.roTipoAgenciaVista}"
+							value="#{varTipoAgencia}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formTipoAgencia"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoTipoAgencia.eliminarTipoAgencia()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoAgencia.roTipoAgenciaVista}"
+							value="#{varTipoAgencia}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar TipoAgencia"
+							message="¿Desea eliminar este TipoAgencia?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoAgencia"
+							fileName="tipoAgencia" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoAgencia" fileName="tipoAgencia" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoAgencia"
+							fileName="tipoAgencia" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoAgencia"
+							fileName="tipoAgencia" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoAgencia" fileName="tipoAgencia" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoAgencia"
+							fileName="tipoAgencia" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

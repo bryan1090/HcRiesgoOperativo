@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Nivel de Proceso</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	
+	<ui:define name="contenido">
+		<h:form id="formNivelProceso">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+			<p:commandButton id="btnNuevaNivelProceso"
+				value="Añadir Nuevo Nivel de Proceso"
+				action="#{controladorCrudGenNivelProceso.nuevoNivelProcesoVista()}"
+				icon="ui-icon-plus" update="formNivelProceso"
+				disabled="#{controladorCrudGenNivelProceso.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlNivelProceso"
+				rendered="#{controladorCrudGenNivelProceso.pnlNivelProceso}">
+
+				<p:outputLabel for="txtNombreNivelProceso" value="Nombre del NivelProceso" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreNivelProceso"
+						value="#{controladorCrudGenNivelProceso.genNivelProcesoVista.nombreGnip}"
+						required="true"
+						requiredMessage="El Nombre de NivelProceso es un campo Obligatorio"
+						maxlength="250" size="50"/>
+					<p:message for="txtNombreNivelProceso" />
+				</h:panelGrid>
+
+			
+				<p:commandButton id="btnGuardarNivelProceso" value="Guardar"
+					actionListener="#{controladorCrudGenNivelProceso.guardarNivelProceso()}"
+					icon="ui-icon-disk"
+					update="formNivelProceso">
+					<p:confirm header="Guardar NivelProceso"
+						message="¿Desea guardar esta NivelProceso?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarNivelProceso" value="Cancelar"
+					action="#{controladorCrudGenNivelProceso.cancelar()}" icon="ui-icon-disk"
+					update="formNivelProceso" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlNivelProceso"
+				value="#{controladorCrudGenNivelProceso.nivelProcesosTodos}"
+				style="width:40%"
+				var="varNivelProceso"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+				 
+						<f:facet name="header">Nombre</f:facet>
+					 
+					<h:outputText value="#{varNivelProceso.nombreGnip}" />
+				</p:column>
+
+
+						
+
+
+				<!-- *********************************************************
+				 			ACCIONES NivelProceso
+				************************************************************* -->
+
+				<p:column exportable="false">
+					 
+						<f:facet name="header">Acciones</f:facet>
+					 
+
+					<p:commandButton id="btnEditar" update=":formNivelProceso"
+						action="#{controladorCrudGenNivelProceso.editarNivelProcesoVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudGenNivelProceso.genNivelProcesoVista}"
+							value="#{varNivelProceso}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formNivelProceso" icon="ui-icon-trash"
+						action="#{controladorCrudGenNivelProceso.eliminarNivelProceso()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudGenNivelProceso.genNivelProcesoVista}"
+							value="#{varNivelProceso}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar NivelProceso"
+							message="¿Desea eliminar este NivelProceso?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			
+				<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlNivelProceso"
+							fileName="nivelProceso" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlNivelProceso" fileName="nivelProceso" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlNivelProceso"
+							fileName="nivelProceso" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlNivelProceso"
+							fileName="nivelProceso" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlNivelProceso" fileName="nivelProceso" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlNivelProceso"
+							fileName="nivelProceso" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

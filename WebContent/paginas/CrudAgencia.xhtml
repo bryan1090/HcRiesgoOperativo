@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templateProDual.xhtml">
+	<ui:define name="tituloPagina">Agencia</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	<ui:define name="arbolRecursivo">
+		<h:form id="formArbolAgencia">
+			<h1>AGENCIAS:</h1>
+			<p:tree value="#{controladorCrudRoAgencia.arbolAgenciaVista}"
+				var="node" dynamic="true" selectionMode="single"
+				selection="#{controladorCrudRoAgencia.arbolAgenciaSeleccionado}"
+				id="arbAgencia" filterBy="#{node}" style="width:270px;">
+				<p:ajax event="select" update=":formAgencia"
+					listener="#{controladorCrudRoAgencia.seleccionarAgencia()}" />
+
+				<p:treeNode>
+					<h:outputText value="#{node}" />
+				</p:treeNode>
+			</p:tree>
+		</h:form>
+	</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formAgencia">
+
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaAgencia"
+				value="Añadir Nueva Agencia a #{controladorCrudRoAgencia.nombreSeleccionado}"
+				action="#{controladorCrudRoAgencia.nuevoAgenciaVista()}"
+				icon="ui-icon-plus" update="formAgencia"
+				disabled="#{controladorCrudRoAgencia.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlAgencia"
+				rendered="#{controladorCrudRoAgencia.pnlAgencia}">
+
+				<p:outputLabel for="txtNombreAgencia" value="Nombre de la Agencia" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreAgencia"
+						value="#{controladorCrudRoAgencia.roAgenciaVista.nombreAgia}"
+						required="true"
+						requiredMessage="El Nombre de Agencia es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreAgencia" />
+				</h:panelGrid>
+
+				<p:outputLabel value="Código" />
+				<p:inputText
+					value="#{controladorCrudRoAgencia.roAgenciaVista.numeroAgia}"
+					maxlength="10" />
+
+				<p:outputLabel for="cmbEstadoAgencia" value="Estado" />
+				<p:selectOneMenu id="cmbEstadoAgencia"
+					value="#{controladorCrudRoAgencia.idEstadoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado de la Agencia">
+					<f:selectItems value="#{controladorCrudRoAgencia.estadosTodos}"
+						var="varEstados" itemValue="#{varEstados.codigoEsta}"
+						itemLabel="#{varEstados.nombreEsta}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbTipoAgencia" value="Tipo" />
+				<p:selectOneMenu id="cmbTipoAgencia"
+					value="#{controladorCrudRoAgencia.idTipoAgenciaSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar un tipo de Agencia">
+					<f:selectItems value="#{controladorCrudRoAgencia.tipoAgenciaTodos}"
+						var="varTipos" itemValue="#{varTipos.codigoTiag}"
+						itemLabel="#{varTipos.nombreTiag}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbNivelAgencia" value="Nivel" />
+				<p:selectOneMenu id="cmbNivelAgencia"
+					value="#{controladorCrudRoAgencia.idNivelArbolSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar un nivel de Agencia">
+					<f:selectItems
+						value="#{controladorCrudRoAgencia.nivelesArbolTodos}"
+						var="varNiveles" itemValue="#{varNiveles.codigoGniv}"
+						itemLabel="#{varNiveles.nombreGniv}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbResponsablesSeleccionados"
+					value="Responsables" />
+				<p:selectManyMenu id="cmbResponsablesSeleccionados"
+					value="#{controladorCrudRoAgencia.responsablesSeleccionados}"
+					required="True"
+					filter="true" filterMatchMode="contains"
+					requiredMessage="Debe seleccionar uno o mas responsables para la Agencia"
+					style="width:200px;height:230px" showCheckbox="true">
+					<f:selectItems
+						value="#{controladorCrudRoAgencia.responsablesTodos}"
+						var="responsable"
+						itemLabel="#{responsable.apellidoResp} #{responsable.nombreResp} - #{responsable.roTipoResp.nombreTres}"
+						itemValue="#{responsable.codigoResp}" />
+
+				</p:selectManyMenu>
+
+				<p:outputLabel for="txtObservacionAgencia" value="Observación" />
+				<p:inputTextarea id="txtObservacionAgencia"
+					value="#{controladorCrudRoAgencia.roAgenciaVista.observacionAgia}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+
+				<p:commandButton id="btnGuardarAgencia" value="Guardar"
+					actionListener="#{controladorCrudRoAgencia.guardarAgencia()}"
+					icon="ui-icon-disk"
+					update="formAgencia :formArbolAgencia:arbAgencia">
+					<p:confirm header="Guardar Agencia"
+						message="¿Desea guardar esta agencia?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarAgencia" value="Cancelar"
+					action="#{controladorCrudRoAgencia.cancelar()}" icon="ui-icon-disk"
+					update="formAgencia" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlAgencia"
+				value="#{controladorCrudRoAgencia.subAgenciasTodos}"
+				var="varAgencia"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column sortBy="#{varAgencia.nombreAgia}" filterBy="#{varAgencia.nombreAgia}">
+					<f:facet name="header">Nombre</f:facet>
+					<h:outputText value="#{varAgencia.nombreAgia}" />
+				</p:column>
+
+				<p:column  sortBy="#{varAgencia.numeroAgia}" filterBy="#{varAgencia.numeroAgia}">
+					<f:facet name="header">Código</f:facet>
+					<h:outputText value="#{varAgencia.numeroAgia}" />
+				</p:column>
+
+				<p:column sortBy="#{varAgencia.genEstado.nombreEsta}">
+					<f:facet name="header">Estado</f:facet>
+					<h:outputText value="#{varAgencia.genEstado.nombreEsta}" />
+				</p:column>
+
+				<p:column sortBy="#{varAgencia.roTipoAgencia.nombreTiag}">
+					<f:facet name="header">Tipo</f:facet>
+					<h:outputText value="#{varAgencia.roTipoAgencia.nombreTiag}" />
+				</p:column>
+
+				<p:column sortBy="">
+					<f:facet name="header">Nivel</f:facet>
+					<h:outputText value="#{varAgencia.genNivelArbol.nombreGniv}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES Agencia
+				************************************************************* -->
+
+				<p:column exportable="false">
+					<f:facet name="header">Acciones</f:facet>
+
+					<p:commandButton id="btnEditar" update=":formAgencia"
+						action="#{controladorCrudRoAgencia.editarAgenciaVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoAgencia.roAgenciaVista}"
+							value="#{varAgencia}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formAgencia :formArbolAgencia" icon="ui-icon-trash"
+						action="#{controladorCrudRoAgencia.eliminarAgencia()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoAgencia.roAgenciaVista}"
+							value="#{varAgencia}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Agencia"
+							message="¿Desea eliminar esta agencia?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlAgencia" fileName="agencias" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlAgencia" fileName="agencias" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlAgencia" fileName="agencias" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlAgencia" fileName="agencias"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlAgencia" fileName="agencias" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlAgencia" fileName="agencias"
+							pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

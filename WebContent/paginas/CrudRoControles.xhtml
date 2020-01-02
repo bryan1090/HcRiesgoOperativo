@@ -1,0 +1,556 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Registro de Controles</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formRoTipoControles">
+			<p:growl id="growl" showDetail="true" />
+
+
+			<p:commandButton id="btnNuevoControl" value="Añadir Nuevo Control"
+				action="#{controladorRoControles.nuevoControl()}"
+				update="formRoTipoControles"
+				disabled="#{controladorRoControles.btnAñadirControl}" />
+
+			<h:panelGrid columns="2" id="pnlRoTipoControl" border="1"
+				rendered="#{controladorRoControles.pnlRoTipoControl}">
+
+				<p:outputLabel for="cmbCalcProb" value="Calculo probabilidad: " />
+				<p:selectOneMenu id="cmbCalcProb"
+					value="#{controladorRoControles.idCalcProbSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el cargo del Usuario"
+					style="width:175px">
+					<p:ajax event="change"
+						listener="#{controladorRoControles.calcProducto()}"
+						update="txtCalculoProducto" partialSubmit="true" global="false" />
+					<f:selectItems
+						value="#{controladorRoControles.listaRoProbabilidadEvento}"
+						var="varProbCalc" itemValue="#{varProbCalc.CODIGO_prob}"
+						itemLabel="#{varProbCalc.calculoProb}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtImpactoEconomico" value="Impacto económico: " />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtImpactoEconomico"
+						value="#{controladorRoControles.roControlesVista.impactEcon}"
+						required="true"
+						requiredMessage="El Impacto Economico es un campo Obligatorio"
+						maxlength="10">
+						<p:ajax partialSubmit="true" global="false" update="txta" />
+					</p:inputText>
+					<p:message for="txtImpactoEconomico" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtREP" value="REP: " />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtREP"
+						value="#{controladorRoControles.roControlesVista.paramImpRep}"
+						required="true" requiredMessage="El REP es un campo Obligatorio"
+						maxlength="10">
+						<p:ajax partialSubmit="true" global="false" update="txta" />
+					</p:inputText>
+				</h:panelGrid>
+
+				<p:outputLabel for="txtBCP" value="BCP: " id="txta" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtBCP"
+						value="#{controladorRoControles.roControlesVista.bcp}"
+						required="true" requiredMessage="El BCP es un campo Obligatorio"
+						maxlength="10">
+						<p:ajax event="keyup"
+							listener="#{controladorRoControles.calcImpact()}"
+							update="txtCalculoImpacto" partialSubmit="true" global="false" />
+						<p:ajax event="keyup"
+							listener="#{controladorRoControles.calcProducto()}"
+							update="txtCalculoProducto" partialSubmit="true" global="false" />
+
+					</p:inputText>
+					<p:message for="txtBCP" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtCalculoImpacto" value="Calculo Impacto: " />
+				<p:inputText readonly="true" id="txtCalculoImpacto"
+					value="#{controladorRoControles.calcIm}">
+				</p:inputText>
+
+				<p:outputLabel for="txtCalculoProducto" value="Calculo Producto: " />
+				<p:inputText readonly="true" id="txtCalculoProducto"
+					value="#{controladorRoControles.mult}" />
+
+				<p:outputLabel for="cmbTipoRiesgo" value="Tipo Riesgo: " />
+				<p:selectOneMenu id="cmbTipoRiesgo"
+					value="#{controladorRoControles.idTipoRiesgo}" required="true"
+					requiredMessage="Debe seleccionar un Tipo Riesgo"
+					style="width:175px">
+					<f:selectItems
+						value="#{controladorRoControles.listaParamProbabilidadRiesgo}"
+						var="varTipoRiesgo" itemValue="#{varTipoRiesgo.codigoPprr}"
+						itemLabel="#{varTipoRiesgo.nombrePprr}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtControlActual" value="Control Actual: " />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtControlActual"
+						value="#{controladorRoControles.roControlesVista.controlAct}"
+						required="true"
+						requiredMessage="El control Actual es un campo obligatorio"
+						maxlength="50" />
+					<p:message for="txtControlActual" />
+				</h:panelGrid>
+
+				<p:outputLabel for="cmdCategoriazacion" value="Categorización: " />
+				<p:selectOneMenu id="cmdCategoriazacion"
+					value="#{controladorRoControles.roControlesVista.categorizacion}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar un registro">
+					<f:selectItem itemLabel="No Aplica" itemValue="No Aplica" />
+					<f:selectItem itemLabel="Clave" itemValue="Clave" />
+					<f:selectItem itemLabel="Complemento" itemValue="Complemento" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbResponsable" value="Responsable: " />
+				<p:selectOneMenu id="cmbResponsable"
+					value="#{controladorRoControles.idResponsable}" required="true"
+					requiredMessage="Debe seleccionar un Responsable"
+					style="width:175px">
+					<f:selectItems value="#{controladorRoControles.listaRoResponsable}"
+						var="varResponsables" itemValue="#{varResponsables.codigoResp}"
+						itemLabel="#{varResponsables.nombreResp} #{varResponsables.apellidoResp}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmdEfectividad" value="Efectividad:" />
+				<p:selectOneMenu id="cmdEfectividad"
+					value="#{controladorRoControles.roControlesVista.efectividad}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar una Efectividad">
+					<p:ajax event="change" update="cmdCalcEfectividad"
+						listener="#{controladorRoControles.calcEfectividad()}" />
+					<p:ajax event="change"
+						listener="#{controladorRoControles.valoracionDelControl()}"
+						update="txtValoracionDelControl" partialSubmit="true"
+						global="false" />
+
+					<f:selectItem itemLabel="Ninguna" itemValue="Ninguna" />
+					<f:selectItem itemLabel="Mal diseñado no cumple con el fin"
+						itemValue="Mal diseñado no cumple con el fin" />
+					<f:selectItem itemLabel="Reduce solo algún aspescto del riesgo"
+						itemValue="Reduce solo algún aspescto del riesgo" />
+					<f:selectItem
+						itemLabel="Su diseño reduce los principales efectos del riesgo"
+						itemValue="Su diseño reduce los principales efectos del riesgo" />
+					<f:selectItem
+						itemLabel="Su diseño elimina en su totalidad el riesgo"
+						itemValue="Su diseño elimina en su totalidad el riesgo" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmdCalcEfectividad" value="Cálculo Efectividad:" />
+				<p:inputText readonly="true" id="cmdCalcEfectividad"
+					value="#{controladorRoControles.valor}">
+					<p:ajax partialSubmit="true" global="false" update="txtCalcControl" />
+				</p:inputText>
+
+				<p:outputLabel for="cmdPeriodicidad" value="Periodicidad: " />
+				<p:selectOneMenu id="cmdPeriodicidad"
+					value="#{controladorRoControles.roControlesVista.periodicidad}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar un registro">
+					<p:ajax event="change"
+						listener="#{controladorRoControles.calculoP()}"
+						update="txtCalculoPeriodicidad" partialSubmit="true"
+						global="false" />
+					<p:ajax event="change"
+						listener="#{controladorRoControles.valoracionEficiencia()}"
+						update="txtValoracionEficiencia" partialSubmit="true"
+						global="false" />
+					<f:selectItem itemLabel="NINGUNA" itemValue="NINGUNA" />
+					<f:selectItem itemLabel="POR LO MENOS UNA VEZ AL AÑO"
+						itemValue="POR LO MENOS UNA VEZ AL AÑO" />
+					<f:selectItem itemLabel="OCASIONAL O CUANDO SE REQUIERA"
+						itemValue="OCASIONAL O CUANDO SE REQUIERA" />
+					<f:selectItem
+						itemLabel="PERIODICO QUE INVOLUCRA ALGUNAS VECES EN EL AÑO"
+						itemValue="PERIODICO QUE INVOLUCRA ALGUNAS VECES EN EL AÑO" />
+					<f:selectItem itemLabel="PERMANENTE" itemValue="PERMANENTE" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmdTipo" value="Tipo: " />
+				<p:selectOneMenu id="cmdTipo"
+					value="#{controladorRoControles.roControlesVista.tipo}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar un registro">
+					<p:ajax event="change"
+						listener="#{controladorRoControles.calculoT()}"
+						update="txtCalculoTipo" partialSubmit="true" global="false" />
+					<p:ajax event="change"
+						listener="#{controladorRoControles.valoracionEficiencia()}"
+						update="txtValoracionEficiencia" partialSubmit="true"
+						global="false" />
+					<f:selectItem itemLabel="NINGUNO" itemValue="NINGUNO" />
+					<f:selectItem itemLabel="CORRECTIVO" itemValue="CORRECTIVO" />
+					<f:selectItem itemLabel="DETECTIVO" itemValue="DETECTIVO" />
+					<f:selectItem itemLabel="PREVENTIVO" itemValue="PREVENTIVO" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmdForma" value="Forma: " />
+				<p:selectOneMenu id="cmdForma"
+					value="#{controladorRoControles.roControlesVista.forma}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar un registro">
+					<p:ajax event="change"
+						listener="#{controladorRoControles.calculoF()}"
+						update="txtCalculoForma" partialSubmit="true" global="false" />
+					<p:ajax event="change"
+						listener="#{controladorRoControles.valoracionEficiencia()}"
+						update="txtValoracionEficiencia" partialSubmit="true"
+						global="false" />
+					<f:selectItem itemLabel="NINGUNO" itemValue="NINGUNO" />
+					<f:selectItem itemLabel="MANUAL" itemValue="MANUAL" />
+					<f:selectItem itemLabel="MIXTO" itemValue="MIXTO" />
+					<f:selectItem itemLabel="AUTOMÁTICO" itemValue="AUTOMÁTICO" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmdEstaDocumentado" value="Esta Documentado: " />
+				<p:selectOneMenu id="cmdEstaDocumentado"
+					value="#{controladorRoControles.roControlesVista.estaDoc}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar un registro">
+					<p:ajax event="change"
+						listener="#{controladorRoControles.valoracionDelControl()}"
+						update="txtValoracionDelControl" partialSubmit="true"
+						global="false" />
+					<p:ajax event="change"
+						listener="#{controladorRoControles.calculoD()}"
+						update="txtCalculoEstaDocumentado" partialSubmit="true"
+						global="false" />
+					<f:selectItem itemLabel="SI" itemValue="SI" />
+					<f:selectItem itemLabel="NO" itemValue="NO" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmdEstaFormalizado" value="Esta Formalizado: " />
+				<p:selectOneMenu id="cmdEstaFormalizado"
+					value="#{controladorRoControles.roControlesVista.estaFor}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar un registro">
+					<p:ajax event="change"
+						listener="#{controladorRoControles.valoracionDelControl()}"
+						update="txtValoracionDelControl" partialSubmit="true"
+						global="false" />
+					<p:ajax event="change"
+						listener="#{controladorRoControles.calculoEF()}"
+						update="txtCalculoEstaFormalizado" partialSubmit="true"
+						global="false" />
+					<f:selectItem itemLabel="SI" itemValue="SI" />
+					<f:selectItem itemLabel="NO" itemValue="NO" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmdSeAplica" value="Se Aplica: " />
+				<p:selectOneMenu id="cmdSeAplica"
+					value="#{controladorRoControles.roControlesVista.seAplica}"
+					style="width:175px" required="true"
+					requiredMessage="Debe seleccionar un registro">
+					<p:ajax event="change"
+						listener="#{controladorRoControles.valoracionDelControl()}"
+						update="txtValoracionDelControl" partialSubmit="true"
+						global="false" />
+					<p:ajax event="change"
+						listener="#{controladorRoControles.calculoSA()}"
+						update="txtCalculoSeAplica" partialSubmit="true" global="false" />
+					<f:selectItem itemLabel="SI" itemValue="SI" />
+					<f:selectItem itemLabel="NO" itemValue="NO" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtCalculoPeriodicidad"
+					value="Calculo Periodicidad: " />
+				<p:inputText id="txtCalculoPeriodicidad" readonly="true"
+					value="#{controladorRoControles.calP}" />
+
+				<p:outputLabel for="txtCalculoTipo" value="Calculo Tipo: " />
+				<p:inputText id="txtCalculoTipo" readonly="true"
+					value="#{controladorRoControles.calT}" />
+
+				<p:outputLabel for="txtCalculoForma" value="Calculo Forma: "
+					id="txtCalcForm" />
+				<p:inputText id="txtCalculoForma" readonly="true"
+					value="#{controladorRoControles.calF}" />
+
+				<p:outputLabel for="txtCalculoEstaDocumentado"
+					value="Calculo Esta Documentado: " />
+				<p:inputText id="txtCalculoEstaDocumentado" readonly="true"
+					value="#{controladorRoControles.calD}" />
+
+				<p:outputLabel for="txtCalculoEstaFormalizado"
+					value="Calculo Esta Formalizado: " />
+				<p:inputText id="txtCalculoEstaFormalizado" readonly="true"
+					value="#{controladorRoControles.calEF}" />
+
+				<p:outputLabel for="txtCalculoSeAplica" value="Calculo Se Aplica: "
+					id="txtCalcControl" />
+				<p:inputText id="txtCalculoSeAplica" readonly="true"
+					value="#{controladorRoControles.calSA}" />
+
+				<p:outputLabel for="txtValoracionEficiencia"
+					value="Valoracion Eficiencia: " />
+				<p:inputText readonly="true" id="txtValoracionEficiencia"
+					value="#{controladorRoControles.valoracion}">
+					<f:convertNumber pattern="#,###,##0.00" />
+				</p:inputText>
+
+				<p:outputLabel for="txtValoracionDelControl"
+					value="Valoracion del Control: " />
+				<p:inputText readonly="true" id="txtValoracionDelControl"
+					value="#{controladorRoControles.valoracionDelControl}">
+					<f:convertNumber pattern="#,###,##0.00" />
+				</p:inputText>
+
+				<p:commandButton value="Guardar" icon="ui-icon-disk"
+					action="#{controladorRoControles.guardarRoTipoControl()}"
+					update="formRoTipoControles">
+					<p:confirm header="Guardar Registro de Control"
+						message="¿Desea guardar este Control?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton value="Cancelar" icon="ui-icon-close"
+					action="#{controladorRoControles.cancelarControl()}"
+					update="formRoTipoControles" process="@this" />
+			</h:panelGrid>
+
+			<p:dataTable id="RoTipoCargo" border="1"
+				value="#{controladorRoControles.listaRoControles}" var="controles"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} "
+				paginator="true" rows="12" style="margin-bottom:20px; width:1378px;"
+				rowsPerPageTemplate="4,8,12" scrollable="true" scrollWidth="1378">
+
+				<p:column id="CALCULO-PROBABILIDAD" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO PROBABILIDAD"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel
+						value="#{controles.roProbabilidadEvento.calculoProb}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-IMPACTO" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="IMPACTO ECONOMICO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.impactEcon}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="PRODUCTO" style="width:70px;">
+					<f:facet name="header">
+						<p:outputLabel value="PRODUCTO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.producto}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="TIPO-CARGO" style="width:70px;">
+					<f:facet name="header">
+						<p:outputLabel value="TIPO CARGO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel
+						value="#{controles.paramProbabilidadRiesgo.nombrePprr}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CONTROL-ACTUAL" style="width:70px;">
+					<f:facet name="header">
+						<p:outputLabel value="CONTROL ACTUAL"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.controlAct}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CATEGORIZACION" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CATEGORIZACION"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.categorizacion}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="RESPONSABLE" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="RESPONSABLE"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.roResponsable.nombreResp}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-EFECTIVIDAD" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO EFECTIVIDAD"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.calcEfect}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="EFICIENCIA" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="PERIODICIDAD"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.periodicidad}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="TIPO" style="width:70px;">
+					<f:facet name="header">
+						<p:outputLabel value="TIPO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.tipo}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="FORMA" style="width:70px;">
+					<f:facet name="header">
+						<p:outputLabel value="FORMA"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.forma}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="ESTA-DOCUMENTADO" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="ESTA DOCUMENTADO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.estaDoc}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="ESTA-FORMZALIZADO" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="ESTA FORMZALIZADO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.estaFor}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="SE-APLICA" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="SE APLICA"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.seAplica}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-PERIODICIDAD" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO PERIODICIDAD"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.calcPerio}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-TIPO" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO TIPO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.calcTipo}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-FORMA" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO FORMA"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.calcForm}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-ESTA-DOCUMENTADO" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO ESTA DOCUMENTADO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.calcEstaDocu}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-ESTA-FORMALIZADO" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO ESTA FORMZALIDADO"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.calcEstaFormal}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CALCULO-ESTA-SE-APLICA" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CALCULO SE APLICA"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.calcSeAplica}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="VALORACION-EFICIENCIA" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="VALORACION EFICIENCIA"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.valorEfic}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="VALORACION-CONTROL" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="VALORACION CONTROL"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.valorControl}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="PROMEDIOS" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="PROMEDIOS"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.promedioControl}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="DENOMINACION-CONTROL" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="DENOMINACION CONTROL"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.denomControl}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="RIESGO-RESIDUAL" style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="RIESGO RESIDUAL"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.riesgoResi}"></p:outputLabel>
+				</p:column>
+
+				<p:column id="CLASIFICACION-FINAL-RIESGO-RESIDUAL"
+					style="width:100px;">
+					<f:facet name="header">
+						<p:outputLabel value="CLASIFICACION FINAL RIESGO RESIDUAL"></p:outputLabel>
+					</f:facet>
+					<p:outputLabel value="#{controles.clasifiFinal}"></p:outputLabel>
+				</p:column>
+
+				<p:column style="width:100px;">
+					<center>
+						<f:facet name="header">ACCIONES</f:facet>
+					</center>
+
+					<p:commandButton process="@this" id="btnEditar"
+						update=":formRoTipoControles"
+						action="#{controladorRoControles.editarRoControles()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorRoControles.roControlesVista}"
+							value="#{controles}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update="@all"
+						icon="ui-icon-trash"   process="@this"
+						action="#{controladorRoControles.borrarControl()}">
+						<f:setPropertyActionListener
+							target="#{controladorRoControles.roControlesVista}"
+							value="#{controles}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Control"
+							message="¿Desea eliminar este Control?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+							
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

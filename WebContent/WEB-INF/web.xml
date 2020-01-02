@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>hcRiesgoOperativo</display-name>
+	<context-param>
+		<param-name>com.sun.faces.writeStateAtFormEnd</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	
+
+	<!-- DESHABILITAR EL REQUESTSCOPE EN TODAS LAS PAGINAS -->
+	<!-- <context-param> -->
+	<!-- <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name> -->
+	<!-- <param-value>false</param-value> -->
+	<!-- </context-param> -->
+
+	<!-- DESHABILITAR EL REQUESTSCOPE EN PÁGINAS ESPECÍFICAS -->
+	<!-- <context-param> -->
+	<!-- <param-name>javax.faces.FULL_STATE_SAVING_VIEW_IDS</param-name> -->
+	<!-- <param-value>/paginas/DetalleEvento.xhtml,/other.xhtml</param-value> -->
+	<!-- </context-param> -->
+
+	<filter>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	<!--Faces Servlet -->
+
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>/faces/*</url-pattern>
+	</servlet-mapping>
+	<!-- Otras -->
+<!-- 	<error-page> -->
+<!-- 		<exception-type>javax.faces.application.ViewExpiredException</exception-type> -->
+<!-- 		<location>/errores/expira.html</location> -->
+<!-- 	</error-page> -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/errores/404.html</location>
+	</error-page>
+
+	<error-page>
+	<location>/errores/DefaultErrorPage.html</location>
+	</error-page>
+ 
+
+ 
+
+</web-app>

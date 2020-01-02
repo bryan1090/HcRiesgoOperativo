@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Asignacion de Riesgo</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formResponsable">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<div align="center">
+				<h:panelGrid columns="2">
+					<f:facet name="header">
+						<h:outputText value="Asignación de Riesgo" />
+					</f:facet>
+					<p:dataGrid var="proba"
+						value="#{controladorCrudRoAriesgo.paramProbabilidadRiesgoTodos}"
+						columns="1" id="probas">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+							<h:panelGrid columns="1">
+								<h:outputText value="#{proba.letraPprr} - #{proba.nombrePprr}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+					</p:dataGrid>
+
+					<p:dataGrid var="aries"
+						value="#{controladorCrudRoAriesgo.ariesgoTodos}"
+						columns="#{controladorCrudRoAriesgo.columnas}" id="ariesgos"
+						style="height:100%; width:100%;">
+
+
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;background-color: ##{aries.roCalifRiesgo.colorClrs}; ">
+							<p:commandLink onclick="PF('dlg1').show()"
+								title="#{aries.roCalifRiesgo.nombreClrs}">
+								<h:panelGrid columns="2">
+									<h:outputText styleClass="ui-icon ui-icon-pencil"
+										style="margin:0 auto;" title="Editar" />
+									<h:outputText value="Editar" />
+								</h:panelGrid>
+								<f:setPropertyActionListener value="#{aries}"
+									target="#{controladorCrudRoAriesgo.roAriesgoVista}" />
+							</p:commandLink>
+
+
+						</h:panelGrid>
+
+					</p:dataGrid>
+
+					<h:outputText value="" />
+					<p:dataGrid var="pconi"
+						value="#{controladorCrudRoAriesgo.paramConsecuenciaImpactoTodos}"
+						columns="#{controladorCrudRoAriesgo.columnas}" id="pconis">
+
+						<h:panelGrid columns="1"
+							style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+
+							<h:outputText value="#{pconi.numeroPconi} - #{pconi.nombrePconi}" />
+
+						</h:panelGrid>
+
+					</p:dataGrid>
+				</h:panelGrid>
+			</div>
+
+			<p:dialog id="dlg1" widgetVar="dlg1" closable="false" modal="true"
+				height="250" width="400" resizable="false"
+				header="Calificación de Riesgo">
+				<h:outputText
+					value="Seleccione la Calificación de Riesgo que va a Asignar:" />
+
+				<!-- TABLA -->
+				<p:dataTable id="dtlCalificacionRiesgo"
+					value="#{controladorCrudRoAriesgo.calificacionesTodos}"
+					var="varCalificacion"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					paginator="true" rows="4"
+					selection="#{controladorCrudRoAriesgo.roCalifRiesgoControlador}"
+					selectionMode="single" rowKey="#{varCalificacion.codigoClrs}">
+					<p:ajax event="rowSelect"
+						listener="#{controladorCrudRoAriesgo.seleccionar()}"
+						onstart="PF('dlg2').show();" oncomplete="PF('dlg2').hide();" />
+
+					<p:column>
+						<center>
+							<f:facet name="header">Nombre</f:facet>
+						</center>
+						<h:outputText value="#{varCalificacion.nombreClrs}" />
+					</p:column>
+
+
+					<p:column>
+						<center>
+							<f:facet name="header">Color</f:facet>
+						</center>
+						<h:outputText value="[#{varCalifRiesgo.colorClrs}]"
+							style="background-color:##{varCalificacion.colorClrs};" />
+					</p:column>
+				</p:dataTable>
+
+				<h:panelGroup>
+					<p:commandButton id="btnAceptar" value="Aceptar"
+						action="#{controladorCrudRoAriesgo.aceptarCalifRiesgo()}"
+						icon="ui-icon-check" update="@form" oncomplete="PF('dlg1').hide()">
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarAttrbAdicionale" value="Cancelar"
+						action="#{controladorCrudRoAriesgo.cancelarCalifRiesgo()}"
+						icon="ui-icon-disk" update="@form" process="@this" />
+				</h:panelGroup>
+			</p:dialog>
+
+			<p:dialog id="modalDialog2" widgetVar="dlg2" closable="false"
+				modal="true" height="30" width="100" resizable="false">
+				<h:outputText value="Espere....." />
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

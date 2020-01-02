@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<ui:composition template="/utils/loginTemplate.xhtml">
+	<ui:define name="tituloPagina">Login</ui:define>
+	<ui:define name="tituloFormulario">Iniciar Sesión</ui:define>
+	<ui:define name="autor">HC-CONSULTORES</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formSesion">
+			<p:growl id="growl" showDetail="true">
+				<p:autoUpdate />
+			</p:growl>
+			<h:panelGrid columns="2" id="panel">
+				<img src="#{request.contextPath}/utils/images/user.png" alt="Login"
+					title="Usuario" style="width: 30px;" />
+				<p:inputText id="txtNombreUsuario" size="25"
+					value="#{controladorLogin.nomUsuario}" />
+
+				<img src="#{request.contextPath}/utils/images/pass.png" alt="Login"
+					title="Contraseña" style="width: 30px;" />
+				<p:password id="txtContrasenia"
+					value="#{controladorLogin.usuarioSesion.contraseniaUsua}" size="25" />
+			</h:panelGrid>
+
+			<div id="boton">
+				<p:commandButton value="Ingresar"
+					action="#{controladorLogin.logearUsuario()}" />
+			</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

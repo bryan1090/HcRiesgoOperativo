@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Tipo de Responsabilidad</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formTipoResp">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevoTipoResp"
+				value="Añadir Nuevo Tipo de Responsabilidad"
+				action="#{controladorCrudRoTipoResp.nuevoTipoRespVista()}"
+				icon="ui-icon-plus" update="formTipoResp"
+				disabled="#{controladorCrudRoTipoResp.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlTipoResp"
+				rendered="#{controladorCrudRoTipoResp.pnlTipoAfecta}">
+
+				<p:outputLabel for="txtNombreTres" value="Nombre " />
+				<p:inputText id="txtNombreTres"
+					value="#{controladorCrudRoTipoResp.roTipoRespVista.nombreTres}"
+					required="true"
+					requiredMessage="El Nombre del Tipo de Responsabilidad es Obligatorio"
+					maxlength="250" size="50"/>
+				
+				
+				
+				<p:commandButton id="btnGuardarTipoResp" value="Guardar"
+					actionListener="#{controladorCrudRoTipoResp.guardarTipoResp()}"
+					icon="ui-icon-disk" update="formTipoResp">
+					<p:confirm header="Guardar Tipo de Responsabilidad"
+						message="¿Desea guardar esta Tipo de Responsabilidad ?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarTipoResp" value="Cancelar"
+					action="#{controladorCrudRoTipoResp.cancelar()}"
+					icon="ui-icon-disk" update="formTipoResp" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlTipoResp"
+				value="#{controladorCrudRoTipoResp.tipoRespTodos}" var="varTipoResp"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+	 
+						<f:facet name="header">Nombre</f:facet>
+		 
+					<h:outputText value="#{varTipoResp.nombreTres}" />
+				</p:column>
+
+				<p:column>
+	 
+						<f:facet name="header">Detalle de Menu</f:facet>
+		 
+					<h:outputText value="#{varTipoResp.sisDetalleMenu.nombreDeme}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES TipoResp
+				************************************************************* -->
+
+				<p:column exportable="false">
+		 
+						<f:facet name="header">Acciones</f:facet>
+		 
+
+					<p:commandButton id="btnEditar" update=":formTipoResp"
+						action="#{controladorCrudRoTipoResp.editarTipoRespVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoResp.roTipoRespVista}"
+							value="#{varTipoResp}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formTipoResp"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoTipoResp.eliminarTipoResp()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoResp.roTipoRespVista}"
+							value="#{varTipoResp}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar TipoResp"
+							message="¿Desea eliminar este registro?"
+							icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+				
+				<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoResp"
+							fileName="tipoResp" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoResp" fileName="tipoResp" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoResp"
+							fileName="tipoResp" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoResp"
+							fileName="tipoResp" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoResp" fileName="tipoResp" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoResp"
+							fileName="tipoResp" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+				
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

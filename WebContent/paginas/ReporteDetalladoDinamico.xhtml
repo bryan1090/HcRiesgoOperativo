@@ -1,0 +1,709 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">
+				Reporte Detallado Dinámico
+			</ui:define>
+	<ui:define name="tituloFormulario">
+				Reporte Detallado Dinámico
+			</ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="barras2">
+
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<div align="center">
+
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+					<p:outputLabel for="console" value="Filtrar por:" />
+					<p:selectOneRadio id="console"
+						value="#{controladorReporteDetalladoDinamico.tipoFiltro}">
+						<f:selectItem itemLabel="Fecha de Registro" itemValue="1" />
+						<f:selectItem itemLabel="Fecha de Ocurrencia" itemValue="2" />
+						<f:selectItem itemLabel="Fecha de Descubrimiento" itemValue="3" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+
+				<h:panelGrid columns="5">
+
+					<h:outputText value="Fecha de Inicio" />
+					<p:calendar
+						value="#{controladorReporteDetalladoDinamico.fechaInicio}"
+						navigator="true" locale="es" />
+					<h:outputText value="Fecha de Fin" />
+					<p:calendar value="#{controladorReporteDetalladoDinamico.fechaFin}"
+						navigator="true" locale="es" />
+					<h:outputText value="" />
+
+					<h:outputText value="Agencias:" />
+					<h:outputText value="Departamentos:" />
+					<h:outputText value="Procesos:" />
+					<h:outputText value="Negocios:" />
+					<h:outputText value="Usuarios:" />
+
+					<p:scrollPanel id="display" mode="native"
+						style="width:205px;height:188px;;">
+						<p:tree filterBy="#{node}" 
+							value="#{controladorReporteDetalladoDinamico.agenciasVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDetalladoDinamico.agenciasSeleccionadas}"
+							id="arbAgencia">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+					<p:scrollPanel id="departamentos" mode="native"
+						style="width:205px;height:188px;">
+						<p:tree filterBy="#{node}" 
+							value="#{controladorReporteDetalladoDinamico.departamentosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDetalladoDinamico.departamentosSeleccionadas}"
+							id="arbDepartamento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}" 
+							value="#{controladorReporteDetalladoDinamico.procesosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDetalladoDinamico.procesosSeleccionadas}"
+							id="arbProceso">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}" 
+							value="#{controladorReporteDetalladoDinamico.negociosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDetalladoDinamico.negociosSeleccionadas}"
+							id="arbNegocio">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollUsuarios">
+
+						<p:selectBooleanButton id="selTodosUsuarios"
+							value="#{controladorReporteDetalladoDinamico.btodosUsuarios}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollUsuarios"
+								listener="#{controladorReporteDetalladoDinamico.seleccionarTodosUsuarios}" />
+						</p:selectBooleanButton>
+						<p:selectManyCheckbox
+							value="#{controladorReporteDetalladoDinamico.usuariosFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorReporteDetalladoDinamico.usuariosTodos}"
+								var="responsable" itemLabel="#{responsable.nombreUsua}"
+								itemValue="#{responsable.codigoUsua}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+
+					<h:outputText value="Eventos:" />
+					<h:outputText value="Factor de Riesgos:" />
+					<h:outputText value="Tipo de Pérdida:" />
+					<h:outputText value="Tipo de Registro:" />
+					<h:outputText value="" />
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}" 
+							value="#{controladorReporteDetalladoDinamico.eventosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDetalladoDinamico.eventosSeleccionadas}"
+							id="arbEvento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollFactor">
+						<p:selectBooleanButton
+							value="#{controladorReporteDetalladoDinamico.btodosFactorRiesgo}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollFactor"
+								listener="#{controladorReporteDetalladoDinamico.seleccionarTodosFactorRiesgo()}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorReporteDetalladoDinamico.factorRiesgosFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorReporteDetalladoDinamico.factorRiesgosTodos}"
+								var="factorRiesgo" itemLabel="#{factorRiesgo.nombreFaro}"
+								itemValue="#{factorRiesgo.codigoFaro}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollTipo">
+						<p:selectBooleanButton
+							value="#{controladorReporteDetalladoDinamico.btodosTipoPerdida}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollTipo"
+								listener="#{controladorReporteDetalladoDinamico.seleccionarTodosTipoPerdida()}" />
+						</p:selectBooleanButton>
+						<p:selectManyCheckbox
+							value="#{controladorReporteDetalladoDinamico.tipoPerdidasFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorReporteDetalladoDinamico.tipoPerdidasTodos}"
+								var="tipoPerdida" itemLabel="#{tipoPerdida.nombreTipe}"
+								itemValue="#{tipoPerdida.codigoTipe}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+					
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:selectManyCheckbox
+							value="#{controladorReporteDetalladoDinamico.tipoRegistroFiltros}"
+							layout="grid" columns="1">
+							<f:selectItem itemLabel="Cualitativo" itemValue="Cualitativo" />
+							<f:selectItem itemLabel="Cuantitativo" itemValue="Cuantitativo" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+					<h:panelGrid style="width:205px;height:188px" columns="1">
+						<h:outputText value="Agrupar por:" />
+						<p:selectOneMenu
+							value="#{controladorReporteDetalladoDinamico.variableAgrupacion}"
+							layout="grid" >
+							<f:selectItem itemLabel="Agencia" itemValue="Agencia" />
+							<f:selectItem itemLabel="Departamento" itemValue="Departamento" />
+							<f:selectItem itemLabel="Proceso" itemValue="Proceso" />
+							<f:selectItem itemLabel="Negocio" itemValue="Negocio" />
+							<f:selectItem itemLabel="Usuario" itemValue="Usuario" />
+							<f:selectItem itemLabel="Evento" itemValue="Evento" />
+							<f:selectItem itemLabel="Factor de Riesgos"
+								itemValue="Factor de Riesgos" />
+							<f:selectItem itemLabel="Tipo de Pérdida"
+								itemValue="Tipo de Pérdida" />
+							<f:selectItem itemLabel="Tipo de Registro"
+								itemValue="Tipo de Registro" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Variable 1:" />
+						<p:selectOneMenu
+							value="#{controladorReporteDetalladoDinamico.variableGraficar}"
+							layout="grid" >
+							<f:selectItem itemLabel="Pérdida" itemValue="1" />
+							<f:selectItem itemLabel="Monto Recuperado" itemValue="2" />
+							<f:selectItem itemLabel="Costo Recuperación" itemValue="3" />
+							<f:selectItem itemLabel="Recuperación Real" itemValue="4" />
+							<f:selectItem itemLabel="Pérdida Residual" itemValue="5" />
+							<f:selectItem itemLabel="Número de Ocurrencias" itemValue="6" />
+						</p:selectOneMenu>
+						<h:outputText value="Variable 2:" />
+						<p:selectOneMenu
+							value="#{controladorReporteDetalladoDinamico.variableGraficar2}"
+							layout="grid" >
+							<f:selectItem itemLabel="Pérdida" itemValue="1" />
+							<f:selectItem itemLabel="Monto Recuperado" itemValue="2" />
+							<f:selectItem itemLabel="Costo Recuperación" itemValue="3" />
+							<f:selectItem itemLabel="Recuperación Real" itemValue="4" />
+							<f:selectItem itemLabel="Pérdida Residual" itemValue="5" />
+							<f:selectItem itemLabel="Número de Ocurrencias" itemValue="6" />
+						</p:selectOneMenu>
+						<h:outputText value="Numero Máximo de valores" />
+						<p:selectOneMenu id="numMax"
+							value="#{controladorReporteDetalladoDinamico.numMax}">
+							<f:selectItem itemLabel="5" itemValue="5"/>
+							<f:selectItem itemLabel="10" itemValue="10" />
+							<f:selectItem itemLabel="15" itemValue="15" />
+							<f:selectItem itemLabel="20" itemValue="20" />
+							<f:selectItem itemLabel="Todos" itemValue="1000" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="Campos de la tabla:" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollCamposReporte">
+
+						<p:selectBooleanButton
+							value="#{controladorReporteDetalladoDinamico.bseleccionarTodosCamposReporte}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax
+								listener="#{controladorReporteDetalladoDinamico.seleccionarTodosCamposReporte()}"
+								update="@form:scrollCamposReporte" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox id="cmbCamposReporte"
+							value="#{controladorReporteDetalladoDinamico.camposReporteSeleccionados}"
+							layout="grid" columns="1">
+
+							<f:selectItem itemLabel="Tipo" itemValue="Tipo" />
+							<f:selectItem itemLabel="Codigo" itemValue="Codigo" />
+							<f:selectItem itemLabel="Agencia" itemValue="Agencia" />
+							<f:selectItem itemLabel="Evento" itemValue="Evento" />
+							<f:selectItem itemLabel="Proceso" itemValue="Proceso" />
+							<f:selectItem itemLabel="Negocio" itemValue="Negocio" />
+							<f:selectItem itemLabel="Departamento" itemValue="Departamento" />
+							<f:selectItem itemLabel="Factor de Riesgo"
+								itemValue="Factor de Riesgo" />
+							<f:selectItem itemLabel="Tipo de Perdida"
+								itemValue="Tipo de Perdida" />
+							<f:selectItem itemLabel="Punto de Control"
+								itemValue="Punto de Control" />
+							<f:selectItem itemLabel="Fecha de Ocurrencia"
+								itemValue="Fecha de Ocurrencia" />
+							<f:selectItem itemLabel="Fecha de Descubrimiento"
+								itemValue="Fecha de Descubrimiento" />
+							<f:selectItem itemLabel="Fecha de Registro"
+								itemValue="Fecha de Registro" />
+							<f:selectItem itemLabel="Perdida" itemValue="Perdida" />
+							<f:selectItem itemLabel="Monto Recuperado"
+								itemValue="Monto Recuperado" />
+							<f:selectItem itemLabel="Costo de Recuperacion"
+								itemValue="Costo de Recuperacion" />
+							<f:selectItem itemLabel="Recuperacion Real"
+								itemValue="Recuperacion Real" />
+							<f:selectItem itemLabel="Perdidad Residual"
+								itemValue="Perdida Residual" />
+							<f:selectItem itemLabel="Usuario" itemValue="Usuario" />
+							<f:selectItem itemLabel="Causa Probable"
+								itemValue="Causa Probable" />
+							<f:selectItem itemLabel="Descripcion" itemValue="Descripcion" />
+							<f:selectItem itemLabel="Descripcion Detallada"
+								itemValue="Descripcion Detallada" />
+							<f:selectItem itemLabel="Numero de Ocurrencias"
+								itemValue="Numero de Ocurrencias" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+				</h:panelGrid>
+
+
+				<p:commandButton id="btnGenerarMapas" value="Generar Reporte"
+					actionListener="#{controladorReporteDetalladoDinamico.filtrar()}"
+					icon="ui-icon-check" update="@form" onstart="PF('dlg2').show();"
+					oncomplete="PF('dlg2').hide;">
+
+				</p:commandButton>
+
+				<!--TABLA  -->
+				<p:dataTable id="dtlDetalleEvento"
+					value="#{controladorReporteDetalladoDinamico.roDetalleEventosTodos}"
+					var="varDetalleEvento"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginator="true" rows="10" rowsPerPageTemplate="10,25,50,100"
+					scrollable="true" scrollWidth="978" resizableColumns="true">
+
+
+					<p:column style="width:80px;"
+						sortBy="#{varDetalleEvento.tipoCalifDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colTipo}">
+						<f:facet name="header">Tipo</f:facet>
+						<h:outputText value="#{varDetalleEvento.tipoCalifDeve}"
+							title="#{varDetalleEvento.tipoCalifDeve}" />
+					</p:column>
+
+					<!-- Codigo detalle de evento, no editable-->
+					<p:column headerText="Código" style="width:50px;"
+						sortBy="#{varDetalleEvento.codigoDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colCodigo}">
+						<h:outputText value="#{varDetalleEvento.codigoDeve}"
+							title="#{varDetalleEvento.codigoDeve}" />
+					</p:column>
+
+					<!-- Agencia,editable-->
+					<p:column headerText="Agencia" style="width:205px;"
+						filterBy="#{varDetalleEvento.codigoDeve}"
+						sortBy="#{varDetalleEvento.codigoDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colAgencia}">
+
+						<h:outputText value="#{varDetalleEvento.roAgencia.nombreAgia}"
+							title="#{varDetalleEvento.roAgencia.nombreAgia}" />
+
+					</p:column>
+
+					<!-- Evento,editable-->
+					<p:column headerText="Evento" style="width:205px;"
+						sortBy="#{varDetalleEvento.roEvento.nombreEven}"
+						rendered="#{controladorReporteDetalladoDinamico.colEvento}">
+
+						<h:outputText value="#{varDetalleEvento.roEvento.nombreEven}"
+							title="#{varDetalleEvento.roEvento.nombreEven}" />
+
+					</p:column>
+
+					<!-- Proceso,editable-->
+					<p:column headerText="Proceso" style="width:205px;"
+						sortBy="#{varDetalleEvento.roProceso.nombrePros}"
+						rendered="#{controladorReporteDetalladoDinamico.colProceso}">
+
+						<h:outputText value="#{varDetalleEvento.roProceso.nombrePros}"
+							title="#{varDetalleEvento.roProceso.nombrePros}" />
+
+					</p:column>
+
+					<!-- Negocio,editable-->
+					<p:column headerText="Negocio" style="width:205px;"
+						sortBy="#{varDetalleEvento.roNegocio1.nombreNego}"
+						filterBy="#{varDetalleEvento.roNegocio1.nombreNego}"
+						rendered="#{controladorReporteDetalladoDinamico.colNegocio}">
+						<h:outputText value="#{varDetalleEvento.roNegocio1.nombreNego}"
+							title="#{varDetalleEvento.roNegocio1.nombreNego}" />
+					</p:column>
+
+					<!-- Departamento, editable-->
+					<p:column headerText="Departamento" style="width:205px;"
+						sortBy="#{varDetalleEvento.roDepartamento.nombreDept}"
+						filterBy="#{varDetalleEvento.roDepartamento.nombreDept}"
+						rendered="#{controladorReporteDetalladoDinamico.colDepartamento}">
+
+						<h:outputText
+							value="#{varDetalleEvento.roDepartamento.nombreDept}"
+							title="#{varDetalleEvento.roDepartamento.nombreDept}" />
+
+					</p:column>
+
+					<!-- Factor de Riesgo, editable-->
+					<p:column headerText="Factor de Riesgo" style="width:205px;"
+						sortBy="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+						rendered="#{controladorReporteDetalladoDinamico.colFactorDeRiesgo}">
+
+						<h:outputText
+							value="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+							title="#{varDetalleEvento.roFactorRiesgo.nombreFaro}" />
+
+					</p:column>
+
+					<p:column headerText="Tipo de Pérdida" style="width:205px;"
+						filterBy="#{controladorReporteDetalladoDinamico.colTipoDePerdida}"
+						sortBy="#{controladorReporteDetalladoDinamico.colTipoDePerdida}"
+						rendered="#{controladorReporteDetalladoDinamico.colTipoDePerdida}">
+
+						<h:outputText value="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+							title="#{varDetalleEvento.roTipoPerdida.nombreTipe}" />
+
+					</p:column>
+
+
+					<!-- Pto Control, editable-->
+					<p:column headerText="Punto de Control" style="width:205px;"
+						sortBy="#{varDetalleEvento.ptoCtrlProcDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colPuntoDeControl}">
+						<h:outputText value="#{varDetalleEvento.ptoCtrlProcDeve}"
+							title="#{varDetalleEvento.ptoCtrlProcDeve}" />
+
+					</p:column>
+
+					<p:column headerText="Fecha de Ocurrencia" style="width:140px;"
+						sortBy="#{varDetalleEvento.fechaOcurDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colFechaDeOcurrencia}">
+						<h:outputText value="#{varDetalleEvento.fechaOcurDeve}"
+							title="#{varDetalleEvento.fechaOcurDeve}" />
+					</p:column>
+
+					<p:column headerText="Fecha de Descubrimiento" style="width:140px;"
+						sortBy="#{varDetalleEvento.fechaDescDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colFechaDeDescubrimiento}">
+						<h:outputText value="#{varDetalleEvento.fechaDescDeve}"
+							title="#{varDetalleEvento.fechaDescDeve}" />
+					</p:column>
+
+					<p:column headerText="Fecha de Registro" style="width:140px;"
+						sortBy="#{varDetalleEvento.fechaRegisDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colFechaDeRegistro}">
+						<h:outputText value="#{varDetalleEvento.fechaRegisDeve}"
+							title="#{varDetalleEvento.fechaRegisDeve}" />
+					</p:column>
+
+					<p:column headerText="Pérdida" style="width:180px;"
+						sortBy="#{varDetalleEvento.valorDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colPerdida}">
+						<h:outputText value="#{varDetalleEvento.valorDeve}"
+							title="#{varDetalleEvento.valorDeve}" />
+					</p:column>
+
+					<!-- Monto Recuperado, editable-->
+					<p:column headerText="Monto Recuperado" style="width:120px;"
+						sortBy="#{varDetalleEvento.montoRecupDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colMontoRecuperado}">
+
+						<h:outputText value="#{varDetalleEvento.montoRecupDeve}"
+							title="#{varDetalleEvento.montoRecupDeve}" />
+
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column headerText="Costo de Recuperación" style="width:130px;"
+						sortBy="#{varDetalleEvento.costoRecupDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colCostoDeRecuperacion}">
+						<h:outputText value="#{varDetalleEvento.costoRecupDeve}"
+							title="#{varDetalleEvento.costoRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column headerText="Recuperación Real" style="width:130px;"
+						sortBy="#{varDetalleEvento.realRecupDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colRecuperacionReal}">
+						<h:outputText value="#{varDetalleEvento.realRecupDeve}"
+							title="#{varDetalleEvento.realRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column headerText="Perdida Residual" style="width:130px;"
+						sortBy="#{varDetalleEvento.perdidaResidualDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colPerdidaResidual}">
+						<h:outputText value="#{varDetalleEvento.perdidaResidualDeve}"
+							title="#{varDetalleEvento.perdidaResidualDeve}" />
+					</p:column>
+
+
+
+
+
+
+
+
+
+					<!-- Fecha, editable-->
+
+					<p:column headerText="Usuario" style="width:150px;"
+						filterBy="#{varDetalleEvento.sisUsuario.nombreUsua}"
+						sortBy="#{varDetalleEvento.sisUsuario.nombreUsua}"
+						rendered="#{controladorReporteDetalladoDinamico.colUsuario}">
+						<h:outputText value="#{varDetalleEvento.sisUsuario.nombreUsua}"
+							title="#{varDetalleEvento.sisUsuario.nombreUsua}" />
+					</p:column>
+
+
+					<p:column headerText="Causa probable" style="width:150px;"
+						sortBy="#{varDetalleEvento.causaDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colCausaProbable}">
+						<h:outputText value="#{varDetalleEvento.causaDeve}"
+							title="#{varDetalleEvento.causaDeve}" />
+					</p:column>
+
+					<p:column headerText="Descripción" style="width:150px;"
+						sortBy="#{varDetalleEvento.descripcionDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colDescripcion}">
+						<h:outputText value="#{varDetalleEvento.descripcionDeve}"
+							title="#{varDetalleEvento.descripcionDeve}" />
+					</p:column>
+
+					<p:column headerText="Descripción Detallada" style="width:150px;"
+						sortBy="#{varDetalleEvento.descripcionDetalladaDeve}"
+						rendered="#{controladorReporteDetalladoDinamico.colDescripcionDetallada}">
+						<h:outputText value="#{varDetalleEvento.descripcionDetalladaDeve}"
+							title="#{varDetalleEvento.descripcionDetalladaDeve}" />
+					</p:column>
+
+					<p:column headerText="Num. de Ocurrencias" style="width:150px;"
+						sortBy="#{varDetalleEvento.numOcur}"
+						rendered="#{controladorReporteDetalladoDinamico.colNumeroOcurrencias}">
+						<h:outputText value="#{varDetalleEvento.numOcur}"
+							title="#{varDetalleEvento.numOcur}" />
+					</p:column>
+
+				</p:dataTable>
+
+
+
+				<p:panel header="Exportar Filtros">
+					<h:commandLink
+						actionListener="#{controladorReporteDetalladoDinamico.crearReporteCabecera}">
+						<p:graphicImage value="/utils/images/pdf.png" />
+					</h:commandLink>
+				</p:panel>
+				<p:panel header="Exportar Detalle">
+					<h:commandLink
+						actionListener="#{controladorReporteDetalladoDinamico.exportarPDF}">
+						<p:graphicImage value="/utils/images/pdf.png" />
+					</h:commandLink>
+					<h:commandLink
+						actionListener="#{controladorReporteDetalladoDinamico.exportarXLS}">
+						<p:graphicImage value="/utils/images/excel.png" />
+					</h:commandLink>
+					<h:commandLink
+						actionListener="#{controladorReporteDetalladoDinamico.exportarDOC}">
+						<p:graphicImage value="/utils/images/word.png" style="width:32px;" />
+					</h:commandLink>
+				</p:panel>
+
+				<!-- 				GRAFICOS -->
+				<p:accordionPanel  multiple="true" activeIndex="null">
+					<p:tab title="Pie">
+
+						<p:commandButton type="button" value="Export"
+							icon="ui-icon-extlink" onclick="exportpie1()" />
+						<p:chart type="pie" style="height:500px" widgetVar="pie1"
+							model="#{controladorReporteDetalladoDinamico.modelPie}" />
+					</p:tab>
+
+					<p:tab title="Pie 2">
+						<p:commandButton type="button" value="Export"
+							icon="ui-icon-extlink" onclick="exportpie2()" />
+						<p:chart type="pie" style="height:500px" widgetVar="pie2"
+							model="#{controladorReporteDetalladoDinamico.modelPie2}" />
+					</p:tab>
+
+					<p:tab title="Barras Horizontales">
+						<p:commandButton type="button" value="Export"
+							icon="ui-icon-extlink" onclick="exportbarra1()" />
+						<p:chart type="bar" xaxisAngle="90" style="height:550px"
+							widgetVar="barra1"
+							rendered="#{controladorReporteDetalladoDinamico.mostrarBarra}"
+							model="#{controladorReporteDetalladoDinamico.modelBarHorizontal}"
+							title="#{controladorReporteDetalladoDinamico.nombreVariableGraficar} y #{controladorReporteDetalladoDinamico.nombreVariableGraficar2} por #{controladorReporteDetalladoDinamico.variableAgrupacion}" />
+					</p:tab>
+
+					<p:tab title="Barras Verticales">
+						<p:commandButton type="button" value="Export"
+							icon="ui-icon-extlink" onclick="exportbarra2()" />
+						<p:chart type="bar" id="bar2" styleClass="rotate"
+							style="height:500px" widgetVar="barra2" extender="extender"
+							rendered="#{controladorReporteDetalladoDinamico.mostrarBarra}"
+							model="#{controladorReporteDetalladoDinamico.modelBar}"
+							title="#{controladorReporteDetalladoDinamico.nombreVariableGraficar} y #{controladorReporteDetalladoDinamico.nombreVariableGraficar2} por #{controladorReporteDetalladoDinamico.variableAgrupacion}" />
+					</p:tab>
+
+				</p:accordionPanel>
+
+				<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+					modal="true" height="30" width="100" resizable="false">
+					<h:outputText value="Espere....." />
+				</p:dialog>
+
+				<p:dialog widgetVar="dlg" draggable="false" height="600px" showEffect="fade" modal="true"
+					header="Gráfico" resizable="false" closeOnEscape="true" onShow="PF('dlg').initPosition()" >
+					<p:commandButton value="Print" type="button" icon="ui-icon-print"
+						style="display:block;margin-bottom: 20px">
+						<p:printer target="image" />
+					</p:commandButton>
+					<p:panel id="image">
+						<center>
+							<h:panelGrid columns="2">
+								<h1>Reporte Detallado Dinámico - Gráfico</h1>
+								<h:graphicImage value="/utils/images/logoJEP.png" />
+							</h:panelGrid>
+						</center>
+						<p:outputPanel id="output" layout="block"  />
+					</p:panel>
+				</p:dialog>
+
+
+
+
+				<script type="text/javascript">
+					function extender() 
+						{
+						        this.cfg.seriesDefaults = {
+						            pointLabels: {show: true,location:'e'},
+						            rendererOptions: {barWidth : 10},
+						           	fillColor:{color: '#FCB1B8'},         
+						        };
+	
+						}
+					
+// 					function extenderBarrasHorizontales() 
+// 					{
+// 						this.cfg.seriesDefaults = {
+// 					            pointLabels: {show: true },
+// 					            rendererOptions: {barDirection: 'horizontal', barWidth : 3,barPadding :6},
+// 					        };
+// 						 this.cfg.legend= {
+// 		 					        show: true,
+// 		 					        renderer: $.jqplot.EnhancedLegendRenderer,
+// 		 					        location: 'ne',
+// 		 					        placement: 'outsideGrid',  
+		 					          
+// 		 					    };
+// 					}
+				
+				
+					function exportpie1() {
+    				//export image
+    				$('#barras2\\:output').empty().append(PF('pie1').exportAsImage());
+ 
+    				//show the dialog
+    				PF('dlg').show();
+					}
+
+					function exportpie2() {
+	    				//export image
+	    				$('#barras2\\:output').empty().append(PF('pie2').exportAsImage());
+	 
+	    				//show the dialog
+	    				PF('dlg').show();
+						}
+
+					function exportbarra1() {
+	    				//export image
+	    				$('#barras2\\:output').empty().append(PF('barra1').exportAsImage());
+	 
+	    				//show the dialog
+	    				PF('dlg').show();
+						}
+					function exportbarra2() {
+	    				//export image
+	    				$('#barras2\\:output').empty().append(PF('barra2').exportAsImage());
+	 
+	    				//show the dialog
+	    				PF('dlg').show();
+					}
+					
+					function showAgencia(element){
+						var elElemento=document.getElementById(element);
+						   if(elElemento.style.display == 'block') {
+						      elElemento.style.display = 'none';
+						   } else {
+						      elElemento.style.display = 'block';
+						   }
+					}
+
+					function showContent() {
+				        element = document.getElementById("content");
+				        check = document.getElementById("check");
+				        if (check.checked) {
+				            element.style.display='block';
+				        }
+				        else {
+				            element.style.display='none';
+				        }
+				    }
+					function tip(){
+						document.getElementById('dtlDetalleEvento').style.display='block';						
+					}
+				</script>
+			</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</html>

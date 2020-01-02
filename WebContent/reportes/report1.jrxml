@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ab6ecf49-2668-437b-bab1-e743dcc416d6">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\PCCORP\\Documents\\reporte detalle\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DETALLE_EVENTOS" class="java.util.List">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$F{detalleEventos}]]></defaultValueExpression>
+	</parameter>
+	<field name="paramProbabilidadRiesgo.letraPprr" class="java.lang.String"/>
+	<field name="paramProbabilidadRiesgo.nombrePprr" class="java.lang.String"/>
+	<field name="paramConsecuenciaImpacto.numeroPconi" class="java.lang.Number"/>
+	<field name="paramConsecuenciaImpacto.nombrePconi" class="java.lang.String"/>
+	<field name="roEventos" class="java.util.List"/>
+	<field name="detalleEventos" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="131" splitType="Stretch">
+			<staticText>
+				<reportElement x="152" y="1" width="214" height="34" uuid="b444a342-2bfd-4388-9429-d6a417e00bf8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sistema de Riesgo Operativo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="152" y="35" width="107" height="28" uuid="bc5e2d12-2344-4701-8c65-ff15167757c3"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[Mapa de Riesgo]]></text>
+			</staticText>
+			<image>
+				<reportElement x="2" y="1" width="137" height="34" uuid="9bb938c1-5bf6-45fe-9185-3634fafd76c3"/>
+				<imageExpression><![CDATA["logoCliente.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="152" y="63" width="100" height="20" uuid="a6eea856-321e-434f-87cd-b064a831fdf0"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Detalles]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="576" y="0" width="226" height="35" uuid="1fc470f0-1d4d-462a-9309-7d24a6129c65"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MATRIZ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="637" y="35" width="165" height="28" uuid="3d8861e8-f767-401b-839e-a4a3609d6cf8"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Av Rodrigo de Chávez, Quito EC170111]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="637" y="63" width="165" height="28" uuid="c1e8c9d2-3ef5-478a-8f83-d75dffe1b241"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[(07) 413-5000]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="637" y="91" width="165" height="28" uuid="a138e98e-2d6f-446e-bcd8-0aacebd787c5"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[www.coopjep.fin.ec]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="576" y="35" width="61" height="28" uuid="5663ef17-6101-47b9-9a97-9f2e5533c9d1"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="576" y="63" width="61" height="28" uuid="cd4d390f-dff8-48af-b9f7-7e16e70a6f30"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="576" y="91" width="61" height="28" uuid="788bc385-6212-4c2c-9d65-f3c0ab0730e3"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Web:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="45" splitType="Stretch">
+			<textField>
+				<reportElement x="77" y="6" width="18" height="15" uuid="0e98541c-9899-4503-bfbb-70dd1342b7b8"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paramProbabilidadRiesgo.letraPprr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="6" width="74" height="15" uuid="ac887172-669d-4e4f-90d3-ad510ce748b4"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Probabilidad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="6" width="77" height="15" uuid="1905ee8b-0726-4fa1-b1ee-9500bc1927a7"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Consecuencia:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="427" y="6" width="23" height="15" uuid="4578c8de-bb1c-4fe5-9688-8427022ebe3a"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paramConsecuenciaImpacto.numeroPconi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="461" y="6" width="227" height="15" uuid="fd18882d-e05c-4719-8196-5635f4636065"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paramConsecuenciaImpacto.nombrePconi}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="26" width="802" height="8" uuid="c27ca659-0d8c-46d2-b686-fbc999081f89"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{detalleEventos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["report1_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="-10" y="3" width="823" height="1" uuid="56175471-17c5-4de4-80c5-ab022d44d93e"/>
+			</line>
+			<textField>
+				<reportElement x="113" y="6" width="225" height="15" uuid="3021bacd-3cec-4ecb-985e-e8205a1d78fd"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paramProbabilidadRiesgo.nombrePprr}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="366" y="1" width="71" height="13" uuid="1c756ceb-1914-4cdd-b8d4-47a5f318238a"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="0" width="317" height="15" uuid="a224e509-570b-4f9a-8adc-1b54a0bb44d3"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="666" y="0" width="136" height="15" uuid="05232cac-b360-475e-b827-ac4242d55e1f"/>
+				<textFieldExpression><![CDATA["Mapa de Riesgo Cualitativo"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Categoría de Objetivo</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formCatObjetivo">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaCatObjetivo"
+				value="Añadir Nueva Categoría de Objetivo"
+				action="#{controladorCrudRoCatObjetivo.nuevoCatObjetivoVista()}"
+				icon="ui-icon-plus" update="formCatObjetivo"
+				disabled="#{controladorCrudRoCatObjetivo.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlCatObjetivo"
+				rendered="#{controladorCrudRoCatObjetivo.pnlCatObjetivo}">
+
+				<p:outputLabel for="txtNombreCatObjetivo"
+					value="Nombre de la Categoría de Objetivo" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreCatObjetivo"
+						value="#{controladorCrudRoCatObjetivo.roCatObjetivoVista.nombreCobj}"
+						required="true"
+						requiredMessage="El Nombre de la Categoría de Objetivo es un campo Obligatorio"
+						maxlength="250" size="50"/>
+					<p:message for="txtNombreCatObjetivo" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtObservacionCatObjetivo" value="Observación" />
+				<p:inputTextarea id="txtObservacionCatObjetivo"
+					value="#{controladorCrudRoCatObjetivo.roCatObjetivoVista.observacionCobj}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarCatObjetivo" value="Guardar"
+					actionListener="#{controladorCrudRoCatObjetivo.guardarCatObjetivo()}"
+					icon="ui-icon-disk" update="formCatObjetivo">
+					<p:confirm header="Guardar Categoría de Objetivo"
+						message="¿Desea guardar esta Categoría de Objetivo?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarCatObjetivo" value="Cancelar"
+					action="#{controladorCrudRoCatObjetivo.cancelar()}"
+					icon="ui-icon-disk" update="formCatObjetivo" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlCatObjetivo"
+				value="#{controladorCrudRoCatObjetivo.catObjetivosTodos}"
+				var="varCatObjetivo"
+								style="width:30%"
+				
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+					 
+						<f:facet name="header">Nombre</f:facet>
+				 
+					<h:outputText value="#{varCatObjetivo.nombreCobj}" />
+				</p:column>
+
+
+				<!-- *********************************************************
+				 			ACCIONES CatObjetivo
+				************************************************************* -->
+
+				<p:column exportable="false">
+			 
+						<f:facet name="header">Acciones</f:facet>
+		 
+
+					<p:commandButton id="btnEditar" update=":formCatObjetivo"
+						action="#{controladorCrudRoCatObjetivo.editarCatObjetivoVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoCatObjetivo.roCatObjetivoVista}"
+							value="#{varCatObjetivo}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formCatObjetivo"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoCatObjetivo.eliminarCatObjetivo()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoCatObjetivo.roCatObjetivoVista}"
+							value="#{varCatObjetivo}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar CatObjetivo"
+							message="¿Desea eliminar esta Categoría de Objetivo?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlCatObjetivo"
+							fileName="categoriadeobjetivo" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlCatObjetivo" fileName="categoriadeobjetivo" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlCatObjetivo"
+							fileName="categoriadeobjetivo" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlCatObjetivo"
+							fileName="categoriadeobjetivo" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlCatObjetivo" fileName="categoriadeobjetivo"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlCatObjetivo"
+							fileName="categoriadeobjetivo" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

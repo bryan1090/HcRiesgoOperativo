@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templateProDual.xhtml">
+	<ui:define name="tituloPagina">Evento</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	<ui:define name="arbolRecursivo">
+		<h:form id="formArbolEvento">
+			<h1>EVENTOS:</h1>
+			<p:tree value="#{controladorCrudRoEvento.arbolEventoVista}"
+				var="node" dynamic="true" selectionMode="single"
+				selection="#{controladorCrudRoEvento.arbolEventoSeleccionado}"
+				id="arbEvento" style="width:270px;">
+				<p:ajax event="select" update=":formEvento"
+					listener="#{controladorCrudRoEvento.seleccionarEvento()}" />
+
+				<p:treeNode>
+					<h:outputText value="#{node}"  />
+				</p:treeNode>
+			</p:tree>
+		</h:form>
+	</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formEvento">
+
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaEvento"
+				value="Añadir Nuevo Evento a #{controladorCrudRoEvento.nombreSeleccionado}"
+				action="#{controladorCrudRoEvento.nuevoEventoVista()}"
+				icon="ui-icon-plus" update="formEvento"
+				disabled="#{controladorCrudRoEvento.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlEvento"
+				rendered="#{controladorCrudRoEvento.pnlEvento}">
+
+				<p:outputLabel for="txtNombreEvento" value="Nombre del Evento" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreEvento"
+						value="#{controladorCrudRoEvento.roEventoVista.nombreEven}"
+						required="true"
+						requiredMessage="El Nombre de Evento es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreEvento" />
+				</h:panelGrid>
+
+				<p:outputLabel value="Código" />
+				<p:inputText
+					value="#{controladorCrudRoEvento.roEventoVista.numeroEven}"
+					maxlength="10" />
+
+				<p:outputLabel for="cmbEstadoEvento" value="Estado" />
+				<p:selectOneMenu id="cmbEstadoEvento"
+					value="#{controladorCrudRoEvento.idEstadoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado del Evento">
+					<f:selectItems value="#{controladorCrudRoEvento.estadosTodos}"
+						var="varEstados" itemValue="#{varEstados.codigoEsta}"
+						itemLabel="#{varEstados.nombreEsta}" />
+				</p:selectOneMenu>
+
+
+				<p:outputLabel for="cmbNivelEvento" value="Nivel" />
+				<p:selectOneMenu id="cmbNivelEvento"
+					value="#{controladorCrudRoEvento.idNivelArbolSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el nivel del Evento">
+					<f:selectItems value="#{controladorCrudRoEvento.nivelesArbolTodos}"
+						var="varNiveles" itemValue="#{varNiveles.codigoGniv}"
+						itemLabel="#{varNiveles.nombreGniv}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtObservacionEvento" value="Observación" />
+				<p:inputTextarea id="txtObservacionEvento"
+					value="#{controladorCrudRoEvento.roEventoVista.observacionEven}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+
+				<p:commandButton id="btnGuardarEvento" value="Guardar"
+					actionListener="#{controladorCrudRoEvento.guardarEvento()}"
+					icon="ui-icon-disk" update="formEvento :formArbolEvento:arbEvento">
+					<p:confirm header="Guardar Evento"
+						message="¿Desea guardar este Evento?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarEvento" value="Cancelar"
+					action="#{controladorCrudRoEvento.cancelar()}" icon="ui-icon-disk"
+					update="formEvento" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlEvento"
+				value="#{controladorCrudRoEvento.subEventosTodos}" var="varEvento"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column sortBy="#{varEvento.nombreEven}">
+
+					<f:facet name="header">Nombre</f:facet>
+
+					<h:outputText value="#{varEvento.nombreEven}" />
+				</p:column>
+
+				<p:column sortBy="#{varEvento.numeroEven}">
+
+					<f:facet name="header">Código</f:facet>
+
+					<h:outputText value="#{varEvento.numeroEven}" />
+				</p:column>
+
+				<p:column sortBy="#{varEvento.genEstado.nombreEsta}">
+
+					<f:facet name="header">Estado</f:facet>
+
+					<h:outputText value="#{varEvento.genEstado.nombreEsta}" />
+				</p:column >
+
+
+				<p:column sortBy="#{varEvento.genNivelArbol.nombreGniv}">
+
+					<f:facet name="header">Nivel</f:facet>
+
+					<h:outputText value="#{varEvento.genNivelArbol.nombreGniv}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES Evento
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar" update=":formEvento"
+						action="#{controladorCrudRoEvento.editarEventoVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoEvento.roEventoVista}"
+							value="#{varEvento}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formEvento :formArbolEvento" icon="ui-icon-trash"
+						action="#{controladorCrudRoEvento.eliminarEvento()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoEvento.roEventoVista}"
+							value="#{varEvento}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Evento"
+							message="¿Desea eliminar este Evento?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlEvento" fileName="evento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlEvento" fileName="evento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlEvento" fileName="evento" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlEvento" fileName="evento"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlEvento" fileName="evento" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlEvento" fileName="evento"
+							pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteProcesos" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6cb6209c-e6c5-4526-83d7-b06cb1e37b12">
+	<property name="ireport.zoom" value="1.2100000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="nombrePros" class="java.lang.String"/>
+	<field name="genEstado.nombreEsta" class="java.lang.String"/>
+	<field name="roTipoEjecucion.nombreTiej" class="java.lang.String"/>
+	<field name="roTipoProceso.nombreTipr" class="java.lang.String"/>
+	<field name="roCriticidad.nombreCrit" class="java.lang.String"/>
+	<field name="sisSucursal.roResponsables" class="java.lang.String"/>
+	<field name="genNivelArbol.nombreGniv" class="java.lang.String"/>
+	<field name="observacionPros" class="java.lang.String"/>
+	<field name="roFrecEjecucion.nombreFrej" class="java.lang.String"/>
+	<field name="genNivelProceso.nombreGnip" class="java.lang.String"/>
+	<field name="ancestroPros" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="44" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="137" height="34" uuid="2b79c740-4e93-4813-a5b4-780c9502b466"/>
+				<imageExpression><![CDATA["logoCliente.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="176" y="0" width="225" height="22" uuid="d5d08b48-ec4b-4eca-98e8-a3e55602033b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sistema de Riesgo Operativo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="234" y="22" width="100" height="20" uuid="9096308f-42c8-4fdf-a7ab-fba7a0b14dfd"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Procesos]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="37" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="36" width="802" height="1" uuid="c3835f70-471f-46d0-b24a-8a895f9893b0"/>
+			</line>
+			<staticText>
+				<reportElement x="145" y="16" width="88" height="20" uuid="5acf663b-ff3d-4d31-870d-210c91d165f6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de Ejecución]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="17" width="124" height="20" uuid="8ecd3d0e-a755-4448-a5c5-f04fb082a1eb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Frecuencia de Ejecución]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="357" y="16" width="87" height="20" uuid="ba953a72-1e09-47c4-9d73-e5449894e1ef"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de Proceso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="17" width="55" height="20" uuid="9dbe598e-d3a3-4119-a8e8-78a48c3af92e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="16" width="88" height="20" uuid="e4496c46-1ed8-4774-a8a7-5dd7869036f5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="16" width="76" height="20" uuid="57cfdf9b-b1ae-4498-80c7-421be2542143"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel de Arbol]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="520" y="16" width="86" height="20" uuid="376ff0f5-9df7-4c64-a4e8-c7f11a62b677"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel de Proceso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="680" y="17" width="122" height="20" uuid="ebc00076-d28a-4980-85c1-13a4a2137481"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="606" y="17" width="74" height="20" uuid="3402efcf-c33f-47e3-b9d9-b469dfbea2cd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ancestro]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="28" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="0" width="88" height="25" uuid="94e2f36f-e4d9-46b6-a235-c3c3157c4e1a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nombrePros}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="0" width="55" height="25" uuid="ad7a5d4a-ca7a-4c5d-ab1c-741c35e16abe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{genEstado.nombreEsta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="0" width="88" height="25" uuid="26cfe21b-5eca-4bfb-878f-c60b365ae9a0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{roTipoEjecucion.nombreTiej}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="0" width="76" height="25" uuid="49a1815b-97e3-4a0b-9da5-05a434f52a80"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{genNivelArbol.nombreGniv}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="520" y="0" width="86" height="25" uuid="8ebfa0f2-6732-4c98-8e68-9160db831667"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{genNivelProceso.nombreGnip}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="357" y="0" width="87" height="25" uuid="da3e4473-ff7b-4140-a181-24471677d620"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{roTipoProceso.nombreTipr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="233" y="0" width="124" height="25" uuid="74d24533-a82b-47a7-86c2-22864be0ece3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{roFrecEjecucion.nombreFrej}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="680" y="0" width="122" height="25" uuid="b2d04766-c6b4-4807-9ffb-e2606b1e5f2a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{observacionPros}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="606" y="0" width="74" height="25" uuid="a62afdfa-c305-4f5d-88d1-ec5ffd615192"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ancestroPros}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,2402 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Detalle de Evento</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			<!-- <p:log /> -->
+		</h:form>
+
+		<h:form id="formDetalleEvento">
+			<p:growl id="growl" showDetail="true">
+			</p:growl>
+
+
+			<p:commandButton id="btnNuevaDetalleEvento"
+				value="Añadir Detalle Evento"
+				action="#{controladorCrudRoDetalleEvento.nuevoDetalleEvento()}"
+				icon="ui-icon-plus" update="formDetalleEvento"
+				onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;"
+				disabled="#{controladorCrudRoDetalleEvento.btnAnadir}"
+				title="Crea un nuevo registro de un detalle de evento" />
+
+			<!-- PANEL INGRESO DETALLE EVENTO -->
+
+			<h:panelGrid id="pnlIngresoDetalleEvento" columns="2"
+				rendered="#{controladorCrudRoDetalleEvento.pnlRoDetalleEvento}">
+
+				<p:outputLabel for="txtCodigoDetalle" value="Codigo"
+					rendered="#{controladorCrudRoDetalleEvento.colCodigo}" />
+				<h:panelGrid columns="2"
+					rendered="#{controladorCrudRoDetalleEvento.colCodigo}">
+					<p:inputText id="txtCodigoDetalle"
+						value="#{controladorCrudRoDetalleEvento.roDetalleEventoVista.codigoDeve}"
+						rendered="#{controladorCrudRoDetalleEvento.colCodigo}"
+						readonly="true" />
+				</h:panelGrid>
+
+				<p:outputLabel for="cmbCalificacion" value="Tipo de Registro"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativoAux}" />
+				<p:selectOneMenu id="cmbCalificacion" required="true"
+					requiredMessage="Los campos con * son obligatorios"
+					value="#{controladorCrudRoDetalleEvento.califSeleccionada}"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativoAux}">
+					<f:selectItem itemValue="Cuantitativo" itemLabel="Cuantitativo" />
+					<f:selectItem itemValue="Cualitativo" itemLabel="Cualitativo" />
+					<p:ajax update="@form"
+						listener="#{controladorCrudRoDetalleEvento.cambiarCalificaion()}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbAgencias" value="Agencia"
+					rendered="#{controladorCrudRoDetalleEvento.colAgencia}" />
+				<p:selectOneMenu id="cmbAgencias"
+					value="#{controladorCrudRoDetalleEvento.idAgenciaSeleccionada}"
+					rendered="#{controladorCrudRoDetalleEvento.colAgencia}"
+					disabled="#{controladorCrudRoDetalleEvento.disAgencia}"
+					required="#{controladorCrudRoDetalleEvento.reqAgencia}"
+					requiredMessage="Los campos con * son obligatorios">
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.agenciasUsuario}"
+						var="varAgencias" itemValue="#{varAgencias.codigoAgia}"
+						itemLabel="#{varAgencias.nombreAgia}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbEventos" value="Evento"
+					rendered="#{controladorCrudRoDetalleEvento.colEvento}" />
+				<p:selectOneMenu id="cmbEventos" filter="true"
+					filterMatchMode="contains"
+					rendered="#{controladorCrudRoDetalleEvento.colEvento}"
+					disabled="#{controladorCrudRoDetalleEvento.disEvento}"
+					required="#{controladorCrudRoDetalleEvento.reqEvento}"
+					requiredMessage="Los campos con * son obligatorios"
+					value="#{controladorCrudRoDetalleEvento.idEventoSeleccionado}">
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.eventosTodos}" var="var"
+						itemValue="#{var.codigoEven}" itemLabel="#{var.nombreEven}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbProceso" value="Proceso"
+					rendered="#{controladorCrudRoDetalleEvento.colProceso}" />
+				<p:selectOneMenu id="cmbProceso" filter="true"
+					filterMatchMode="contains"
+					rendered="#{controladorCrudRoDetalleEvento.colProceso}"
+					disabled="#{controladorCrudRoDetalleEvento.disProceso}"
+					required="#{controladorCrudRoDetalleEvento.reqProceso}"
+					requiredMessage="Los campos con * son obligatorios"
+					value="#{controladorCrudRoDetalleEvento.idProcesoSeleccionado}">
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.procesosUsuario}"
+						var="var" itemValue="#{var.codigoPros}"
+						itemLabel="#{var.nombrePros}" />
+					<p:ajax update="cmbNegocio"
+						listener="#{controladorCrudRoDetalleEvento.cambiarNegocio}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbNegocio" value="Negocio"
+					rendered="#{controladorCrudRoDetalleEvento.colNegocio}" />
+				<p:selectOneMenu id="cmbNegocio"
+					rendered="#{controladorCrudRoDetalleEvento.colNegocio}"
+					disabled="#{controladorCrudRoDetalleEvento.disNegocio}"
+					required="#{controladorCrudRoDetalleEvento.reqNegocio}"
+					value="#{controladorCrudRoDetalleEvento.idNegocioSeleccionado}">
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.negociosProcesos}"
+						var="var" itemValue="#{var.codigoNego}"
+						itemLabel="#{var.nombreNego}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbDepartamento" value="Departamento"
+					rendered="#{controladorCrudRoDetalleEvento.colDepartamento}" />
+				<p:selectOneMenu id="cmbDepartamento"
+					rendered="#{controladorCrudRoDetalleEvento.colDepartamento}"
+					disabled="#{controladorCrudRoDetalleEvento.disDepartamento}"
+					required="#{controladorCrudRoDetalleEvento.reqDepartamento}"
+					value="#{controladorCrudRoDetalleEvento.idDepartamentoSeleccionado}">
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.departamentosTodos}"
+						var="var" itemValue="#{var.codigoDept}"
+						itemLabel="#{var.nombreDept}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbFactor" value="Factor de Riesgo"
+					rendered="#{controladorCrudRoDetalleEvento.colFactorRiesgo}" />
+				<p:selectOneMenu id="cmbFactor"
+					rendered="#{controladorCrudRoDetalleEvento.colFactorRiesgo}"
+					disabled="#{controladorCrudRoDetalleEvento.disFactorRiesgo}"
+					required="#{controladorCrudRoDetalleEvento.reqFactorRiesgo}"
+					value="#{controladorCrudRoDetalleEvento.idFactorSeleccionado}">
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.factorRiesgoTodos}"
+						var="var" itemValue="#{var.codigoFaro}"
+						itemLabel="#{var.nombreFaro}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbTipoPerdida" value="Tipo de Pérdida"
+					rendered="#{controladorCrudRoDetalleEvento.colTipoPerdida}" />
+				<p:selectOneMenu id="cmbTipoPerdida"
+					rendered="#{controladorCrudRoDetalleEvento.colTipoPerdida}"
+					disabled="#{controladorCrudRoDetalleEvento.disTipoPerdida}"
+					required="#{controladorCrudRoDetalleEvento.reqTipoPerdida}"
+					value="#{controladorCrudRoDetalleEvento.idTipoPerdida}">
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.tipoPerdidaTodos}"
+						var="var" itemValue="#{var.codigoTipe}"
+						itemLabel="#{var.nombreTipe}" />
+				</p:selectOneMenu>
+
+
+
+				<p:outputLabel for="txtNumOcur" value="Número de Ocurrencias"
+					rendered="#{controladorCrudRoDetalleEvento.colNumOcur}" />
+
+				<p:inputText id="txtNumOcur"
+					rendered="#{controladorCrudRoDetalleEvento.colNumOcur}"
+					disabled="#{controladorCrudRoDetalleEvento.disNumOcur}"
+					required="#{controladorCrudRoDetalleEvento.reqNumOcur}"
+					value="#{controladorCrudRoDetalleEvento.numOcur}">
+					<p:ajax
+						process="@this :formDetalleEvento:cmbNegocio :formDetalleEvento:txtCostoOtros"
+						update=":formDetalleEvento:txtProbabilidadAntes growl"
+						listener="#{controladorCrudRoDetalleEvento.calcularProb_Consec_Antes()}" />
+				</p:inputText>
+
+
+				<p:outputLabel for="txtCostoOtros" value="Valor de la Pérdida"
+					rendered="#{controladorCrudRoDetalleEvento.colOtrosGastos}" />
+				<p:inputText id="txtCostoOtros"
+					rendered="#{controladorCrudRoDetalleEvento.colOtrosGastos}"
+					disabled="#{controladorCrudRoDetalleEvento.disOtrosGastos}"
+					required="#{controladorCrudRoDetalleEvento.reqOtrosGastos}"
+					value="#{controladorCrudRoDetalleEvento.otrosGastosDeve}">
+					<p:ajax
+						process="@this :formDetalleEvento:cmbNegocio :formDetalleEvento:txtNumOcur"
+						update=":formDetalleEvento:cmbConsecuenciaAntes growl"
+						listener="#{controladorCrudRoDetalleEvento.calcularProb_Consec_Antes()}" />
+				</p:inputText>
+
+
+
+				<p:outputLabel for="txtProbabilidadAntes"
+					value="Probabilidad de Ocurrencia"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}" />
+				<p:inputText id="txtProbabilidadAntes"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}"
+					value="#{controladorCrudRoDetalleEvento.nombreProbabilidadAntes}"
+					readonly="true">
+					
+				</p:inputText>
+
+
+				<p:outputLabel for="cmbConsecuenciaAntes"
+					value="Consecuencia de Impacto"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}" />
+				<p:selectOneMenu id="cmbConsecuenciaAntes"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}"
+					disabled="false"
+					value="#{controladorCrudRoDetalleEvento.idConsecuenciaAntes}">
+
+					<f:selectItem itemLabel="Seleccione una opcion" itemValue=""
+						itemDisabled="true" />
+
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.consecuenciaTodos}"
+						var="var" itemValue="#{var.codigoPconi}"
+						itemLabel="#{var.nombrePconi}" itemDisabled="true" />
+				</p:selectOneMenu>
+
+
+
+				<p:outputLabel for="txtNumOcurDespues"
+					value="Número de Ocurrencias (Después de controles)"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}" />
+
+				<p:inputText id="txtNumOcurDespues"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}"
+					disabled="#{controladorCrudRoDetalleEvento.disNumOcur}"
+					required="#{controladorCrudRoDetalleEvento.reqNumOcur}"
+					value="#{controladorCrudRoDetalleEvento.numOcurDespues}">
+					<p:ajax
+						process="@this :formDetalleEvento:cmbNegocio :formDetalleEvento:txtCostoOtrosDespues"
+						update=":formDetalleEvento:cmbProbabilidadDespues growl"
+						listener="#{controladorCrudRoDetalleEvento.calcularProb_Consec_Despues()}" />
+				</p:inputText>
+
+				<p:outputLabel for="txtCostoOtrosDespues"
+					value="Valor de la Pérdida (Después de controles)"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}" />
+				<p:inputText id="txtCostoOtrosDespues"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}"
+					required="#{controladorCrudRoDetalleEvento.reqOtrosGastos}"
+					value="#{controladorCrudRoDetalleEvento.otrosGastosDeveDespues}">
+					<p:ajax
+						process="@this :formDetalleEvento:cmbNegocio :formDetalleEvento:txtNumOcurDespues"
+						update=":formDetalleEvento:cmbConsecuenciaDespues growl"
+						listener="#{controladorCrudRoDetalleEvento.calcularProb_Consec_Despues()}" />
+
+				</p:inputText>
+
+
+
+
+
+				<p:outputLabel for="cmbProbabilidadDespues"
+					value="Probabilidad de Ocurrencia (Después de controles)"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}" />
+				<p:selectOneMenu id="cmbProbabilidadDespues"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}"
+					disabled="false"
+					value="#{controladorCrudRoDetalleEvento.idProbabilidadDespues}">
+
+					<f:selectItem itemLabel="Seleccione una opcion" itemValue="0"
+						noSelectionOption="true" />
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.probabilidadesTodos}"
+						var="var" itemValue="#{var.codigoPprr}"
+						itemLabel="#{var.nombrePprr}" itemDisabled="true" />
+				</p:selectOneMenu>
+
+
+
+
+
+				<p:outputLabel for="cmbConsecuenciaDespues"
+					value="Consecuencia de Impacto (Después de controles)"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}" />
+				<p:selectOneMenu id="cmbConsecuenciaDespues"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}"
+					disabled="false"
+					value="#{controladorCrudRoDetalleEvento.idConsecuenciaDespues}">
+
+					<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+					<f:selectItems
+						value="#{controladorCrudRoDetalleEvento.consecuenciaTodos}"
+						var="var" itemValue="#{var.codigoPconi}"
+						itemLabel="#{var.nombrePconi}" itemDisabled="true" />
+				</p:selectOneMenu>
+
+
+
+				<p:outputLabel for="txtPtoControl" value="Punto de Control"
+					rendered="#{controladorCrudRoDetalleEvento.colPtoControl}" />
+				<p:inputText id="txtPtoControl"
+					rendered="#{controladorCrudRoDetalleEvento.colPtoControl}"
+					disabled="#{controladorCrudRoDetalleEvento.disPtoControl}"
+					required="#{controladorCrudRoDetalleEvento.reqPtoControl}"
+					value="#{controladorCrudRoDetalleEvento.ptoCtrlProcDeve}"
+					maxlength="20" />
+
+				<p:outputLabel for="txtFechaOcur" value="Fecha de Ocurrencia"
+					rendered="#{controladorCrudRoDetalleEvento.colFechaOcurrencia}" />
+				<p:calendar id="txtFechaOcur"
+					rendered="#{controladorCrudRoDetalleEvento.colFechaOcurrencia}"
+					disabled="#{controladorCrudRoDetalleEvento.disFechaOcurrencia}"
+					required="#{controladorCrudRoDetalleEvento.reqFechaOcurrencia}"
+					value="#{controladorCrudRoDetalleEvento.fechaOcurrencia}"
+					navigator="true" />
+
+				<p:outputLabel for="txtFechaDesc" value="Fecha de Descubrimiento"
+					rendered="#{controladorCrudRoDetalleEvento.colFechaDescubrimiento}" />
+				<p:calendar id="txtFechaDesc"
+					rendered="#{controladorCrudRoDetalleEvento.colFechaDescubrimiento}"
+					disabled="#{controladorCrudRoDetalleEvento.disFechaDescubrimiento}"
+					required="#{controladorCrudRoDetalleEvento.reqFechaDescubrimiento}"
+					value="#{controladorCrudRoDetalleEvento.fechaDescubrimiento}"
+					navigator="true" />
+
+
+				<p:outputLabel for="txtCausaProbable" value="Causa Probable"
+					rendered="#{controladorCrudRoDetalleEvento.colCausaProbable}" />
+				<p:inputTextarea id="txtCausaProbable"
+					rendered="#{controladorCrudRoDetalleEvento.colCausaProbable}"
+					disabled="#{controladorCrudRoDetalleEvento.disCausaProbable}"
+					required="#{controladorCrudRoDetalleEvento.reqCausaProbable}"
+					value="#{controladorCrudRoDetalleEvento.causaProbable}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes.">
+					<p:ajax listener="#{controladorCrudRoDetalleEvento.qwe()}" />
+				</p:inputTextarea>
+
+				<div />
+				<h:outputText id="counter" />
+
+				<p:outputLabel for="txtDescripcion" value="Descripción" />
+				<p:inputTextarea id="txtDescripcion"
+					value="#{controladorCrudRoDetalleEvento.descDetalleEvento}"
+					maxlength="250" rows="5" cols="60" counter="counter1"
+					counterTemplate="{0} caracteres restantes." />
+
+				<div />
+				<h:outputText id="counter1" />
+
+				<p:outputLabel for="txtDetallada" value="Descripción Detallada" />
+				<p:inputTextarea id="txtDetallada"
+					value="#{controladorCrudRoDetalleEvento.descDetallada}"
+					maxlength="2000" rows="5" cols="60" counter="counter2"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter2" />
+
+				<p:outputLabel for="btnBloqueo" value="Bloqueado" />
+				<h:panelGrid columns="2">
+					<p:selectBooleanButton onLabel="Bloqueado" offLabel="Desbloqueado"
+						id="btnBloqueo" onIcon="ui-icon-locked" offIcon="ui-icon-unlocked"
+						disabled="#{!controladorCrudRoDetalleEvento.colBloqueo}"
+						value="#{controladorCrudRoDetalleEvento.valBloqueado}">
+					</p:selectBooleanButton>
+					<div />
+				</h:panelGrid>
+
+				<p:commandButton value="Guardar"
+					rendered="#{controladorCrudRoDetalleEvento.btnGuardar}"
+					action="#{controladorCrudRoDetalleEvento.guardarDetalleEvento()}"
+					icon="ui-icon-disk" update="@form" onstart="PF('dlg2').show();"
+					onsuccess="PF('dlg2').hide;"
+					title="Guarda cabecera del detalle de evento">
+					<p:confirm header="Guardar Usuario"
+						message="¿Desea guardar este Detalle de Evento?"
+						icon="ui-icon-disk" />
+
+				</p:commandButton>
+
+
+
+
+
+
+
+				<p:commandButton id="btnCancelarDetalleEvento" value="Cancelar"
+					rendered="#{controladorCrudRoDetalleEvento.btnCancelar}"
+					title="Cancela la edición de la cabecera del detalle de evento"
+					action="#{controladorCrudRoDetalleEvento.cancelar()}"
+					onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;"
+					icon="ui-icon-disk" update="@form" process="@this" />
+
+				<p:commandButton id="btnGuardarDetalleEventoEditado" value="Guardar"
+					rendered="#{controladorCrudRoDetalleEvento.btnGuardarEditado}"
+					action="#{controladorCrudRoDetalleEvento.guardarDetalleEventoEditado()}"
+					icon="ui-icon-disk" update="@form" onstart="PF('dlg2').show();"
+					onsuccess="PF('dlg2').hide;" process="pnlIngresoDetalleEvento"
+					title="Guarda cabecera del detalle de evento">
+					<p:confirm header="Guardar Usuario"
+						message="¿Desea guardar este Detalle de Evento?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarDetalleEventoEditado"
+					value="Cancelar"
+					rendered="#{controladorCrudRoDetalleEvento.btnCancelarEditado}"
+					title="Cancela la edición de la cabecera del detalle de evento"
+					action="#{controladorCrudRoDetalleEvento.cancelar()}"
+					onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;"
+					icon="ui-icon-disk" update="@form" process="@this" />
+
+			</h:panelGrid>
+
+
+
+			<!-- TABLA DETALLE EVENTO-->
+			<p:dataTable id="dtlDetalleEvento"
+				value="#{controladorCrudRoDetalleEvento.detalleEventosVisibles}"
+				var="varDetalleEvento"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+				scrollable="true" scrollWidth="1178" widgetVar="1178px"
+				resizableColumns="true"
+				selection="#{controladorCrudRoDetalleEvento.roDetalleEventoVista}"
+				selectionMode="single" rowKey="#{varDetalleEvento.codigoDeve}">
+				<p:ajax event="rowSelect"
+					listener="#{controladorCrudRoDetalleEvento.seleccionar()}"
+					update=":formDetalleEvento" onstart="PF('dlg2').show();"
+					onsuccess="PF('dlg2').hide;" />
+
+				<!-- Codigo detalle de evento, no editable-->
+				<p:column style="width:50px;" disabledSelection="true"
+					sortBy="#{varDetalleEvento.codigoDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colCodigo}">
+					<f:facet name="header">Código</f:facet>
+					<h:outputText value="#{varDetalleEvento.codigoDeve}"
+						title="#{varDetalleEvento.codigoDeve}" />
+				</p:column>
+
+				<p:column style="width:80px;" disabledSelection="true"
+					sortBy="#{varDetalleEvento.tipoCalifDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo2}">
+					<f:facet name="header">Tipo</f:facet>
+					<h:outputText value="#{varDetalleEvento.tipoCalifDeve}"
+						title="#{varDetalleEvento.tipoCalifDeve}" />
+				</p:column>
+
+				<!-- Agencia,editable-->
+				<p:column style="width:200px;"
+					sortBy="#{varDetalleEvento.roAgencia.nombreAgia}"
+					rendered="#{controladorCrudRoDetalleEvento.colAgencia}">
+					<f:facet name="header">Agencia</f:facet>
+					<h:outputText value="#{varDetalleEvento.roAgencia.nombreAgia}"
+						title="#{varDetalleEvento.roAgencia.nombreAgia}" />
+
+				</p:column>
+
+				<!-- Evento,editable-->
+				<p:column style="width:200px;"
+					filterBy="#{varDetalleEvento.roEvento.nombreEven}"
+					sortBy="#{varDetalleEvento.roEvento.nombreEven}"
+					rendered="#{controladorCrudRoDetalleEvento.colEvento}">
+					<f:facet name="header">Evento</f:facet>
+					<h:outputText value="#{varDetalleEvento.roEvento.nombreEven}"
+						title="#{varDetalleEvento.roEvento.nombreEven}" />
+				</p:column>
+
+				<!-- Proceso,editable-->
+				<p:column style="width:200px;"
+					sortBy="#{varDetalleEvento.roProceso.nombrePros}"
+					filterBy="#{varDetalleEvento.roProceso.nombrePros}"
+					rendered="#{controladorCrudRoDetalleEvento.colProceso}">
+					<f:facet name="header">Proceso</f:facet>
+					<h:outputText value="#{varDetalleEvento.roProceso.nombrePros}"
+						title="#{varDetalleEvento.roProceso.nombrePros}" />
+				</p:column>
+
+				<!-- Negocio,editable-->
+				<p:column style="width:200px;"
+					sortBy="#{varDetalleEvento.roNegocio1.nombreNego}"
+					rendered="#{controladorCrudRoDetalleEvento.colNegocio}">
+					<f:facet name="header">Negocio</f:facet>
+					<h:outputText value="#{varDetalleEvento.roNegocio1.nombreNego}"
+						title="#{varDetalleEvento.roNegocio1.nombreNego}" />
+				</p:column>
+
+				<!-- Departamento, editable-->
+				<p:column style="width:200px;"
+					sortBy="#{varDetalleEvento.roDepartamento.nombreDept}"
+					rendered="#{controladorCrudRoDetalleEvento.colDepartamento}">
+					<f:facet name="header">Departamento</f:facet>
+					<h:outputText value="#{varDetalleEvento.roDepartamento.nombreDept}"
+						title="#{varDetalleEvento.roDepartamento.nombreDept}" />
+				</p:column>
+
+
+				<!-- Factor de Riesgo, editable-->
+				<p:column style="width:200px;"
+					filterBy="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+					sortBy="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+					rendered="#{controladorCrudRoDetalleEvento.colFactorRiesgo}"
+					disabledSelection="true">
+					<f:facet name="header">Factor de Riesgo</f:facet>
+					<h:outputText value="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+						title="#{varDetalleEvento.roFactorRiesgo.nombreFaro}" />
+
+				</p:column>
+
+				<p:column style="width:200px;" disabledSelection="true"
+					sortBy="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+					rendered="#{controladorCrudRoDetalleEvento.colTipoPerdida}">
+					<f:facet name="header">Tipo de Pérdida</f:facet>
+					<h:outputText value="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+						title="#{varDetalleEvento.roTipoPerdida.nombreTipe}" />
+				</p:column>
+
+
+				<!-- Pto Control, editable-->
+				<p:column style="width:160px;"
+					sortBy="#{varDetalleEvento.ptoCtrlProcDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colPtoControl}">
+					<f:facet name="header">Punto de Control</f:facet>
+					<h:outputText value="#{varDetalleEvento.ptoCtrlProcDeve}"
+						title="#{varDetalleEvento.ptoCtrlProcDeve}" />
+
+				</p:column>
+
+				<!-- Valor, editable-->
+
+				<p:column style="width:60px;"
+					sortBy="#{varDetalleEvento.fechaOcurDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colFechaOcurrencia}">
+					<f:facet name="header">Fecha de Ocurrencia</f:facet>
+					<h:outputText value="#{varDetalleEvento.fechaOcurDeve}"
+						title="#{varDetalleEvento.fechaOcurDeve}" />
+				</p:column>
+
+				<p:column style="width:60px;"
+					sortBy="#{varDetalleEvento.fechaDescDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colFechaDescubrimiento}">
+					<f:facet name="header">Fecha de Descubrimiento</f:facet>
+					<h:outputText value="#{varDetalleEvento.fechaDescDeve}"
+						title="#{varDetalleEvento.fechaDescDeve}" />
+				</p:column>
+
+				<p:column style="width:60px;"
+					sortBy="#{varDetalleEvento.fechaRegisDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colFechaRegistro}">
+					<f:facet name="header">Fecha de Registro</f:facet>
+					<h:outputText value="#{varDetalleEvento.fechaRegisDeve}"
+						title="#{varDetalleEvento.fechaRegisDeve}" />
+				</p:column>
+
+
+				<p:column style="width:150px;"
+					sortBy="#{varDetalleEvento.sisUsuario.nombreUsua}"
+					rendered="#{controladorCrudRoDetalleEvento.colUsuario}">
+					<f:facet name="header">Usuario</f:facet>
+					<h:outputText value="#{varDetalleEvento.sisUsuario.nombreUsua}"
+						title="#{varDetalleEvento.sisUsuario.nombreUsua}" />
+				</p:column>
+
+				<p:column style="width:550px;text-align:center;"
+					sortBy="#{varDetalleEvento.causaDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colCausaProbable}">
+					<f:facet name="header">Causa Probable</f:facet>
+					<h:outputText value="#{varDetalleEvento.causaDeve}"
+						title="#{varDetalleEvento.causaDeve}" />
+				</p:column>
+
+				<p:column style="width:550px;text-align:center;"
+					sortBy="#{varDetalleEvento.descripcionDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colDescripcion}">
+					<f:facet name="header">Descripción</f:facet>
+					<h:outputText value="#{varDetalleEvento.descripcionDeve}"
+						title="#{varDetalleEvento.descripcionDeve}" />
+				</p:column>
+
+				<p:column style="width:550px;text-align:center;"
+					sortBy="#{varDetalleEvento.descripcionDetalladaDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colDescripcionDetallada}">
+					<f:facet name="header">Descripción detallada</f:facet>
+					<h:outputText value="#{varDetalleEvento.descripcionDetalladaDeve}"
+						title="#{varDetalleEvento.descripcionDetalladaDeve}" />
+				</p:column>
+
+
+
+
+
+
+
+
+
+
+
+				<p:column id="NUMERO-OCURRENCIAS" style="width:120px;"
+					sortBy="#{varDetalleEvento.numOcur}">
+					<f:facet name="header">
+						<p:outputLabel value="Numero de Ocurrencias"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{varDetalleEvento.numOcur}"
+						title="#{varDetalleEvento.numOcur}"></h:outputLabel>
+				</p:column>
+
+				<p:column style="width:180px;"
+					sortBy="#{varDetalleEvento.valorDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colValor}">
+					<f:facet name="header">Pérdida</f:facet>
+					<h:outputText value="#{varDetalleEvento.valorDeve}"
+						title="#{varDetalleEvento.valorDeve}" />
+				</p:column>
+
+				<p:column style="width:100px;text-align:center;"
+					sortBy="#{varDetalleEvento.paramProbabilidadRiesgoAntes.nombrePprr}">
+					<f:facet name="header">
+						<p:outputLabel value="Prob. Antes"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel
+						value="#{varDetalleEvento.paramProbabilidadRiesgoAntes.nombrePprr}"
+						title="#{varDetalleEvento.paramProbabilidadRiesgoAntes.nombrePprr}"></h:outputLabel>
+				</p:column>
+
+
+				<p:column style="width:100px;text-align:center;"
+					sortBy="#{varDetalleEvento.paramConsecuenciaImpactoAntes}">
+					<f:facet name="header">
+						<p:outputLabel value="Consec. Antes"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel
+						value="#{varDetalleEvento.paramConsecuenciaImpactoAntes.nombrePconi}"
+						title="#{varDetalleEvento.paramConsecuenciaImpactoAntes.nombrePconi}"></h:outputLabel>
+				</p:column>
+
+
+
+				<p:column style="width:130px;text-align:center;"
+					sortBy="#{varDetalleEvento.roAriesgoAntes.roCalifRiesgo.nombreClrs}">
+					<f:facet name="header">
+						<p:outputLabel value="Clasificación Antes"></p:outputLabel>
+					</f:facet>
+
+					<h:outputLabel style=""
+						value="#{varDetalleEvento.roAriesgoAntes.roCalifRiesgo.nombreClrs}"
+						title="#{varDetalleEvento.roAriesgoAntes.roCalifRiesgo.nombreClrs}" />
+
+				</p:column>
+
+
+
+				<!-- Monto Recuperado, editable-->
+				<p:column style="width:120px;"
+					sortBy="#{varDetalleEvento.montoRecupDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colMonto}">
+					<f:facet name="header">Monto Recuperado</f:facet>
+					<h:outputText value="#{varDetalleEvento.montoRecupDeve}"
+						title="#{varDetalleEvento.montoRecupDeve}" />
+
+				</p:column>
+
+				<!-- Costo, editable-->
+				<p:column style="width:130px;"
+					sortBy="#{varDetalleEvento.costoRecupDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colCosto}">
+					<f:facet name="header">Costo de Recuperación</f:facet>
+					<h:outputText value="#{varDetalleEvento.costoRecupDeve}"
+						title="#{varDetalleEvento.costoRecupDeve}" />
+				</p:column>
+
+				<!-- Costo, editable-->
+				<p:column style="width:130px;"
+					sortBy="#{varDetalleEvento.realRecupDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colRecupReal}">
+					<f:facet name="header">Recuperación Real</f:facet>
+					<h:outputText value="#{varDetalleEvento.realRecupDeve}"
+						title="#{varDetalleEvento.realRecupDeve}" />
+				</p:column>
+
+				<!-- Costo, editable-->
+				<p:column style="width:130px;"
+					sortBy="#{varDetalleEvento.perdidaResidualDeve}"
+					rendered="#{controladorCrudRoDetalleEvento.colPerdResidual}">
+					<f:facet name="header">Pérdida Residual</f:facet>
+					<h:outputText value="#{varDetalleEvento.perdidaResidualDeve}"
+						title="#{varDetalleEvento.perdidaResidualDeve}" />
+				</p:column>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				<p:column id="NUMERO-OCURRENCIAS-DESPUES" style="width:150px;"
+					sortBy="#{varDetalleEvento.numOcurDespues}">
+					<f:facet name="header">
+						<p:outputLabel value="Num. Ocurrencias Despúes"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{varDetalleEvento.numOcurDespues}"
+						title="#{varDetalleEvento.numOcurDespues}"></h:outputLabel>
+				</p:column>
+
+
+				<p:column id="VALOR-PERDIDA-DESPUES" style="width:180px;"
+					sortBy="#{varDetalleEvento.valorDeveDespues}"
+					rendered="#{controladorCrudRoDetalleEvento.colValor}">
+					<f:facet name="header">Pérdida(Después)</f:facet>
+					<h:outputText value="#{varDetalleEvento.valorDeveDespues}"
+						title="#{varDetalleEvento.valorDeveDespues}" />
+				</p:column>
+
+				<p:column style="width:100px;text-align:center;"
+					sortBy="#{varDetalleEvento.paramProbabilidadRiesgoDespues.nombrePprr}">
+					<f:facet name="header">
+						<p:outputLabel value="Prob. Después"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel
+						value="#{varDetalleEvento.paramProbabilidadRiesgoDespues.nombrePprr}"
+						title="#{varDetalleEvento.paramProbabilidadRiesgoDespues.nombrePprr}"></h:outputLabel>
+				</p:column>
+
+
+				<p:column style="width:100px;text-align:center;"
+					sortBy="#{varDetalleEvento.paramConsecuenciaImpactoDespues.nombrePconi}">
+					<f:facet name="header">
+						<p:outputLabel value="Consec. Después"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel
+						value="#{varDetalleEvento.paramConsecuenciaImpactoDespues.nombrePconi}"
+						title="#{varDetalleEvento.paramConsecuenciaImpactoDespues.nombrePconi}"></h:outputLabel>
+				</p:column>
+
+
+
+				<p:column style="width:130px;text-align:center;"
+					sortBy="#{varDetalleEvento.roAriesgoDespues.roCalifRiesgo.nombreClrs}">
+					<f:facet name="header">
+						<p:outputLabel value="Clasificación Después"></p:outputLabel>
+					</f:facet>
+
+					<h:outputLabel style=""
+						value="#{varDetalleEvento.roAriesgoDespues.roCalifRiesgo.nombreClrs}"
+						title="#{varDetalleEvento.roAriesgoDespues.roCalifRiesgo.nombreClrs}" />
+				</p:column>
+
+
+
+
+
+
+
+
+
+				<p:column style="width:100px;text-align:center;"
+					sortBy="#{varDetalleEvento.promedio}"
+					rendered="#{controladorCrudRoDetalleEvento.colPromedio}">
+					<f:facet name="header">
+						<p:outputLabel value="Promedio(Ctrls)"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{varDetalleEvento.promedio}"
+						title="#{varDetalleEvento.promedio}"></h:outputLabel>
+				</p:column>
+
+				<p:column id="DENOMINACION" style="width:135px;"
+					sortBy="#{varDetalleEvento.denominacion}">
+					<f:facet name="header">
+						<p:outputLabel value="Denominacion(Ctrls)"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{varDetalleEvento.denominacion}"
+						title="#{varDetalleEvento.denominacion}"></h:outputLabel>
+				</p:column>
+
+				<p:column style="width:135px;text-align:center;"
+					sortBy="#{varDetalleEvento.riesgoInherente}" rendered="true">
+					<f:facet name="header">
+						<p:outputLabel value="Riesgo Inherente(Ctrls)"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{varDetalleEvento.riesgoInherente}"
+						title="#{varDetalleEvento.riesgoInherente}"></h:outputLabel>
+				</p:column>
+
+				<p:column id="RIESGO-RESIDUAL" style="width:135px;"
+					sortBy="#{varDetalleEvento.riesgoResidual}">
+					<f:facet name="header">
+						<p:outputLabel value="Riesgo residual(Ctrls)"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{varDetalleEvento.riesgoResidual}"
+						title="#{varDetalleEvento.riesgoResidual}"></h:outputLabel>
+				</p:column>
+
+				<p:column id="CLASIFICACION" style="width:135px;"
+					sortBy="#{varDetalleEvento.clasificacion}">
+					<f:facet name="header">
+						<p:outputLabel value="Clasificación(Ctrls)"></p:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{varDetalleEvento.clasificacion}"
+						title="#{varDetalleEvento.clasificacion}"></h:outputLabel>
+				</p:column>
+
+
+
+				<!-- 				<p:column style="width:130px;"> -->
+				<!-- 					<f:facet name="header">Bloqueado</f:facet> -->
+				<!-- 					<h:outputText value="#{varDetalleEvento.bloqueo}" title="bloqueo" /> -->
+				<!-- 				</p:column> -->
+
+				<!-- boton seleccionar -->
+				<p:column style="width:200px;"
+					rendered="#{controladorCrudRoDetalleEvento.colBtnEditar}"
+					exportable="false">
+					<f:facet name="header">Opciones</f:facet>
+
+
+					<ui:fragment
+						rendered="#{controladorCrudRoDetalleEvento.colBloqueo}">
+						<p:commandButton id="btnEditar"
+							title="Editar la cabecera del detalle de evento" value="Editar"
+							action="#{controladorCrudRoDetalleEvento.editarDetalleEvento()}"
+							icon="ui-icon-pencil" process="@this" update=":formDetalleEvento"
+							disabled="#{!controladorCrudRoDetalleEvento.colBloqueo}"
+							onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;">
+
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoDetalleEvento.roDetalleEventoVista}"
+								value="#{varDetalleEvento}">
+							</f:setPropertyActionListener>
+							<p:tooltip for="btnEditar"
+								value="Haga click para EDITAR este registro" />
+						</p:commandButton>
+					</ui:fragment>
+
+
+					<ui:fragment
+						rendered="#{!controladorCrudRoDetalleEvento.colBloqueo}">
+						<p:commandButton id="btnEditar2"
+							title="Editar la cabecera del detalle de evento" value="Editar"
+							action="#{controladorCrudRoDetalleEvento.editarDetalleEvento()}"
+							icon="ui-icon-pencil" process="@this" update=":formDetalleEvento"
+							disabled="#{controladorCrudRoDetalleEvento.colBloqueo or varDetalleEvento.bloqueo==1}"
+							onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;">
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoDetalleEvento.roDetalleEventoVista}"
+								value="#{varDetalleEvento}">
+							</f:setPropertyActionListener>
+							<p:tooltip for="btnEditar2"
+								value="Haga click para EDITAR este registro" />
+						</p:commandButton>
+					</ui:fragment>
+
+					<ui:fragment
+						rendered="#{controladorCrudRoDetalleEvento.colBloqueo}">
+						<p:commandButton id="btnEliminar"
+							title="Elimina el detalle de evento" value="Eliminar"
+							action="#{controladorCrudRoDetalleEvento.eliminar()}"
+							icon="ui-icon-trash" process="@this" update=":formDetalleEvento"
+							disabled="#{!controladorCrudRoDetalleEvento.colBloqueo}"
+							onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;">
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoDetalleEvento.roDetalleEventoVista}"
+								value="#{varDetalleEvento}">
+							</f:setPropertyActionListener>
+							<p:confirm header="Eliminar Evento"
+								message="¿Desea eliminar este Evento?" icon="ui-icon-disk" />
+							<p:tooltip for="btnEliminar"
+								value="Haga click para ELIMINAR este registro" />
+						</p:commandButton>
+					</ui:fragment>
+
+					<ui:fragment
+						rendered="#{!controladorCrudRoDetalleEvento.colBloqueo}">
+						<p:commandButton id="btnEliminar2"
+							title="Elimina el detalle de evento" value="Eliminar"
+							action="#{controladorCrudRoDetalleEvento.eliminar()}"
+							icon="ui-icon-trash" process="@this" update=":formDetalleEvento"
+							disabled="#{controladorCrudRoDetalleEvento.colBloqueo or varDetalleEvento.bloqueo==1}"
+							onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;">
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoDetalleEvento.roDetalleEventoVista}"
+								value="#{varDetalleEvento}">
+							</f:setPropertyActionListener>
+							<p:confirm header="Eliminar Evento"
+								message="¿Desea eliminar este Evento?" icon="ui-icon-disk" />
+							<p:tooltip for="btnEliminar2"
+								value="Haga click para ELIMINAR este registro" />
+						</p:commandButton>
+					</ui:fragment>
+
+
+
+
+				</p:column>
+
+			</p:dataTable>
+
+
+
+
+
+
+
+
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlDetalleEvento"
+							fileName="detalle" />
+					</h:commandLink>
+
+
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlDetalleEvento"
+							fileName="detalle" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/csv.png" />
+						<p:dataExporter type="csv" target="dtlDetalleEvento"
+							fileName="detalle" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlDetalleEvento"
+							fileName="detalle" pageOnly="true" />
+					</h:commandLink>
+
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlDetalleEvento"
+							fileName="detalle" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/csv.png" />
+						<p:dataExporter type="csv" target="dtlDetalleEvento"
+							fileName="detalle" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+			<!-- PANEL INGRESO CONTROL -->
+
+			<h:panelGrid columns="1"
+				rendered="#{controladorCrudRoDetalleEvento.mostrarPanelAdicionales}">
+				<p:panel id="pnlRegistroControl"
+					rendered="#{controladorCrudRoDetalleEvento.mostrarPanelControles}"
+					header="Registro de Controles">
+
+					<p:commandButton id="btnNuevoControl" value="Añadir Nuevo Control"
+						action="#{controladorCrudRoDetalleEvento.nuevoControl()}"
+						update="formDetalleEvento:pnlRegistroControl"
+						disabled="#{controladorCrudRoDetalleEvento.btnAñadirControl}" />
+
+					<h:panelGrid columns="4" id="pnlRoTipoControl" border="1"
+						rendered="#{controladorCrudRoDetalleEvento.pnlRoTipoControl}">
+
+						<p:outputLabel for="cmdREP" value="IMPACTO REPUTACION: " />
+						<p:selectOneMenu id="cmdREP"
+							value="#{controladorCrudRoDetalleEvento.idParamImpRep}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.habilitarProbabilidad()}"
+								update="formDetalleEvento:pnlRegistroControl" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoREP()}"
+								update="txtREP" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calcImpact()}"
+								update="txtCalculoImpacto" partialSubmit="true" />
+							<p:ajax partialSubmit="false" update="txta" />
+							<p:ajax event="change" partialSubmit="false"
+								listener="#{controladorCrudRoDetalleEvento.habilitarProbabilidad()}"
+								update="formDetalleEvento:pnlRegistroControl" />
+
+
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.paramImpRepTodos}"
+								var="paramImpRep" itemLabel="#{paramImpRep.nombreRep}"
+								itemValue="#{paramImpRep.codigoRep}">
+							</f:selectItems>
+
+							<!-- 							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" /> -->
+							<!-- 							<f:selectItems -->
+							<!-- 								value="#{controladorCrudRoDetalleEvento.roControlesVista.rep}" -->
+							<!-- 								var="paramImpRep" itemLabel="#{paramImpRep.nombreRep}" -->
+							<!-- 								itemValue="#{paramImpRep.codigoRep}"> -->
+							<!-- 							</f:selectItems> -->
+
+
+							<!-- 							<f:selectItem itemLabel="No Afecta" itemValue="No Afecta" /> -->
+							<!-- 							<f:selectItem itemLabel="Afecta Imagen ante trabajadores" -->
+							<!-- 								itemValue="Afecta Imagen ante trabajadores" /> -->
+							<!-- 							<f:selectItem itemLabel="Afecta imagen ante un cliente" -->
+							<!-- 								itemValue="Afecta imagen ante un cliente" /> -->
+							<!-- 							<f:selectItem -->
+							<!-- 								itemLabel="Afecta imagen ante clientes de agencia(s)" -->
+							<!-- 								itemValue="Afecta imagen ante clientes de agencia(s)" /> -->
+							<!-- 							<f:selectItem -->
+							<!-- 								itemLabel="Afecta imagen ante todos los clientes y socios" -->
+							<!-- 								itemValue="Afecta imagen ante todos los clientes y socios" /> -->
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+
+						<p:outputLabel for="cmdBCP" value="IMPACTO EN LA CONTINUIDAD: " />
+						<p:selectOneMenu id="cmdBCP"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.bcp}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.habilitarProbabilidad()}"
+								update="formDetalleEvento:pnlRegistroControl" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoBCP()}"
+								update="txtBCP" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calcImpact()}"
+								update="txtCalculoImpacto" partialSubmit="true" />
+							<p:ajax partialSubmit="true" update="txta" />
+
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="NO AFECTA" itemValue="NO AFECTA" />
+							<f:selectItem
+								itemLabel="AFECTA A USUARIO INTERNO Y NO SS AL SOCIO"
+								itemValue="AFECTA A USUARIO INTERNO Y NO SS AL SOCIO" />
+							<f:selectItem
+								itemLabel="AFECTA A DEP. INTERNO PERO NO A SS SOCIO"
+								itemValue="AFECTA A DEP. INTERNO PERO NO A SS SOCIO" />
+							<f:selectItem
+								itemLabel="AFECTA EN SUSPENSION DE ALGUN SERVICIO AL SOCIO"
+								itemValue="AFECTA EN SUSPENSION DE ALGUN SERVICIO AL SOCIO" />
+							<f:selectItem
+								itemLabel="AFECTA EN LA SUSPENSION DE TODOS LOS SERVICIOS"
+								itemValue="AFECTA EN LA SUSPENSION DE TODOS LOS SERVICIOS" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdLEG" value="IMPACTO LEGAL: " id="txta" />
+						<p:selectOneMenu id="cmdLEG"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.leg}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.habilitarProbabilidad()}"
+								update="formDetalleEvento:pnlRegistroControl" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoLEG()}"
+								update="txtLEG" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calcImpact()}"
+								update="txtCalculoImpacto" partialSubmit="true" />
+
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem
+								itemLabel="Genera o da lugar a Observaciones por parte de los entes de control"
+								itemValue="Genera o da lugar a Observaciones por parte de los entes de control" />
+							<f:selectItem
+								itemLabel="Sanciones de carácter administrativo y/o restitución de valores a socios (multas por parte del O. de control)"
+								itemValue="Sanciones de carácter administrativo y/o restitución de valores a socios (multas por parte del O. de control)" />
+							<f:selectItem
+								itemLabel="Pérdidas derivadas de la inadecuada instrumentación de operaciones (valores irrecuperables)"
+								itemValue="Pérdidas derivadas de la inadecuada instrumentación de operaciones (valores irrecuperables)" />
+							<f:selectItem
+								itemLabel="Pago de Indemnizaciones (daños y perjuicios)"
+								itemValue="Pago de Indemnizaciones (daños y perjuicios)" />
+							<f:selectItem itemLabel="Liquidación de la entidad"
+								itemValue="Liquidación de la entidad" />
+							<f:selectItem itemLabel="No Aplica" itemValue="No Aplica" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtREP" value="REP: " />
+						<p:inputText readonly="true" id="txtREP"
+							value="#{controladorCrudRoDetalleEvento.calREP}">
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtBCP" value="BCP: " />
+						<p:inputText readonly="true" id="txtBCP"
+							value="#{controladorCrudRoDetalleEvento.calBCP}">
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtLEG" value="LEG: " />
+						<p:inputText readonly="true" id="txtLEG"
+							value="#{controladorCrudRoDetalleEvento.calLEG}">
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmbCalcProb" value="Calculo probabilidad: " />
+						<p:inputText readonly="true" id="cmbCalcProb"
+							value="#{controladorCrudRoDetalleEvento.idCalcProbSeleccionado}" />
+						<p:commandButton id="btnSelecProb" value="Buscar"
+							disabled="#{controladorCrudRoDetalleEvento.pnlProbabilidad}"
+							process="@this" />
+						<p:overlayPanel id="panelProb" for="btnSelecProb"
+							hideEffect="fade" style="width:600px">
+							<p:dataTable var="proba"
+								value="#{controladorCrudRoDetalleEvento.probabilidadEventoTodos}"
+								rows="5" paginator="true">
+								<p:column headerText="Probabilidad de Ocurrencia">
+									<h:outputText value="#{proba.letraPprr} - #{proba.nombrePprr}" />
+								</p:column>
+
+								<p:column headerText="Negocio">
+									<h:outputText value="#{proba.roNegocio.nombreNego}" />
+								</p:column>
+
+								<p:column headerText="Calculo Probabilidad">
+									<h:outputText value="#{proba.calculoProb}" />
+								</p:column>
+
+								<p:column headerText="Desde">
+									<h:outputText value="#{proba.desdeProb}" />
+								</p:column>
+
+								<p:column headerText="Hasta">
+									<h:outputText value="#{proba.hastaProb}" />
+								</p:column>
+
+								<p:column exportable="false">
+									<p:commandButton id="btnSelecProb"
+										action="#{controladorCrudRoDetalleEvento.seleccionarCalcProb()}"
+										icon="ui-icon-check"
+										update="formDetalleEvento:pnlRegistroControl" process="@this">
+										<f:setPropertyActionListener
+											target="#{controladorCrudRoDetalleEvento.roProbabilidadEventoVista}"
+											value="#{proba}"></f:setPropertyActionListener>
+										<p:tooltip for="btnSelecProb"
+											value="Haga click para seleccionar el Calculo de Probabilidad" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:overlayPanel>
+
+
+						<p:outputLabel for="txtImpactoEconomico"
+							value="Impacto económico: " />
+						<p:inputText readonly="true" id="txtImpactoEconomico"
+							value="#{controladorCrudRoDetalleEvento.perdida}">
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoImpacto" value="Calculo Impacto: " />
+						<p:inputText readonly="true" id="txtCalculoImpacto"
+							value="#{controladorCrudRoDetalleEvento.calcIm}">
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoProducto" value="Calculo Producto: " />
+						<p:inputText readonly="true" id="txtCalculoProducto"
+							value="#{controladorCrudRoDetalleEvento.mult}" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+
+
+						<p:outputLabel for="txtControlActual" value="Control Actual: " />
+						<p:inputTextarea rows="5" cols="30" counter="txtControlActual"
+							maxlength="200" counterTemplate="{0} characters remaining."
+							autoResize="false"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.controlAct}"
+							style="width:175px" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<h:outputText value="" />
+						<h:outputText id="txtControlActual" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdCategoriazacion" value="Categorización: " />
+						<p:selectOneMenu id="cmdCategoriazacion"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.categorizacion}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="No Aplica" itemValue="No Aplica" />
+							<f:selectItem itemLabel="Clave" itemValue="Clave" />
+							<f:selectItem itemLabel="Complemento" itemValue="Complemento" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmbResponsable" value="Responsable: " />
+						<p:selectOneMenu id="cmbResponsable"
+							value="#{controladorCrudRoDetalleEvento.idResponsable}"
+							required="true" requiredMessage="Debe seleccionar un Responsable"
+							style="width:175px">
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue=""
+								noSelectionOption="true" />
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.listaRoResponsable}"
+								var="varResponsables" itemValue="#{varResponsables.codigoResp}"
+								itemLabel="#{varResponsables.nombreResp} #{varResponsables.apellidoResp}" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdPeriodicidad" value="Periodicidad: " />
+						<p:selectOneMenu id="cmdPeriodicidad"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.periodicidad}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoP()}"
+								update="txtCalculoPeriodicidad" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.valoracionEficiencia()}"
+								update="txtValoracionEficiencia" partialSubmit="true" />
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="NINGUNA" itemValue="NINGUNA" />
+							<f:selectItem itemLabel="POR LO MENOS UNA VEZ AL AÑO"
+								itemValue="POR LO MENOS UNA VEZ AL AÑO" />
+							<f:selectItem itemLabel="OCASIONAL O CUANDO SE REQUIERA"
+								itemValue="OCASIONAL O CUANDO SE REQUIERA" />
+							<f:selectItem
+								itemLabel="PERIODICO QUE INVOLUCRA ALGUNAS VECES EN EL AÑO"
+								itemValue="PERIODICO QUE INVOLUCRA ALGUNAS VECES EN EL AÑO" />
+							<f:selectItem itemLabel="PERMANENTE" itemValue="PERMANENTE" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdTipo" value="Tipo: " />
+						<p:selectOneMenu id="cmdTipo"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.tipo}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoT()}"
+								update="txtCalculoTipo" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.valoracionEficiencia()}"
+								update="txtValoracionEficiencia" partialSubmit="true" />
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="NINGUNO" itemValue="NINGUNO" />
+							<f:selectItem itemLabel="CORRECTIVO" itemValue="CORRECTIVO" />
+							<f:selectItem itemLabel="DETECTIVO" itemValue="DETECTIVO" />
+							<f:selectItem itemLabel="PREVENTIVO" itemValue="PREVENTIVO" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdForma" value="Forma: " />
+						<p:selectOneMenu id="cmdForma"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.forma}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoF()}"
+								update="txtCalculoForma" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.valoracionEficiencia()}"
+								update="txtValoracionEficiencia" partialSubmit="true" />
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="NINGUNO" itemValue="NINGUNO" />
+							<f:selectItem itemLabel="MANUAL" itemValue="MANUAL" />
+							<f:selectItem itemLabel="MIXTO" itemValue="MIXTO" />
+							<f:selectItem itemLabel="AUTOMÁTICO" itemValue="AUTOMÁTICO" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdEstaDocumentado" value="Esta Documentado: " />
+						<p:selectOneMenu id="cmdEstaDocumentado"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.estaDoc}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.valoracionDelControl()}"
+								update="txtValoracionDelControl" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoD()}"
+								update="txtCalculoEstaDocumentado" partialSubmit="true" />
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="SI" itemValue="SI" />
+							<f:selectItem itemLabel="NO" itemValue="NO" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdEstaFormalizado" value="Esta Formalizado: " />
+						<p:selectOneMenu id="cmdEstaFormalizado"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.estaFor}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.valoracionDelControl()}"
+								update="txtValoracionDelControl" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoEF()}"
+								update="txtCalculoEstaFormalizado" partialSubmit="true" />
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="SI" itemValue="SI" />
+							<f:selectItem itemLabel="NO" itemValue="NO" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdSeAplica" value="Se Aplica: " />
+						<p:selectOneMenu id="cmdSeAplica"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.seAplica}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar un registro">
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.valoracionDelControl()}"
+								update="txtValoracionDelControl" partialSubmit="true" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.calculoSA()}"
+								update="txtCalculoSeAplica" partialSubmit="true" />
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="SI" itemValue="SI" />
+							<f:selectItem itemLabel="NO" itemValue="NO" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdEfectividad" value="Efectividad:" />
+						<p:selectOneMenu id="cmdEfectividad"
+							value="#{controladorCrudRoDetalleEvento.roControlesVista.efectividad}"
+							style="width:175px" required="true"
+							requiredMessage="Debe seleccionar una Efectividad">
+							<p:ajax event="change" update="cmdCalcEfectividad"
+								listener="#{controladorCrudRoDetalleEvento.calcEfectividad()}" />
+							<p:ajax event="change"
+								listener="#{controladorCrudRoDetalleEvento.valoracionDelControl()}"
+								update="txtValoracionDelControl" partialSubmit="true" />
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue="" />
+							<f:selectItem itemLabel="Ninguna" itemValue="Ninguna" />
+							<f:selectItem itemLabel="Mal diseñado no cumple con el fin"
+								itemValue="Mal diseñado no cumple con el fin" />
+							<f:selectItem itemLabel="Reduce solo algún aspescto del riesgo"
+								itemValue="Reduce solo algún aspescto del riesgo" />
+							<f:selectItem
+								itemLabel="Su diseño reduce los principales efectos del riesgo"
+								itemValue="Su diseño reduce los principales efectos del riesgo" />
+							<f:selectItem
+								itemLabel="Su diseño elimina en su totalidad el riesgo"
+								itemValue="Su diseño elimina en su totalidad el riesgo" />
+						</p:selectOneMenu>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="cmdCalcEfectividad"
+							value="Cálculo Efectividad:" />
+						<p:inputText readonly="true" id="cmdCalcEfectividad"
+							value="#{controladorCrudRoDetalleEvento.efectividad}">
+							<p:ajax partialSubmit="true" update="txtCalcControl" />
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoPeriodicidad"
+							value="Calculo Periodicidad: " />
+						<p:inputText id="txtCalculoPeriodicidad" readonly="true"
+							value="#{controladorCrudRoDetalleEvento.calP}" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoTipo" value="Calculo Tipo: " />
+						<p:inputText id="txtCalculoTipo" readonly="true"
+							value="#{controladorCrudRoDetalleEvento.calT}" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoForma" value="Calculo Forma: "
+							id="txtCalcForm" />
+						<p:inputText id="txtCalculoForma" readonly="true"
+							value="#{controladorCrudRoDetalleEvento.calF}" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoEstaDocumentado"
+							value="Calculo Esta Documentado: " />
+						<p:inputText id="txtCalculoEstaDocumentado" readonly="true"
+							value="#{controladorCrudRoDetalleEvento.calD}" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoEstaFormalizado"
+							value="Calculo Esta Formalizado: " />
+						<p:inputText id="txtCalculoEstaFormalizado" readonly="true"
+							value="#{controladorCrudRoDetalleEvento.calEF}" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtCalculoSeAplica"
+							value="Calculo Se Aplica: " id="txtCalcControl" />
+						<p:inputText id="txtCalculoSeAplica" readonly="true"
+							value="#{controladorCrudRoDetalleEvento.calSA}" />
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtValoracionEficiencia"
+							value="Valoracion Eficiencia: " />
+						<p:inputText readonly="true" id="txtValoracionEficiencia"
+							value="#{controladorCrudRoDetalleEvento.valoracion}">
+							<f:convertNumber pattern="#,###,##0.00" />
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+						<p:outputLabel for="txtValoracionDelControl"
+							value="Valoracion del Control: " />
+						<p:inputText readonly="true" id="txtValoracionDelControl"
+							value="#{controladorCrudRoDetalleEvento.valoracionDelControls}">
+							<f:convertNumber pattern="#,###,##0.00" />
+						</p:inputText>
+						<p:outputLabel value=" " />
+						<p:outputLabel value=" " />
+
+
+
+
+						<p:commandButton value="Guardar" icon="ui-icon-disk"
+							action="#{controladorCrudRoDetalleEvento.guardarRoTipoControl()}"
+							update=":formDetalleEvento">
+							<p:confirm header="Guardar Registro de Control"
+								message="¿Desea guardar este Control?" icon="ui-icon-disk" />
+
+						</p:commandButton>
+
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							action="#{controladorCrudRoDetalleEvento.cancelarControl()}"
+							update="formDetalleEvento" process="@this" />
+					</h:panelGrid>
+
+					<!-- TABLA DEL CONTROL -->
+
+					<p:dataTable id="RoTipoControl" border="1"
+						value="#{controladorCrudRoDetalleEvento.listaRoControles}"
+						var="control"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} "
+						paginator="true" rows="12"
+						style="margin-bottom:20px; width:1178px;"
+						rowsPerPageTemplate="4,8,12" scrollable="true" scrollWidth="1178">
+
+
+
+						<p:column id="IMPACTO-REPUTACION" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="IMPACTO REPUTACION"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.paramImpRep.nombreRep}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="IMPACTO-CONTINUIDAD" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="IMPACTO CONTINUIDAD"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.bcp}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="IMPACTO-LEGAL" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="IMPACTO LEGAL"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.leg}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="REP" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="REP"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calRep}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="BCP" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="BCP"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calBcp}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="LEG" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="LEG"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calLeg}"></p:outputLabel>
+						</p:column>
+
+
+						<p:column id="CALCULO-PROBABILIDAD" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO PROBABILIDAD"></p:outputLabel>
+							</f:facet>
+
+							<p:outputLabel
+								value="#{control.roProbabilidadEvento.calculoProb}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="IMPACTO_ECONOMICO" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="IMPACTO ECONOMICO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.impactoeco}"></p:outputLabel>
+						</p:column>
+
+
+						<p:column id="CALCULO_IMPACTO" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO IMPACTO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcImpact}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO_PRODUCTO" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO PRODUCTO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.producto}"></p:outputLabel>
+						</p:column>
+
+
+						<p:column id="TIPO-RIESGO" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="TIPO RIESGO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel
+								value="#{control.paramProbabilidadRiesgo.nombrePprr}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CONTROL-ACTUAL" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="CONTROL ACTUAL"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.controlAct}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CATEGORIZACION" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CATEGORIZACION"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.categorizacion}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="RESPONSABLE" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="RESPONSABLE"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.roResponsable.nombreResp}"></p:outputLabel>
+						</p:column>
+
+
+
+						<p:column id="PERIODICIDAD" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="PERIODICIDAD"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.periodicidad}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="TIPO" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="TIPO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.tipo}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="FORMA" style="width:70px;">
+							<f:facet name="header">
+								<p:outputLabel value="FORMA"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.forma}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="ESTA-DOCUMENTADO" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="ESTA DOCUMENTADO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.estaDoc}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="ESTA-FORMZALIZADO" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="ESTA FORMZALIZADO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.estaFor}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="SE-APLICA" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="SE APLICA"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.seAplica}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO-EFECTIVIDAD" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO EFECTIVIDAD"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcEfect}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO-PERIODICIDAD" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO PERIODICIDAD"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcPerio}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO-TIPO" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO TIPO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcTipo}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO-FORMA" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO FORMA"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcForm}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO-ESTA-DOCUMENTADO" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO ESTA DOCUMENTADO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcEstaDocu}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO-ESTA-FORMALIZADO" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO ESTA FORMZALIDADO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcEstaFormal}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="CALCULO-ESTA-SE-APLICA" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="CALCULO SE APLICA"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.calcSeAplica}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="VALORACION-EFICIENCIA" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="VALORACION EFICIENCIA"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.valorEfic}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="VALORACION-CONTROL" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="VALORACION CONTROL"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.valorControl}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="RIESGO-INHERENTE" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="RIESGO INHERENTE"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.riesgoInhe}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="RIESGO-RESIDUAL" style="width:100px;">
+							<f:facet name="header">
+								<p:outputLabel value="RIESGO RESIDUAL"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{control.riesgoResi}"></p:outputLabel>
+						</p:column>
+
+						<p:column style="width:100px;">
+							<center>
+								<f:facet name="header">ACCIONES</f:facet>
+							</center>
+
+							<p:commandButton disabled="true" process="@this" id="btnEditar"
+								update=":formDetalleEvento"
+								action="#{controladorCrudRoDetalleEvento.editarRoControles()}"
+								icon="ui-icon-pencil">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roControlesVista}"
+									value="#{control}"></f:setPropertyActionListener>
+								<p:tooltip for="btnEditar"
+									value="Haga click para EDITAR este registro" />
+							</p:commandButton>
+
+							<p:commandButton id="btnEliminar" update=":formDetalleEvento"
+								icon="ui-icon-trash" process="@this"
+								action="#{controladorCrudRoDetalleEvento.borrarControl()}">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roControlesVista}"
+									value="#{control}"></f:setPropertyActionListener>
+								<p:confirm header="Eliminar Control"
+									message="¿Desea eliminar este Control?" icon="ui-icon-disk" />
+								<p:tooltip for="btnEliminar"
+									value="Haga click para ELIMINAR este registro" />
+							</p:commandButton>
+
+
+						</p:column>
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:panelGrid>
+
+			<!-- PANELES ADICIONALES -->
+			<h:panelGrid id="pnlGridTablasAdic" columns="3"
+				rendered="#{controladorCrudRoDetalleEvento.mostrarPanelAdicionales}">
+
+				<p:panel header="Detalles Adicionales" id="pnlAttrbAdicionales"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelAdicionales}">
+
+					<p:commandButton id="btnNuevaAttrDetalleEvento"
+						value="Añadir Característica"
+						action="#{controladorCrudRoDetalleEvento.nuevaCaracteristica()}"
+						icon="ui-icon-plus" update=":formDetalleEvento"
+						disabled="#{controladorCrudRoDetalleEvento.btnAnadirCarac}"
+						title="Añade una nueva característica al detalle de evento seleccionado"
+						readonly="#{controladorCrudRoDetalleEvento.disPanelAdicionales}" />
+
+					<h:panelGrid columns="2"
+						rendered="#{controladorCrudRoDetalleEvento.pnlEditarDetalles}">
+
+						<p:outputLabel for="cmbAtributos" value="Nombre" />
+						<p:selectOneMenu id="cmbAtributos"
+							value="#{controladorCrudRoDetalleEvento.idAttrAdicional}">
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.atributosDetalleTodos}"
+								var="var" itemValue="#{var.codigoAttr}"
+								itemLabel="#{var.nombreAttr}" />
+							<p:ajax update=":formDetalleEvento:pnlGridTablasAdic"
+								listener="#{controladorCrudRoDetalleEvento.cargarValorLista()}" />
+
+						</p:selectOneMenu>
+
+						<p:outputLabel for="cmbTipo" value="Tipo" />
+						<p:selectOneRadio id="cmbTipo"
+							value="#{controladorCrudRoDetalleEvento.roDetCarctEventVista.observacionDcev}">
+							<f:selectItem itemLabel="Valor" itemValue="Valor" />
+							<f:selectItem itemLabel="Lista" itemValue="Lista" />
+							<p:ajax update=":formDetalleEvento:pnlAttrbAdicionales"
+								listener="#{controladorCrudRoDetalleEvento.cargarValorLista()}" />
+						</p:selectOneRadio>
+
+						<p:outputLabel value="Valor:" />
+						<p:selectOneMenu id="cmbValorAttrb"
+							value="#{controladorCrudRoDetalleEvento.idValAttrb}"
+							rendered="#{controladorCrudRoDetalleEvento.cmbValor}">
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.roValAttrbs}" var="var"
+								itemValue="#{var.codigoValorAttr}"
+								itemLabel="#{var.variableValAttr}" />
+						</p:selectOneMenu>
+						<p:inputText id="txtValorAttrb"
+							value="#{controladorCrudRoDetalleEvento.valorDetAdic}"
+							rendered="#{controladorCrudRoDetalleEvento.txtValor}" />
+
+						<p:commandButton id="btnGuardarAttrb" value="Guardar"
+							actionListener="#{controladorCrudRoDetalleEvento.guardarAttrb()}"
+							icon="ui-icon-disk" title="Guarda la nueva característica"
+							update=":formDetalleEvento:pnlAttrbAdicionales:formDetalleEvento:dtlAtributoDetalleEvento">
+							<p:confirm header="Guardar Detalle Adicional"
+								message="¿Desea guardar este Detalle Adicional?"
+								icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton id="btnCancelarAttrb" value="Cancelar"
+							action="#{controladorCrudRoDetalleEvento.cancelarAttrb()}"
+							icon="ui-icon-disk"
+							title="Cancela la edición de la nueva característica"
+							update=":formDetalleEvento:pnlAttrbAdicionales" process="@this" />
+					</h:panelGrid>
+
+					<p:dataTable id="dtlAtributoDetalleEvento"
+						value="#{controladorCrudRoDetalleEvento.atributosDetalleEvento}"
+						var="varAtributo"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+						scrollable="true" scrollWidth="286" scrollHeight="150">
+
+						<p:column headerText="Atributo" style="width:60px;">
+							<h:outputText value="#{varAtributo.roAttrbAdicionale.nombreAttr}" />
+						</p:column>
+
+						<p:column headerText="Valor" style="width:60px;">
+							<h:outputText value="#{varAtributo.valorDcev}" />
+						</p:column>
+
+						<p:column headerText="Eliminar" style="width:60px;">
+
+							<p:commandButton id="btnEliminarAttrb"
+								update=":formDetalleEvento:pnlAttrbAdicionales"
+								icon="ui-icon-trash"
+								title="Haga click para ELIMINAR este registro"
+								action="#{controladorCrudRoDetalleEvento.eliminarAttrb()}"
+								disabled="#{controladorCrudRoDetalleEvento.disPanelAdicionales}">
+
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roDetCarctEventVista}"
+									value="#{varAtributo}">
+								</f:setPropertyActionListener>
+								<p:confirm header="Eliminar Registro"
+									message="¿Desea eliminar este registro?" icon="ui-icon-disk" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+
+
+				<p:panel header="Costos del Evento" id="pnlCostosDeve"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCostos}">
+
+					<p:commandButton id="btnNuevaCostoDetalleEvento"
+						value="Añadir Costo"
+						title="Añade un nuevo costo al detalle de evento seleccionado"
+						actionListener="#{controladorCrudRoDetalleEvento.nuevoCosto()}"
+						icon="ui-icon-plus" update=":formDetalleEvento:pnlCostosDeve"
+						disabled="#{controladorCrudRoDetalleEvento.btnAnadirCosto}"
+						readonly="#{controladorCrudRoDetalleEvento.disPanelCostos}" />
+
+					<h:panelGrid columns="2" id="pngEditarCostos"
+						rendered="#{controladorCrudRoDetalleEvento.pnlEditarCostos}">
+
+						<p:outputLabel for="cmbCostosDeve" value="Tipo de Costo" />
+						<p:selectOneMenu id="cmbCostosDeve"
+							value="#{controladorCrudRoDetalleEvento.idTipoCosto}">
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.tipoCostoTodos}"
+								var="var" itemValue="#{var.codigoTico}"
+								itemLabel="#{var.nombreTico}" />
+							<p:ajax update=":formDetalleEvento:pnlCostosDeve"
+								listener="#{controladorCrudRoDetalleEvento.cargarCosto()}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="txtCostosDeve" value="Valor de Costo" />
+						<p:outputLabel id="txtCostosDeve"
+							value="#{controladorCrudRoDetalleEvento.roTipoCostoVista.valorTico}" />
+
+						<p:outputLabel for="txtCantDeve" value="Cantidad" />
+						<p:spinner id="txtCantDeve"
+							value="#{controladorCrudRoDetalleEvento.cantidadEvco}" />
+
+						<p:commandButton id="btnGuardarTipoCosto" value="Guardar"
+							actionListener="#{controladorCrudRoDetalleEvento.guardarTipoCosto()}"
+							icon="ui-icon-disk" title="Guarda el nuevo costo"
+							update=":formDetalleEvento:pnlCostosDeve :formDetalleEvento:dtlDetalleEvento">
+							<p:confirm header="Guardar Tipo de Costo"
+								message="¿Desea guardar este Tipo de Costo?" icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton id="btnCancelarTipoCosto" value="Cancelar"
+							title="Cancela la edición del nuevo costo"
+							action="#{controladorCrudRoDetalleEvento.cancelarTipoCosto()}"
+							icon="ui-icon-disk" update=":formDetalleEvento:pnlCostosDeve"
+							process="@this" />
+
+					</h:panelGrid>
+
+					<p:dataTable id="dtlcostoDetalleEvento"
+						value="#{controladorCrudRoDetalleEvento.costosDetalleEvento}"
+						var="varCosto"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+						scrollable="true" scrollWidth="286" scrollHeight="150">
+
+						<p:column headerText="Tipo de Costo" style="width:130px;">
+							<h:outputText value="#{varCosto.roTipoCosto.nombreTico}"
+								title="#{varCosto.roTipoCosto.nombreTico}" />
+						</p:column>
+
+						<p:column headerText="Cantidad" style="width:60px;">
+							<h:outputText value="#{varCosto.cantidadEvco}" />
+						</p:column>
+
+						<p:column headerText="Valor Unitario" style="width:60px;">
+							<h:outputText value="#{varCosto.valorEvco}" />
+						</p:column>
+
+						<p:column headerText="Total" style="width:60px;">
+							<h:outputText value="#{varCosto.totalEvco}" />
+						</p:column>
+
+						<p:column headerText="Eliminar" style="width:60px;">
+
+							<p:commandButton id="btnEliminarTipoCosto"
+								update=":formDetalleEvento:pnlCostosDeve :formDetalleEvento:dtlDetalleEvento"
+								icon="ui-icon-trash"
+								title="Haga click para ELIMINAR este registro"
+								action="#{controladorCrudRoDetalleEvento.eliminarTipoCosto}"
+								disabled="#{controladorCrudRoDetalleEvento.disPanelCostos}">
+
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roEventoCosto}"
+									value="#{varCosto}">
+								</f:setPropertyActionListener>
+								<p:confirm header="Eliminar Registro"
+									message="¿Desea eliminar este registro?" icon="ui-icon-disk" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel header="Recuperaciones" id="pnlRecupDeve"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelRecuperaciones}">
+
+					<p:commandButton id="btnNuevaRecupDetalleEvento"
+						value="Añadir Recuperación"
+						title="Añade nueva recuperación al detalle de evento seleccionado"
+						actionListener="#{controladorCrudRoDetalleEvento.nuevaRecuperacion()}"
+						icon="ui-icon-plus" update=":formDetalleEvento:pnlRecupDeve"
+						disabled="#{controladorCrudRoDetalleEvento.btnAnadirRecup}"
+						readonly="#{controladorCrudRoDetalleEvento.disPanelRecuperaciones}" />
+
+					<h:panelGrid columns="2" id="pngEditarRecupera"
+						rendered="#{controladorCrudRoDetalleEvento.pnlEditarRecupera}">
+
+						<p:outputLabel for="cmbRecuperaDeve" value="Tipo de Recuperación" />
+						<p:selectOneMenu id="cmbRecuperaDeve"
+							value="#{controladorCrudRoDetalleEvento.idTipoRecupera}">
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.tipoRecuperaTodos}"
+								var="var" itemValue="#{var.codigoTrec}"
+								itemLabel="#{var.nombreTrec}" />
+							<p:ajax update=":formDetalleEvento:pnlRecupDeve"
+								listener="#{controladorCrudRoDetalleEvento.cargarRecupera()}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="txtRecuperaDeve" value="Valor de Recuperación" />
+						<p:inputText id="txtRecuperaDeve"
+							value="#{controladorCrudRoDetalleEvento.valorEvre}" />
+
+						<p:outputLabel for="txtCantRecuperaDeve"
+							value="Costo de Recuperación" />
+						<p:inputText id="txtCantRecuperaDeve"
+							value="#{controladorCrudRoDetalleEvento.costoEvre}" />
+
+						<p:outputLabel for="txtFechaRecupera" value="Fecha" />
+						<p:calendar id="txtFechaRecupera"
+							value="#{controladorCrudRoDetalleEvento.fechaEvre}"
+							navigator="true" />
+
+						<p:commandButton id="btnGuardarTipoRecupera" value="Guardar"
+							actionListener="#{controladorCrudRoDetalleEvento.guardarTipoRecupera()}"
+							icon="ui-icon-disk" title="Guarda la nueva recuperación"
+							update=":formDetalleEvento:pnlRecupDeve :formDetalleEvento:dtlDetalleEvento">
+							<p:confirm header="Guardar Tipo de Recuperación"
+								message="¿Desea guardar este Tipo de Recuperación?"
+								icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton id="btnCancelarTipoRecupera" value="Cancelar"
+							action="#{controladorCrudRoDetalleEvento.cancelarTipoRecupera()}"
+							icon="ui-icon-disk" update=":formDetalleEvento:pnlRecupDeve"
+							process="@this"
+							title="Cancela la edición de la nueva recuperación" />
+
+					</h:panelGrid>
+
+					<p:dataTable id="dtlrecuperacionDetalleEvento"
+						value="#{controladorCrudRoDetalleEvento.recuperacionesDetalleEvento}"
+						var="varRecupera"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+						scrollable="true" scrollWidth="286" scrollHeight="150">
+
+						<p:column headerText="Tipo de Recuperación" style="width:130px;">
+							<h:outputText value="#{varRecupera.roTipoRecupera.nombreTrec}"
+								title="#{varRecupera.roTipoRecupera.nombreTrec}" />
+						</p:column>
+
+						<p:column headerText="Fecha" style="width:60px;">
+							<h:outputText value="#{varRecupera.fechaEvre}" />
+						</p:column>
+
+						<p:column headerText="Valor" style="width:60px;">
+							<h:outputText value="#{varRecupera.valorEvre}" />
+						</p:column>
+
+						<p:column headerText="Costo" style="width:60px;">
+							<h:outputText value="#{varRecupera.costoEvre}" />
+						</p:column>
+
+						<p:column headerText="Total" style="width:60px;">
+							<h:outputText value="#{varRecupera.totalEvre}" />
+						</p:column>
+
+						<p:column headerText="Eliminar" style="width:60px;">
+
+							<p:commandButton id="btnEliminarTipoRecupera"
+								update=":formDetalleEvento:pnlRecupDeve :formDetalleEvento:dtlDetalleEvento"
+								icon="ui-icon-trash"
+								title="Haga click para ELIMINAR este registro"
+								action="#{controladorCrudRoDetalleEvento.eliminarTipoRecupera}"
+								disabled="#{controladorCrudRoDetalleEvento.disPanelRecuperaciones}">
+
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roEventoRecupera}"
+									value="#{varRecupera}">
+								</f:setPropertyActionListener>
+								<p:confirm header="Eliminar Registro"
+									message="¿Desea eliminar este registro?" icon="ui-icon-disk" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel header="Controles" id="pnlCualitativo"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelCualitativo}">
+
+					<p:commandButton id="btnNuevaCualitativo" value="Añadir Control"
+						action="#{controladorCrudRoDetalleEvento.nuevaControlCualitativo()}"
+						icon="ui-icon-plus" update=":formDetalleEvento"
+						disabled="#{controladorCrudRoDetalleEvento.btnAnadirCualitativo}"
+						title="Añade una nueva característica al detalle de evento seleccionado"
+						readonly="#{controladorCrudRoDetalleEvento.disPanelCualitativo}" />
+
+					<h:panelGrid columns="2"
+						rendered="#{controladorCrudRoDetalleEvento.pnlEditarCualitativo}">
+
+						<p:outputLabel for="cmbControles" value="Nombre" />
+						<p:selectOneMenu id="cmbControles"
+							value="#{controladorCrudRoDetalleEvento.idControlEvento}">
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.controlesTodos}"
+								var="var" itemValue="#{var.codigoCtrl}"
+								itemLabel="#{var.nombreControl}" />
+							<p:ajax update=":formDetalleEvento:pnlCualitativo"
+								listener="#{controladorCrudRoDetalleEvento.cargarControlValorLista2()}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="cmbTipoControl" value="Tipo" />
+						<p:selectOneRadio id="cmbTipoControl"
+							value="#{controladorCrudRoDetalleEvento.roControlEventoVista.tipoCtev}">
+							<f:selectItem itemLabel="Valor" itemValue="Valor" />
+							<f:selectItem itemLabel="Lista" itemValue="Lista" />
+							<p:ajax update=":formDetalleEvento:pnlCualitativo"
+								listener="#{controladorCrudRoDetalleEvento.cargarControlValorLista()}" />
+						</p:selectOneRadio>
+
+						<p:outputLabel value="Valor:" />
+						<p:selectOneMenu id="cmbValorControl"
+							value="#{controladorCrudRoDetalleEvento.idValControl}"
+							rendered="#{controladorCrudRoDetalleEvento.cmbValorControl}">
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.roControlValores}"
+								var="var" itemValue="#{var.codigoCtva}"
+								itemLabel="#{var.tipoCtva}" />
+							<p:ajax update=":formDetalleEvento:pnlCualitativo"
+								listener="#{controladorCrudRoDetalleEvento.cargarControl()}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value=""
+							rendered="#{controladorCrudRoDetalleEvento.cmbValorControl}" />
+						<p:inputTextarea id="txtControl"
+							value="#{controladorCrudRoDetalleEvento.control}"
+							readonly="#{controladorCrudRoDetalleEvento.txtValorControl2}" />
+
+						<p:commandButton id="btnGuardarControl" value="Guardar"
+							actionListener="#{controladorCrudRoDetalleEvento.guardarControl()}"
+							icon="ui-icon-disk" title="Guarda el nuevo control"
+							update=":formDetalleEvento:pnlCualitativo :formDetalleEvento:dtlControles"
+							onstart="PF('dlg2').show();" oncomplete="PF('dlg2').hide;">
+
+							<p:confirm header="Guardar Control"
+								message="¿Desea guardar este Control?" icon="ui-icon-disk" />
+
+						</p:commandButton>
+
+						<p:commandButton value="Cancelar"
+							action="#{controladorCrudRoDetalleEvento.cancelarControl()}"
+							icon="ui-icon-disk" title="Cancela la edición del nuevo Control"
+							update=":formDetalleEvento:pnlCualitativo" process="@this">
+
+						</p:commandButton>
+
+					</h:panelGrid>
+
+					<p:dataTable id="dtlControles"
+						value="#{controladorCrudRoDetalleEvento.controlesEvento}"
+						var="varAtributo"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+						scrollable="true" scrollWidth="286" scrollHeight="150">
+
+						<p:column headerText="Nombre" style="width:60px;">
+							<h:outputText value="#{varAtributo.roControl.nombreControl}" />
+						</p:column>
+
+						<p:column headerText="Control" style="width:60px;">
+							<h:outputText value="#{varAtributo.roControlValor.tipoCtva}" />
+						</p:column>
+
+						<p:column headerText="Valor" style="width:60px;">
+							<h:outputText value="#{varAtributo.controlCtev}" />
+						</p:column>
+
+						<p:column headerText="Eliminar" style="width:60px;">
+
+							<p:commandButton id="btnEliminarAttrb"
+								update=":formDetalleEvento:pnlAttrbAdicionales"
+								icon="ui-icon-trash"
+								title="Haga click para ELIMINAR este registro"
+								action="#{controladorCrudRoDetalleEvento.eliminarControl()}"
+								disabled="#{controladorCrudRoDetalleEvento.disPanelCualitativo}">
+
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roControlEventoVista}"
+									value="#{varAtributo}">
+								</f:setPropertyActionListener>
+								<p:confirm header="Eliminar Registro"
+									message="¿Desea eliminar este registro?" icon="ui-icon-disk" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel header="Factores de Riesgo" id="pnlDeveFaro"
+					rendered="#{controladorCrudRoDetalleEvento.colFactorRiesgo}">
+
+					<p:commandButton id="btnNuevoDeveFaro"
+						value="Añadir Factor de Riesgo"
+						title="Añade un nuevo factor de riesgo al detalle de evento seleccionado"
+						actionListener="#{controladorCrudRoDetalleEvento.nuevoDeveFaro()}"
+						icon="ui-icon-plus" update=":formDetalleEvento:pnlDeveFaro"
+						disabled="#{controladorCrudRoDetalleEvento.btnAnadirDeveFaro}"
+						readonly="#{controladorCrudRoDetalleEvento.disFactorRiesgo}" />
+
+					<h:panelGrid columns="2" id="pngEditarDeveFaro"
+						rendered="#{controladorCrudRoDetalleEvento.pnlEditarDeveFaro}">
+
+						<p:outputLabel for="cmbFactorRiesgo" value="Factor de Riesgo" />
+						<p:selectOneMenu id="cmbFactorRiesgo"
+							value="#{controladorCrudRoDetalleEvento.idFactorRiesgo}">
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.factorRiesgoTodos}"
+								var="var" itemValue="#{var.codigoFaro}"
+								itemLabel="#{var.nombreFaro}" />
+						</p:selectOneMenu>
+
+						<p:commandButton id="btnGuardarDeveFaro" value="Guardar"
+							actionListener="#{controladorCrudRoDetalleEvento.guardarDeveFaro()}"
+							icon="ui-icon-disk" title="Guarda el nuevo Factor de Riesgo"
+							update=":formDetalleEvento:pnlDeveFaro :@form:dtlDeveFaro">
+							<p:confirm header="Guardar Tipo de Recuperación"
+								message="¿Desea guardar este Factor de Riesgo?"
+								icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton id="btnCancelarDeveFaro" value="Cancelar"
+							action="#{controladorCrudRoDetalleEvento.cancelarDeveFaro()}"
+							icon="ui-icon-disk" update=":formDetalleEvento:pnlDeveFaro"
+							process="@this"
+							title="Cancela la edición del nuevo factor de riesgo" />
+
+					</h:panelGrid>
+
+					<p:dataTable id="dtlDeveFaro"
+						value="#{controladorCrudRoDetalleEvento.deveFarosDetalleEvento}"
+						var="var"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+						scrollable="true" scrollWidth="286" scrollHeight="150">
+
+						<p:column headerText="Factor de Riesgo" style="width:130px;">
+							<h:outputText value="#{var.roFactorRiesgo.nombreFaro}"
+								title="#{var.roFactorRiesgo.nombreFaro}" />
+						</p:column>
+
+						<p:column headerText="Eliminar" style="width:60px;">
+
+							<p:commandButton id="btnEliminarDeveFaro"
+								update=":formDetalleEvento:pnlDeveFaro :formDetalleEvento:dtlDeveFaro"
+								icon="ui-icon-trash"
+								title="Haga click para ELIMINAR este registro"
+								action="#{controladorCrudRoDetalleEvento.eliminarDeveFaro()}"
+								disabled="#{controladorCrudRoDetalleEvento.disFactorRiesgo}">
+
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roDeveFaro}"
+									value="#{var}">
+								</f:setPropertyActionListener>
+								<p:confirm header="Eliminar Registro"
+									message="¿Desea eliminar este registro?" icon="ui-icon-disk" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel header="Indicadores de Riesgo Clave (KRIs)"
+					id="pnlInriDeve"
+					rendered="#{controladorCrudRoDetalleEvento.colPanelIndicadoresRiesgo}">
+					<!-- PANEL INDICADORES  -->
+					<p:commandButton id="btnNuevoIndicadorRiesgo"
+						value="Añadir Nuevo Indicador"
+						title="Añade nuevo indicador de riesgo clave al detalle de evento seleccionado"
+						action="#{controladorCrudRoDetalleEvento.nuevoIndicadorRiesgo()}"
+						icon="ui-icon-plus" update="pnlInriDeve"
+						disabled="#{controladorCrudRoDetalleEvento.btnAnadirIndicador}"
+						readonly="#{controladorCrudRoDetalleEvento.disPanelIndicadores}"
+						process="@this">
+					</p:commandButton>
+
+
+
+					<h:panelGrid id="pngEditarIndicador" columns="2"
+						rendered="#{controladorCrudRoDetalleEvento.pnlEditarIndicador}">
+
+
+						<p:outputLabel for="cmbTipoIndicador" value="Tipo de Indicador" />
+						<p:selectOneMenu id="cmbTipoIndicador" required="true"
+							requiredMessage="Escoja un tipo de indicador"
+							value="#{controladorCrudRoDetalleEvento.idTipoIndicadorRiesgo}">
+							<f:selectItem itemLabel="Escoger uno..." noSelectionOption="true" />
+							<f:selectItems
+								value="#{controladorCrudRoDetalleEvento.tipoIndicadoresPorProcesoDeve}"
+								var="var" itemValue="#{var.codigoTinri}"
+								itemLabel="#{var.nombreTinri}" />
+							<p:ajax update="formDetalleEvento"
+								listener="#{controladorCrudRoDetalleEvento.seleccionarTipoIndicador()}" />
+						</p:selectOneMenu>
+
+						<h:outputText
+							rendered="#{controladorCrudRoDetalleEvento.esPorcentaje}"
+							value="Total de transacciones: " />
+						<p:inputText id="txtTotalTransaccionesIndicadorDeve"
+							rendered="#{controladorCrudRoDetalleEvento.esPorcentaje}"
+							value="#{controladorCrudRoDetalleEvento.totalTransaccionesEvin}">
+							<p:ajax update="formDetalleEvento:pnlInriDeve"
+								listener="#{controladorCrudRoDetalleEvento.calcularPorcentaje()}" />
+						</p:inputText>
+
+						<p:outputLabel for="txtValorIndicadorDeve"
+							value="Valor del Indicador" />
+
+
+						<h:panelGrid columns="2">
+							<p:inputText id="txtValorIndicadorDeve" required="true"
+								requiredMessage="Ingrese un Valor"
+								readonly="#{controladorCrudRoDetalleEvento.esPorcentaje}"
+								value="#{controladorCrudRoDetalleEvento.valorEvin}">
+							</p:inputText>
+
+							<ui:fragment
+								rendered="#{not empty controladorCrudRoDetalleEvento.roTipoIndicadorRiesgoVista.tipoValor}">
+								<h:outputText
+									value=" (#{controladorCrudRoDetalleEvento.roTipoIndicadorRiesgoVista.tipoValor})" />
+							</ui:fragment>
+
+						</h:panelGrid>
+
+
+						<p:outputLabel for="txtFechaRecupera" value="Fecha del Indicador" />
+						<p:calendar id="txtFechaIndicador" required="true"
+							requiredMessage="Escoja una fecha"
+							value="#{controladorCrudRoDetalleEvento.fechaEvin}" />
+
+						<p:commandButton id="btnGuardarDeveIndicador" value="Guardar"
+							action="#{controladorCrudRoDetalleEvento.guardarDeveIndicador()}"
+							icon="ui-icon-disk" title="Guarda el nuevo indicador"
+							update="formDetalleEvento">
+							<p:confirm header="Guardar indicador"
+								message="¿Desea guardar el indicador?" icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton id="btnCancelarDeveIndicador" value="Cancelar"
+							action="#{controladorCrudRoDetalleEvento.cancelarDeveIndicador()}"
+							icon="ui-icon-trash" update="formDetalleEvento:pnlInriDeve"
+							process="@this">
+						</p:commandButton>
+
+						<!-- 						value="#{controladorCrudRoDetalleEvento.indicadoresDetalleEventoTodos}" -->
+					</h:panelGrid>
+
+					<!-- 					TABLA EVENTO INDICADOR -->
+					<p:dataTable id="dtlIndicadoresDetalleEvento"
+						value="#{controladorCrudRoDetalleEvento.indicadoresDetalleEventoTodos}"
+						var="varIndicador" paginator="true" rows="4"
+						rowsPerPageTemplate="4,8,12" scrollable="true" scrollHeight="150"
+						scrollWidth="286"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+						<p:column headerText="Código" style="width:60px;"
+							filterBy="#{varIndicador.codigoEvin}" filterStyle="width:30px;"
+							sortBy="#{varIndicador.codigoEvin}">
+							<h:outputText value="#{varIndicador.codigoEvin}" />
+						</p:column>
+
+						<p:column headerText="Tipo" style="width:130px;"
+							filterBy="#{varIndicador.roTipoIndicadorRiesgo.nombreTinri}"
+							sortBy="#{varIndicador.roTipoIndicadorRiesgo.nombreTinri}">
+							<h:outputText
+								value="#{varIndicador.roTipoIndicadorRiesgo.nombreTinri}" />
+						</p:column>
+
+						<p:column headerText="Unidad" style="width:100px;"
+							sortBy="#{varIndicador.roTipoIndicadorRiesgo.unidad}"
+							filterBy="#{varIndicador.roTipoIndicadorRiesgo.unidad}"
+							filterStyle="width:80px;">
+
+							<h:outputText
+								value="#{varIndicador.roTipoIndicadorRiesgo.unidad}" />
+						</p:column>
+
+						<p:column headerText="Valor" style="width:50px;"
+							sortBy="#{varIndicador.valorEvin}">
+							<h:outputText value="#{varIndicador.valorEvin}" />
+						</p:column>
+
+						<p:column headerText="Fecha" style="width:80px;"
+							sortBy="#{varIndicador.fechaEvin}">
+							<h:outputText value="#{varIndicador.fechaEvin}" />
+						</p:column>
+
+						<!-- 												<p:column headerText="Codigo deve(QUITAR)" style="width:130px;" -->
+						<!-- 													sortBy="#{varIndicador.roDetalleEvento.codigoDeve}"> -->
+						<!-- 													<h:outputText value="#{varIndicador.roDetalleEvento.codigoDeve}" /> -->
+						<!-- 												</p:column> -->
+
+						<p:column headerText="Eliminar" style="width:40px;">
+							<p:commandButton id="btnEliminar"
+								action="#{controladorCrudRoDetalleEvento.eliminarDeveIndicador()}"
+								update=":formDetalleEvento:pnlInriDeve" process="@this"
+								icon="ui-icon-trash">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoDetalleEvento.roEventoIndicadorVista}"
+									value="#{varIndicador}"></f:setPropertyActionListener>
+								<p:confirm header="Eliminar Control"
+									message="¿Desea eliminar este Control?" icon="ui-icon-disk" />
+								<p:tooltip for="btnEliminar"
+									value="Haga click para ELIMINAR este registro" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+
+
+				</p:panel>
+
+
+
+
+
+
+
+
+
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2"
+				rendered="#{controladorCrudRoDetalleEvento.mostrarPanelAdicionales}">
+				<p:commandButton id="btnListoAdicionales" value="Terminar Registro"
+					actionListener="#{controladorCrudRoDetalleEvento.terminarRegistro()}"
+					icon="ui-icon-disk" update="@form" disabled="true"
+					onstart="PF('dlg2').show();" onsuccess="PF('dlg2').hide;"
+					title="Finaliza la edición del detalle de evento">
+					<p:confirm header="Terminar Registro"
+						message="¿Desea terminar el registro de este Detalle de Evento?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarAdicionales" value="Ocultar Paneles"
+					title="Cierra los paneles de Edición del Evento"
+					action="#{controladorCrudRoDetalleEvento.ocultarPaneles()}"
+					icon="ui-icon-disk" update="@form" />
+			</h:panelGrid>
+
+
+			<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+				modal="true" height="30" width="100" resizable="false">
+				<h:outputText value="Espere....." />
+			</p:dialog>
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>
+</html>

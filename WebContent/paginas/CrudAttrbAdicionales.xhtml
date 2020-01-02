@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Atributos Adicionales</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formAttrbAdicionale">
+			<p:growl id="growl" showDetail="true"  >
+			</p:growl>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaAttrbAdicionale"
+				value="Añadir Nuevo Atributo Adicional" process="@this"
+				action="#{controladorCrudRoAttrbAdicionale.nuevoAttrbAdicionaleVista()}"
+				icon="ui-icon-plus" update="formAttrbAdicionale"
+				disabled="#{controladorCrudRoAttrbAdicionale.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlAttrbAdicionale"
+				rendered="#{controladorCrudRoAttrbAdicionale.pnlAttrbAdicionale}">
+
+				<p:outputLabel for="txtNombreAttrbAdicionale" value="Nombre" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreAttrbAdicionale"
+						value="#{controladorCrudRoAttrbAdicionale.roAttrbAdicionaleVista.nombreAttr}"
+						required="true"
+						requiredMessage="El Nombre del Atributo Adicional es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtNombreAttrbAdicionale" />
+				</h:panelGrid>
+
+				<p:outputLabel for="cmbEstadoAttrbAdicionale" value="Clase" />
+				<p:selectOneMenu id="cmbEstadoAttrbAdicionale"
+					value="#{controladorCrudRoAttrbAdicionale.claseSeleccionada}"
+					required="true"
+					requiredMessage="Debe seleccionar la clase del Atributo Adicional">
+					<f:selectItems
+						value="#{controladorCrudRoAttrbAdicionale.clasesTodos}" var="var"
+						itemValue="#{var}" itemLabel="#{var}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtObservacionAttrbAdicionale"
+					value="Observación" />
+				<p:inputTextarea id="txtObservacionAttrbAdicionale"
+					value="#{controladorCrudRoAttrbAdicionale.roAttrbAdicionaleVista.descripcionAttr}"
+					maxlength="200" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarAttrbAdicionale" value="Guardar"
+					action="#{controladorCrudRoAttrbAdicionale.guardarAttrbAdicionale()}"
+					icon="ui-icon-disk" update="formAttrbAdicionale">
+					<p:confirm header="Guardar Atributo Adicional"
+						message="¿Desea guardar este Atributo Adicional?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarAttrbAdicionale" value="Cancelar"
+					action="#{controladorCrudRoAttrbAdicionale.cancelar()}"
+					icon="ui-icon-disk" update="formAttrbAdicionale" process="@this" />
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlAttrbAdicionale"
+				value="#{controladorCrudRoAttrbAdicionale.attrbAdicionalesTodos}"
+				var="varAttrbAdicionale"
+				style="width:40%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+				selection="#{controladorCrudRoAttrbAdicionale.roAttrbAdicionaleControlador}"
+				selectionMode="single" rowKey="#{varAttrbAdicionale.codigoAttr}">
+				<p:ajax event="rowSelect"
+					listener="#{controladorCrudRoAttrbAdicionale.seleccionar()}"
+					update=":formAttrbAdicionale" onstart="PF('dlg2').show();"
+					oncomplete="PF('dlg2').hide;" />
+
+				<p:column>
+					<center>
+						<f:facet name="header">Nombre</f:facet>
+					</center>
+					<h:outputText value="#{varAttrbAdicionale.nombreAttr}" />
+				</p:column>
+
+
+				<p:column>
+					<center>
+						<f:facet name="header">Clase</f:facet>
+					</center>
+					<h:outputText value="#{varAttrbAdicionale.claseAttr}" />
+				</p:column>
+
+
+
+				<!-- *********************************************************
+				 			ACCIONES AttrbAdicionale
+				************************************************************* -->
+
+				<p:column>
+					<center>
+						<f:facet name="header">Acciones</f:facet>
+					</center>
+
+					<p:commandButton process="@this" id="btnEditar"
+						update=":formAttrbAdicionale"
+						action="#{controladorCrudRoAttrbAdicionale.editarAttrbAdicionaleVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoAttrbAdicionale.roAttrbAdicionaleVista}"
+							value="#{varAttrbAdicionale}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formAttrbAdicionale"
+						icon="ui-icon-trash" process="@this"
+						action="#{controladorCrudRoAttrbAdicionale.eliminarAttrbAdicionale()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoAttrbAdicionale.roAttrbAdicionaleVista}"
+							value="#{varAttrbAdicionale}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar AttrbAdicionale"
+							message="¿Desea eliminar este Atributo Adicional?"
+							icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<p:panel toggleable="false" header="Variables del Atributo"
+				id="pnlVarAttrb"
+				rendered="#{controladorCrudRoAttrbAdicionale.mostrarPnlValAttrb}">
+
+				<p:commandButton id="btnNuevaVarAttrb" value="Añadir Variable"
+					action="#{controladorCrudRoAttrbAdicionale.nuevoValAttrb()}"
+					icon="ui-icon-plus" process="@this"
+					update=":formAttrbAdicionale:pnlVarAttrb"
+					disabled="#{controladorCrudRoAttrbAdicionale.btnAnadirValAttrb}" />
+
+				<h:panelGrid columns="2" id="pngEditarValAttrb"
+					rendered="#{controladorCrudRoAttrbAdicionale.pnlEditarValAttrb}">
+
+
+					<p:outputLabel for="txtNombreValAttrb" value="Valor de Costo" />
+					<p:inputText id="txtNombreValAttrb"
+						value="#{controladorCrudRoAttrbAdicionale.roValAttrbVista.variableValAttr}"
+						maxlength="100"
+						requiredMessage="El Nombre del Control es un campo Obligatorio"
+						required="true" />
+
+					<p:commandButton id="btnGuardarTipoCosto" value="Guardar"
+						actionListener="#{controladorCrudRoAttrbAdicionale.guardarValAttrb()}"
+						icon="ui-icon-disk" update=":formAttrbAdicionale:pnlVarAttrb"
+						process=":formAttrbAdicionale:pnlVarAttrb">
+						<p:confirm header="Guardar Variable"
+							message="¿Desea guardar esta variable?" icon="ui-icon-disk" />
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarTipoCosto" value="Cancelar"
+						action="#{controladorCrudRoAttrbAdicionale.cancelarValAttrb()}"
+						icon="ui-icon-disk" update=":formAttrbAdicionale:pnlVarAttrb"
+						process="@this" />
+
+				</h:panelGrid>
+
+				<p:dataTable id="dtlValAdicionale"
+					value="#{controladorCrudRoAttrbAdicionale.roValAttrbsTodos}"
+					var="varValAttrb"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+					<p:column>
+						<center>
+							<f:facet name="header">Variable</f:facet>
+						</center>
+						<h:outputText value="#{varValAttrb.variableValAttr}" />
+					</p:column>
+
+					<!-- *********************************************************
+				 			ACCIONES ValAdicionale
+				************************************************************* -->
+
+					<p:column>
+						<center>
+							<f:facet name="header">Acciones</f:facet>
+						</center>
+
+						<p:commandButton process="@this" id="btnEditarVal"
+							update=":formAttrbAdicionale:pnlVarAttrb"
+							action="#{controladorCrudRoAttrbAdicionale.editarAttrVal()}"
+							icon="ui-icon-pencil">
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoAttrbAdicionale.roValAttrbVista}"
+								value="#{varValAttrb}"></f:setPropertyActionListener>
+							<p:tooltip for="btnEditarVal"
+								value="Haga click para EDITAR este registro" />
+						</p:commandButton>
+
+						<p:commandButton id="btnEliminar"
+							update=":formAttrbAdicionale:dtlValAdicionale"
+							icon="ui-icon-trash"
+							action="#{controladorCrudRoAttrbAdicionale.eliminarValAttrb()}"
+							process="@this">
+							<p:confirm header="Eliminar Variable"
+								message="¿Desea eliminar esta variable?" icon="ui-icon-disk" />
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoAttrbAdicionale.roValAttrbVista}"
+								value="#{varValAttrb}"></f:setPropertyActionListener>
+							<p:tooltip for="btnEliminar"
+								value="Haga click para ELIMINAR este registro" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+			<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+				modal="true" height="30" width="100" resizable="false">
+				<h:outputText value="Espere..." />
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

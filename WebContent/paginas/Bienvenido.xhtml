@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Bienvenido</ui:define>
+	<ui:define name="tituloFormulario">Bienvenido</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formAccion">
+			<p:growl id="growl" showDetail="true">
+			</p:growl>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		Bienvenid@ al Software de Riesgo Operativo de HC-Consultores!!!
+		<br />
+			<!-- Doy clic en un command link, que está en el controlador bienvenida, una vez compltado me muestra el dialogo cambiar contraseña -->
+			<p:commandLink styleClass="more2" process="@this"
+				update="@form:pngContrasenia1 @form:pngContrasenia2"
+				action="#{controladorBienvenida.abrirCambiarContrasenia()}"
+				oncomplete="PF('dlgCambiarContrasena').show();">
+				<h:panelGrid columns="2">
+					<img src="#{request.contextPath}/utils/images/passlogin.png"
+						alt="Cambiar Contraseña" style="width: 30px; margin: 2px;" />
+					<h:outputText value="Cambiar Contraseña" />
+				</h:panelGrid>
+			</p:commandLink>
+			<!-- No se puede actualizar un diálogo, sino los elementos que está dentro del dialógo, o si no el dialogo se oculta -->
+			<p:dialog widgetVar="dlgCambiarContrasena" showEffect="fade"
+				modal="true" header="Cambio de Contraseña" resizable="false">
+
+				<h:panelGrid columns="3" id="pngContrasenia1">
+					<img src="#{request.contextPath}/utils/images/passlogin.png"
+						alt="Cambiar Contraseña" style="width: 17px; margin: 1px;" />
+					<h:outputText value="Contraseña Actual:"
+						style="FONT-WEIGHT: bold;width:140px;" />
+					<p:password required="true"
+						requiredMessage="Contraseña Actual Requerida"
+						value="#{controladorBienvenida.contraseniaAnterior}" />
+				</h:panelGrid>
+				<p:separator />
+				
+				<h:panelGrid columns="2" id="pngContrasenia2">
+					<h:outputText value="Nueva Contraseña:"
+						style="FONT-WEIGHT: bold;width:140px;" />
+					<p:password required="true"
+						requiredMessage="Nueva Contraseña Requerida"
+						value="#{controladorBienvenida.contrasenia}" feedback="true"
+						promptLabel="Por favor Ingrese la contraseña" weakLabel="Débil"
+						goodLabel="Buena" strongLabel="Fuerte" />
+
+					<h:outputText value="Confirmar Contraseña:"
+						style="FONT-WEIGHT: bold;width:140px;" />
+					<p:password required="true"
+						requiredMessage="Confirmar la Contraseña "
+						value="#{controladorBienvenida.contrasenia2}" feedback="true"
+						promptLabel="Por favor Ingrese la contraseña" weakLabel="Débil"
+						goodLabel="Buena" strongLabel="Fuerte" />
+				</h:panelGrid>
+				<p:separator />
+				<p:commandButton value="Cambiar Contraseña"
+					title="Cambiar Contraseña"
+					actionListener="#{controladorBienvenida.cambiarContrasenia()}"
+					icon="ui-icon-key" />
+			</p:dialog>
+
+			<p:dialog widgetVar="dlg"
+				visible="#{controladorBienvenida.pnlEventos}" modal="true"
+				closeOnEscape="false" draggable="false">
+				<br />
+				<center>
+					<p:outputLabel value="Plan/es de Acción Caducado/s!"
+						style="font-size:30px; color: #FF0000"></p:outputLabel>
+				</center>
+				<br />
+				<center>
+					<p:outputLabel
+						value="Por favor revisar en la ventana Planes de Acción - Responsable General"
+						style="font-size:20px"></p:outputLabel>
+				</center>
+				<br />
+				<center>
+					<p:dataTable id="RoTipoCargo" border="1"
+						value="#{controladorBienvenida.listaEventos}" var="eventos"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} "
+						paginator="true" rows="12"
+						style="margin-bottom:20px; width:400px;"
+						rowsPerPageTemplate="4,8,12">
+
+
+						<p:column id="CODIGO">
+							<f:facet name="header">
+								<p:outputLabel value="CÓDIGO DETALLE EVENTO"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{eventos.roDetalleEvento.codigoDeve}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="NOMBRE">
+							<f:facet name="header">
+								<p:outputLabel value="NOMBRE DEL PLAN DE ACCIÓN"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{eventos.nombreAcci}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="FECHA">
+							<f:facet name="header">
+								<p:outputLabel value="FECHA DE CADUCACIÓN"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{eventos.fechaFinAcci}"></p:outputLabel>
+						</p:column>
+					</p:dataTable>
+				</center>
+
+				<center>
+					<p:outputLabel
+						value="Por favor revisar en la ventana Planes de Acción - Supervisor"
+						style="font-size:20px"></p:outputLabel>
+				</center>
+				<br />
+				<center>
+					<p:dataTable id="RoDetalleAcc" border="1"
+						value="#{controladorBienvenida.listaRoDetalleAccion}"
+						var="eventos"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} "
+						paginator="true" rows="12"
+						style="margin-bottom:20px; width:400px;"
+						rowsPerPageTemplate="4,8,12">
+
+						<p:column id="NOMBRE">
+							<f:facet name="header">
+								<p:outputLabel value="NOMBRE DEL PLAN DE ACCIÓN"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{eventos.nombreDeac}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="FECHA">
+							<f:facet name="header">
+								<p:outputLabel value="FECHA DE CADUCACIÓN"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{eventos.fechaFinDeac}"></p:outputLabel>
+						</p:column>
+					</p:dataTable>
+				</center>
+
+				<center>
+					<p:outputLabel
+						value="Por favor revisar en la ventana Planes de Acción - Responsable"
+						style="font-size:20px"></p:outputLabel>
+				</center>
+				<br />
+				<center>
+					<p:dataTable id="RoDetalleAccResp" border="1"
+						value="#{controladorBienvenida.listaRoDetalleAccion}"
+						var="eventos"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} "
+						paginator="true" rows="12"
+						style="margin-bottom:20px; width:400px;"
+						rowsPerPageTemplate="4,8,12">
+						
+						<p:column id="NOMBRE">
+							<f:facet name="header">
+								<p:outputLabel value="NOMBRE DEL PLAN DE ACCIÓN"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{eventos.nombreDeac}"></p:outputLabel>
+						</p:column>
+
+						<p:column id="FECHA">
+							<f:facet name="header">
+								<p:outputLabel value="FECHA DE CADUCACIÓN"></p:outputLabel>
+							</f:facet>
+							<p:outputLabel value="#{eventos.fechaFinDeac}"></p:outputLabel>
+						</p:column>
+					</p:dataTable>
+				</center>
+			</p:dialog>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

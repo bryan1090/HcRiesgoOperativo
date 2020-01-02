@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">PARAMETRO PROBABILIDAD DE OCURRENCIA</ui:define>
+	<ui:define name="tituloFormulario">PARAMETRO PROBABILIDAD DE OCURRENCIA</ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formParamProbabilidadRiesgo">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaParamProbabilidadRiesgo"
+				value="Añadir Nueva Probabilidad de Ocurrencia"
+				action="#{controladorCrudParamProbabilidadRiesgo.nuevo()}"
+				icon="ui-icon-plus" update="formParamProbabilidadRiesgo"
+				disabled="#{controladorCrudParamProbabilidadRiesgo.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlParamProbabilidadRiesgo"
+				rendered="#{controladorCrudParamProbabilidadRiesgo.pnlParam}">
+
+				<p:outputLabel for="txtNombreParamProbabilidadRiesgo" value="Nombre" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreParamProbabilidadRiesgo"
+						value="#{controladorCrudParamProbabilidadRiesgo.paramProbabilidadRiesgoVista.nombrePprr}"
+						required="true"
+						requiredMessage="El Nombre es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreParamProbabilidadRiesgo" />
+				</h:panelGrid>
+
+
+				<p:commandButton id="btnAgregarParamProbabilidadRiesgo"
+					value="Guardar"
+					actionListener="#{controladorCrudParamProbabilidadRiesgo.agregar()}"
+					icon="ui-icon-disk" update="formParamProbabilidadRiesgo">
+					<p:confirm header="Agregar" message="¿Desea agregar este registro?"
+						icon="ui-icon-plus" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarParamProbabilidadRiesgo"
+					value="Cancelar"
+					action="#{controladorCrudParamProbabilidadRiesgo.cancelar()}"
+					icon="ui-icon-disk" update="formParamProbabilidadRiesgo"
+					process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlParamProbabilidadRiesgo"
+				value="#{controladorCrudParamProbabilidadRiesgo.paramsProbasTodos}"
+				var="varParamProbabilidadRiesgo"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="10" rowsPerPageTemplate="10,15,20">
+
+				<p:column>
+					<f:facet name="header">Nombre</f:facet>
+					<h:outputText value="#{varParamProbabilidadRiesgo.nombrePprr}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">Orden</f:facet>
+					<h:outputText value="#{varParamProbabilidadRiesgo.numeroPprr}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">Letra</f:facet>
+					<h:outputText value="#{varParamProbabilidadRiesgo.letraPprr}" />
+				</p:column>
+
+
+
+				<!-- *********************************************************
+				 			ACCIONES ParamProbabilidadRiesgo
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar"
+						update=":formParamProbabilidadRiesgo"
+						action="#{controladorCrudParamProbabilidadRiesgo.editar()}"
+						icon="ui-icon-pencil"
+						disabled="#{controladorCrudParamProbabilidadRiesgo.btnEditar}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudParamProbabilidadRiesgo.paramProbabilidadRiesgoVista}"
+							value="#{varParamProbabilidadRiesgo}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnSubir"
+						update=":formParamProbabilidadRiesgo"
+						icon="ui-icon-arrowthick-1-n"
+						disabled="#{controladorCrudParamProbabilidadRiesgo.btnSubir}"
+						action="#{controladorCrudParamProbabilidadRiesgo.subir()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudParamProbabilidadRiesgo.paramProbabilidadRiesgoVista}"
+							value="#{varParamProbabilidadRiesgo}"></f:setPropertyActionListener>
+
+						<p:tooltip for="btnSubir"
+							value="Haga click para SUBIR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnBajar"
+						update=":formParamProbabilidadRiesgo"
+						icon="ui-icon-arrowthick-1-s"
+						disabled="#{controladorCrudParamProbabilidadRiesgo.btnBajar}"
+						action="#{controladorCrudParamProbabilidadRiesgo.bajar()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudParamProbabilidadRiesgo.paramProbabilidadRiesgoVista}"
+							value="#{varParamProbabilidadRiesgo}"></f:setPropertyActionListener>
+
+						<p:tooltip for="btnBajar"
+							value="Haga click para BAJAR este registro" />
+					</p:commandButton>
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlParamProbabilidadRiesgo"
+							fileName="ParamProbabilidadRiesgo" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlParamProbabilidadRiesgo"
+							fileName="ParamProbabilidadRiesgo" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlParamProbabilidadRiesgo"
+							fileName="ParamProbabilidadRiesgo" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlParamProbabilidadRiesgo"
+							fileName="ParamProbabilidadRiesgo" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlParamProbabilidadRiesgo"
+							fileName="ParamProbabilidadRiesgo" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlParamProbabilidadRiesgo"
+							fileName="ParamProbabilidadRiesgo" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

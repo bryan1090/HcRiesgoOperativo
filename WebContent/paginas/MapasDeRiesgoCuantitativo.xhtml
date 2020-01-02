@@ -1,0 +1,539 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Mapas de Riesgo Cuantitativo</ui:define>
+	<ui:define name="tituloFormulario">Mapas de Riesgo Cuantitativo</ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formResponsable">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<div align="center">
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+					<p:outputLabel for="console" value="Filtrar por:" />
+					<p:selectOneRadio id="console"
+						value="#{controladorMapasDeRiesgoCuantitativo.tipoFiltro}">
+						<f:selectItem itemLabel="Fecha de Registro" itemValue="1" />
+						<f:selectItem itemLabel="Fecha de Ocurrencia" itemValue="2" />
+						<f:selectItem itemLabel="Fecha de Descubrimiento" itemValue="3" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+				<h:panelGrid columns="5">
+
+					<h:outputText value="Fecha de Inicio" />
+					<p:calendar
+						value="#{controladorMapasDeRiesgoCuantitativo.fechaInicio}"
+						navigator="true" locale="es" />
+
+					<h:outputText value="Fecha de Fin" />
+					<p:calendar
+						value="#{controladorMapasDeRiesgoCuantitativo.fechaFin}"
+						navigator="true" locale="es" />
+					<h:outputText value="" />
+
+					<h:outputText value="Agencias:" />
+					<h:outputText value="Departamentos:" />
+					<h:outputText value="Procesos:" />
+					<h:outputText value="Negocios:" />
+					<h:outputText value="Usuarios:" />
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}"
+							value="#{controladorMapasDeRiesgoCuantitativo.agenciasVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMapasDeRiesgoCuantitativo.agenciasSeleccionadas}"
+							id="arbAgencia">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorMapasDeRiesgoCuantitativo.departamentosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMapasDeRiesgoCuantitativo.departamentosSeleccionadas}"
+							id="arbDepartamento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorMapasDeRiesgoCuantitativo.procesosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMapasDeRiesgoCuantitativo.procesosSeleccionadas}"
+							id="arbProceso">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorMapasDeRiesgoCuantitativo.negociosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMapasDeRiesgoCuantitativo.negociosSeleccionadas}"
+							id="arbNegocio">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollUsuarios">
+						<p:selectBooleanButton id="selTodosUsuarios"
+							value="#{controladorMapasDeRiesgoCuantitativo.btodosUsuarios}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollUsuarios"
+								listener="#{controladorMapasDeRiesgoCuantitativo.seleccionarTodosUsuarios}" />
+						</p:selectBooleanButton>
+						<p:selectManyCheckbox
+							value="#{controladorMapasDeRiesgoCuantitativo.usuariosFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorMapasDeRiesgoCuantitativo.usuariosTodos}"
+								var="responsable" itemLabel="#{responsable.nombreUsua}"
+								itemValue="#{responsable.codigoUsua}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+
+					<h:outputText value="Eventos:" />
+					<h:outputText value="Nivel de Agrupación de Evento" />
+					<h:outputText value="Factor de Riesgos:" />
+					<h:outputText value="Tipo de Pérdida:" />
+					<h:outputText value="" />
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorMapasDeRiesgoCuantitativo.eventosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorMapasDeRiesgoCuantitativo.eventosSeleccionadas}"
+							id="arbEvento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:selectOneListbox
+							value="#{controladorMapasDeRiesgoCuantitativo.nivelEventoFiltro}"
+							layout="grid">
+							<f:selectItems
+								value="#{controladorMapasDeRiesgoCuantitativo.nivelEventoTodos}"
+								var="nivelEvento" itemLabel="#{nivelEvento}"
+								itemValue="#{nivelEvento}" />
+						</p:selectOneListbox>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollFactor">
+						<p:selectBooleanButton id="selTodosFactor"
+							value="#{controladorMapasDeRiesgoCuantitativo.btodosFactorRiesgo}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollFactor"
+								listener="#{controladorMapasDeRiesgoCuantitativo.seleccionarTodosFactorRiesgo()}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorMapasDeRiesgoCuantitativo.factorRiesgosFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorMapasDeRiesgoCuantitativo.factorRiesgosTodos}"
+								var="factorRiesgo" itemLabel="#{factorRiesgo.nombreFaro}"
+								itemValue="#{factorRiesgo.codigoFaro}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollTipo">
+						<p:selectBooleanButton
+							value="#{controladorMapasDeRiesgoCuantitativo.btodosTipoPerdida}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollTipo"
+								listener="#{controladorMapasDeRiesgoCuantitativo.seleccionarTodosTipoPerdida()}" />
+						</p:selectBooleanButton>
+						<p:selectManyCheckbox
+							value="#{controladorMapasDeRiesgoCuantitativo.tipoPerdidasFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorMapasDeRiesgoCuantitativo.tipoPerdidasTodos}"
+								var="tipoPerdida" itemLabel="#{tipoPerdida.nombreTipe}"
+								itemValue="#{tipoPerdida.codigoTipe}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+				</h:panelGrid>
+
+				<p:commandButton id="btnGenerarMapas" value="Generar Mapas"
+					actionListener="#{controladorMapasDeRiesgoCuantitativo.generarMapas()}"
+					icon="ui-icon-check" update="@form" onstart="PF('dlg2').show();"
+					oncomplete="PF('dlg2').hide;">
+
+				</p:commandButton>
+
+				<p:commandButton id="btnGenerarMapa"
+					value="Ver Mapa de Riesgo Inherente"
+					actionListener="#{controladorMapasDeRiesgoCuantitativo.verMapaInherente()}"
+					icon="ui-icon-check" update="@form"
+					rendered="#{controladorMapasDeRiesgoCuantitativo.mostrarBtnMapaInherente}"
+					onstart="PF('dlg2').show();" oncomplete="PF('dlg2').hide;">
+
+				</p:commandButton>
+
+				<p:commandButton id="btnGenerarMapaResidual"
+					value="Ver Mapa de Riesgo Residual"
+					actionListener="#{controladorMapasDeRiesgoCuantitativo.verMapaResidual()}"
+					icon="ui-icon-check" update="@form"
+					rendered="#{controladorMapasDeRiesgoCuantitativo.mostrarBtnMapaResidual}"
+					onstart="PF('dlg2').show();" oncomplete="PF('dlg2').hide;">
+
+				</p:commandButton>
+				
+<!-- 				GRÁFICO MAPA -->
+				<h:panelGrid columns="2">
+					<h:panelGrid columns="2" id="image">
+						<f:facet name="header">
+							<h:outputText value="Mapa de Riesgo Cuantitativo Inherente" />
+						</f:facet>
+						<p:dataGrid var="proba"
+							value="#{controladorMapasDeRiesgoCuantitativo.paramProbabilidadRiesgoTodos}"
+							columns="1" id="probas">
+
+							<h:panelGrid columns="1"
+								style="border: 1px dotted #a1a1a1;border-radius: 5px;height:15;width:100%;">
+								<h:panelGrid columns="1">
+									<h:outputText value="#{proba.letraPprr} - #{proba.nombrePprr}" />
+								</h:panelGrid>
+							</h:panelGrid>
+
+						</p:dataGrid>
+
+						<p:dataGrid var="cruceMapa"
+							value="#{controladorMapasDeRiesgoCuantitativo.cruceMapaTodos}"
+							columns="#{controladorMapasDeRiesgoCuantitativo.columnas}"
+							id="ariesgos" style="height:100%; width:100%;">
+
+							<h:panelGrid columns="1"
+								style="border: 1px dotted #a1a1a1;border-radius: 5px; height:15;width:100%;background-color: ##{cruceMapa.roAriesgo.roCalifRiesgo.colorClrs}; ">
+								<p:commandLink
+									action="#{controladorMapasDeRiesgoCuantitativo.seleccionarCruce()}"
+									title="#{cruceMapa.roAriesgo.roCalifRiesgo.nombreClrs}"
+									update="@form" onstart="PF('dlg2').show();"
+									oncomplete="PF('dlg2').hide;">
+									<h:panelGrid columns="2">
+										<h:outputText value="#{cruceMapa.roEventos.size()}" />
+									</h:panelGrid>
+									<f:setPropertyActionListener value="#{cruceMapa}"
+										target="#{controladorMapasDeRiesgoCuantitativo.cruceMapaVista}" />
+								</p:commandLink>
+							</h:panelGrid>
+						</p:dataGrid>
+
+						<h:outputText value="" />
+						<p:dataGrid var="pconi"
+							value="#{controladorMapasDeRiesgoCuantitativo.paramConsecuenciaImpactoTodos}"
+							columns="#{controladorMapasDeRiesgoCuantitativo.columnas}"
+							id="pconis">
+
+							<h:panelGrid columns="1"
+								style="border: 1px dotted #a1a1a1;border-radius: 5px; height:100%;width:100%;">
+
+								<h:outputText
+									value="#{pconi.numeroPconi} - #{pconi.nombrePconi}" />
+							</h:panelGrid>
+							
+						</p:dataGrid>
+						
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" style="width:120px">
+						<p:dataTable var="califRiesgo" style=""
+							value="#{controladorMapasDeRiesgoCuantitativo.calificacionesTodos}">
+							<p:column
+								style="width:20px;background-color:##{califRiesgo.colorClrs};">
+							</p:column>
+
+							<p:column style="width:50px">
+								<f:facet name="header">Categoría</f:facet>
+								<h:outputText value="#{califRiesgo.nombreClrs}" />
+							</p:column>
+
+							<p:column style="width:50px">
+								<f:facet name="header">Total</f:facet>
+								<h:outputText value="#{califRiesgo.total}" />
+							</p:column>
+
+						</p:dataTable>
+
+					</h:panelGrid>
+				</h:panelGrid>
+
+
+				<h:panelGrid columns="3">
+					<p:panel header="Exportar Filtros">
+						<h:commandLink
+							actionListener="#{controladorMapasDeRiesgoCuantitativo.crearReporteCabecera}">
+							<p:graphicImage value="/utils/images/pdf.png" />
+						</h:commandLink>
+					</p:panel>
+					<p:panel header="Exportar Mapa">
+						<h:commandLink
+							actionListener="#{controladorMapasDeRiesgoCuantitativo.crearReporteMapa}">
+							<p:graphicImage value="/utils/images/pdf.png" />
+						</h:commandLink>
+					</p:panel>
+
+
+				</h:panelGrid>
+
+				<p:dataTable id="dtlCruces"
+					value="#{controladorMapasDeRiesgoCuantitativo.cruceMapaVista.roEventos}"
+					var="varEvento"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+					selection="#{controladorMapasDeRiesgoCuantitativo.roEventoControlador}"
+					selectionMode="single" rowKey="#{varEvento.codigoEven}">
+					<p:ajax event="rowSelect"
+						listener="#{controladorMapasDeRiesgoCuantitativo.seleccionarEvento()}"
+						update=":@form" onstart="PF('dlg2').show();"
+						oncomplete="PF('dlg2').hide;" />
+
+					<p:column sortBy="#{varEvento.nombreEven}">
+						<center>
+							<f:facet name="header">Evento</f:facet>
+						</center>
+						<h:outputText value="#{varEvento.nombreEven}" />
+					</p:column>
+
+
+					<p:column sortBy="#{varEvento.numeroOcurrencias}">
+						<center>
+							<f:facet name="header">Número de Ocurrencias</f:facet>
+						</center>
+						<h:outputText value="#{varEvento.numeroOcurrencias}" />
+					</p:column>
+
+					<p:column sortBy="#{varEvento.negocio}">
+						<center>
+							<f:facet name="header">Negocio</f:facet>
+						</center>
+						<h:outputText value="#{varEvento.negocio}" />
+					</p:column>
+
+				</p:dataTable>
+
+				<p:dataTable id="dtlDetalleEvento"
+					value="#{controladorMapasDeRiesgoCuantitativo.roEventoVista.detallesEvento}"
+					var="varDetalleEvento"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+					scrollable="true" scrollWidth="978" resizableColumns="true">
+					<p:column headerText="Plan de Acción" style="width:200px;">
+						<p:commandButton process="@this" id="btnPlanDeAccion"
+							value="Plan de Acción"
+							action="#{controladorMapasDeRiesgoCuantitativo.planDeAccion()}"
+							icon="ui-icon-pencil"
+							oncomplete="window.open('/hcRiesgoOperativo/paginas/CrudAccion.jsf', '_blank');">
+							<f:setPropertyActionListener
+								target="#{controladorMapasDeRiesgoCuantitativo.roDetalleEventoVista}"
+								value="#{varDetalleEvento}"></f:setPropertyActionListener>
+							<p:tooltip for="btnPlanDeAccion"
+								value="Haga click para abrir la ventana de Planes de Acción de este registro" />
+						</p:commandButton>
+					</p:column>
+					<!-- Codigo detalle de evento, no editable-->
+					<p:column sortBy="#{varDetalleEvento.codigoDeve}"
+						headerText="Codigo" style="width:50px;">
+						<h:outputText value="#{varDetalleEvento.codigoDeve}"
+							title="#{varDetalleEvento.codigoDeve}" />
+					</p:column>
+
+					<!-- Agencia,editable-->
+					<p:column sortBy="#{varDetalleEvento.roAgencia.nombreAgia}"
+						headerText="Agencia" style="width:205px;">
+
+						<h:outputText value="#{varDetalleEvento.roAgencia.nombreAgia}"
+							title="#{varDetalleEvento.roAgencia.nombreAgia}" />
+
+					</p:column>
+
+					<!-- Evento,editable-->
+					<p:column sortBy="#{varDetalleEvento.roEvento.nombreEven}"
+						headerText="Evento" style="width:205px;">
+
+						<h:outputText value="#{varDetalleEvento.roEvento.nombreEven}"
+							title="#{varDetalleEvento.roEvento.nombreEven}" />
+
+					</p:column>
+
+					<!-- Proceso,editable-->
+					<p:column sortBy="#{varDetalleEvento.roProceso.nombrePros}"
+						headerText="Proceso" style="width:205px;">
+
+						<h:outputText value="#{varDetalleEvento.roProceso.nombrePros}"
+							title="#{varDetalleEvento.roProceso.nombrePros}" />
+
+					</p:column>
+
+					<!-- Negocio,editable-->
+					<p:column sortBy="#{varDetalleEvento.roNegocio1.nombreNego}"
+						headerText="Negocio" style="width:205px;">
+						<h:outputText value="#{varDetalleEvento.roNegocio1.nombreNego}"
+							title="#{varDetalleEvento.roNegocio1.nombreNego}" />
+					</p:column>
+
+					<!-- Departamento, editable-->
+					<p:column sortBy="#{varDetalleEvento.roDepartamento.nombreDept}"
+						headerText="Departamento" style="width:205px;">
+
+						<h:outputText
+							value="#{varDetalleEvento.roDepartamento.nombreDept}"
+							title="#{varDetalleEvento.roDepartamento.nombreDept}" />
+
+					</p:column>
+
+
+
+					<!-- Factor de Riesgo, editable-->
+					<p:column sortBy="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+						headerText="Factor de Riesgo" style="width:205px;">
+
+						<h:outputText
+							value="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+							title="#{varDetalleEvento.roFactorRiesgo.nombreFaro}" />
+
+					</p:column>
+
+					<p:column sortBy="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+						headerText="Tipo de Pérdida" style="width:205px;">
+
+						<h:outputText value="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+							title="#{varDetalleEvento.roTipoPerdida.nombreTipe}" />
+
+					</p:column>
+
+
+					<!-- Pto Control, editable-->
+					<p:column sortBy="#{varDetalleEvento.ptoCtrlProcDeve}"
+						headerText="Punto de Control" style="width:205px;">
+						<h:outputText value="#{varDetalleEvento.ptoCtrlProcDeve}"
+							title="#{varDetalleEvento.ptoCtrlProcDeve}" />
+
+					</p:column>
+
+					<p:column sortBy="#{varDetalleEvento.fechaOcurDeve}"
+						headerText="Fecha de Ocurrencia" style="width:60px;">
+						<h:outputText value="#{varDetalleEvento.fechaOcurDeve}"
+							title="#{varDetalleEvento.fechaOcurDeve}" />
+					</p:column>
+
+					<p:column sortBy="#{varDetalleEvento.fechaDescDeve}"
+						headerText="Fecha de Descubrimiento" style="width:60px;">
+						<h:outputText value="#{varDetalleEvento.fechaDescDeve}"
+							title="#{varDetalleEvento.fechaDescDeve}" />
+					</p:column>
+
+					<p:column sortBy="#{varDetalleEvento.fechaRegisDeve}"
+						headerText="Fecha de Registro" style="width:60px;">
+						<h:outputText value="#{varDetalleEvento.fechaRegisDeve}"
+							title="#{varDetalleEvento.fechaRegisDeve}" />
+					</p:column>
+
+					<p:column sortBy="#{varDetalleEvento.valorDeve}"
+						headerText="Pérdida" style="width:180px;">
+						<h:outputText value="#{varDetalleEvento.valorDeve}"
+							title="#{varDetalleEvento.valorDeve}" />
+					</p:column>
+
+					<!-- Monto Recuperado, editable-->
+					<p:column headerText="Monto Recuperado" style="width:120px;">
+
+						<h:outputText value="#{varDetalleEvento.montoRecupDeve}"
+							title="#{varDetalleEvento.montoRecupDeve}" />
+
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column sortBy="#{varDetalleEvento.costoRecupDeve}"
+						headerText="Costo de Recuperación" style="width:130px;">
+						<h:outputText value="#{varDetalleEvento.costoRecupDeve}"
+							title="#{varDetalleEvento.costoRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column sortBy="#{varDetalleEvento.realRecupDeve}"
+						headerText="Recuperación Real" style="width:130px;">
+						<h:outputText value="#{varDetalleEvento.realRecupDeve}"
+							title="#{varDetalleEvento.realRecupDeve}" />
+					</p:column>
+
+					<!-- Costo, editable-->
+					<p:column sortBy="#{varDetalleEvento.perdidaResidualDeve}"
+						headerText="Perdida Residual" style="width:130px;">
+						<h:outputText value="#{varDetalleEvento.perdidaResidualDeve}"
+							title="#{varDetalleEvento.perdidaResidualDeve}" />
+					</p:column>
+
+					<!-- Fecha, editable-->
+
+					<p:column sortBy="#{varDetalleEvento.sisUsuario.nombreUsua}"
+						headerText="Usuario" style="width:150px;">
+						<h:outputText value="#{varDetalleEvento.sisUsuario.nombreUsua}"
+							title="#{varDetalleEvento.sisUsuario.nombreUsua}" />
+					</p:column>
+
+					<p:column sortBy="#{varDetalleEvento.numOcur}"
+						headerText="Numero de Ocurrencias" style="width:150px;">
+						<h:outputText value="#{varDetalleEvento.numOcur}"
+							title="#{varDetalleEvento.numOcur}" />
+					</p:column>
+
+				</p:dataTable>
+
+				<h:panelGrid columns="1">
+					<p:panel header="Exportar Detalle">
+						<h:commandLink
+							actionListener="#{controladorMapasDeRiesgoCuantitativo.exportarPDF}">
+							<p:graphicImage value="/utils/images/pdf.png" />
+						</h:commandLink>
+						<h:commandLink
+							actionListener="#{controladorMapasDeRiesgoCuantitativo.exportarXLS}">
+							<p:graphicImage value="/utils/images/excel.png" />
+						</h:commandLink>
+						<h:commandLink
+							actionListener="#{controladorMapasDeRiesgoCuantitativo.exportarDOC}">
+							<p:graphicImage value="/utils/images/word.png"
+								style="width:32px;" />
+						</h:commandLink>
+					</p:panel>
+
+				</h:panelGrid>
+
+				<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+					modal="true" height="30" width="100" resizable="false">
+					<h:outputText value="Espere....." />
+				</p:dialog>
+			</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

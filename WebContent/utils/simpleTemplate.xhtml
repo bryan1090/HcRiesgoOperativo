@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<!-- tags
+tituloPagina  
+menuPagina
+tituloFormulario
+contenido
+ -->
+<h:head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>HC Consultores - Riesgo Operativo - <ui:insert
+			name="tituloPagina">Facturación y Control de Inventario</ui:insert></title>
+	<link href="#{request.contextPath}/utils/styles.css" rel="stylesheet"
+		type="text/css" />
+	<link rel="#{request.contextPath}/utils/stylesheet"
+		href="nivo-slider.css" type="text/css" media="screen" />
+	<h:outputScript name="scriptJava.js" />
+
+
+	<!-- <p:growl  /> -->
+</h:head>
+
+<h:body onload="setupPicChange();">
+
+	<div id="bg" style="BACKGROUND-COLOR: #ffffff;">
+
+		<div id="main">
+			<div id="main_bot">
+
+				<!-- header ends -->
+				<!-- scroll begins -->
+
+				<div class="header_bg"
+					style="BACKGROUND-COLOR: #ffffff; height: 200px; width: 983px;">
+
+
+					<div id="slider" onmouseover="stopTimer();"
+						onmouseout="setupPicChange()" onclick="change();"
+						style="height: 177px;"></div>
+
+
+
+
+				</div>
+				<div id="menuprime">
+					<ui:insert name="menuPagina">
+						<ui:include src="/paginas/MenuPrincipal.xhtml" />
+					</ui:insert>
+				</div>
+				<!-- header ends -->
+				<!-- content begins -->
+
+				<div id="content" style="width: 980px;">
+
+					<h2>
+						<ui:insert name="tituloFormulario">Titulo Formulario</ui:insert>
+					</h2>
+
+					<ui:insert name="contenido">
+							Aqui va el contenido
+						</ui:insert>
+
+
+
+				</div>
+
+				<!-- content ends -->
+
+				<!-- footer begins -->
+				<div id="footer" style="width: 986px;">
+					<div id="izqfooter" style="width: 320px;">
+						<ui:insert name="pieIzq">
+
+						</ui:insert>
+					</div>
+					<div id="cenfooter" style="width: 346px;">
+						<ui:insert name="pieCen"></ui:insert>
+					</div>
+					<div id="derfooter" style="width: 320px;">
+						<ui:insert name="pieDer">
+							<h:form>
+								<p:outputLabel
+									value="#{dataManagerSesion.usuarioSesion.nombreCompletoUsua}" />
+								<br />
+								<p:commandLink value="Cerrar Sesión"
+									action="#{dataManagerSesion.logout()}" />
+							</h:form>
+						</ui:insert>
+					</div>
+				</div>
+				<!-- footer ends -->
+			</div>
+		</div>
+	</div>
+</h:body>
+</html>

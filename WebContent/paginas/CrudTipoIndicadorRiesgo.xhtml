@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Indicadores de Riesgo Clave (KRIs)</ui:define>
+	<ui:define name="tituloFormulario">Indicadores de Riesgo Clave (KRIs)</ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formIndicadorRiesgo">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+<!-- 			<p:scrollPanel mode="native" style="width:100px;height:150px;word-wrap:break-word;"> -->
+
+<!-- 				<h:outputText value="asdsdqwewdasdaaaaaaaaaaaweqewwwwwwwwwdsadweqwesssssssdasdqwwwwww" /> -->
+
+
+<!-- 			</p:scrollPanel> -->
+
+
+			<p:commandButton id="btnNuevoInri"
+				value="Añadir Nuevo Indicador de Riesgo"
+				action="#{controladorCrudRoTipoIndicadorRiesgo.nuevoTipoIndicadorRiesgo()}"
+				update="formIndicadorRiesgo" process="@this">
+
+			</p:commandButton>
+
+
+			<h:panelGrid
+				rendered="#{controladorCrudRoTipoIndicadorRiesgo.pnlEditarIndicadorRiesgo}"
+				columns="2" id="pnlEditarIndicadorRiesgo">
+
+				<p:outputLabel for="cmbProceso" value="Proceso"></p:outputLabel>
+				<p:selectOneMenu id="cmbProceso" filter="true"
+					filterMatchMode="contains" required="true"
+					requiredMessage="El proceso es un campo obligatorio"
+					value="#{controladorCrudRoTipoIndicadorRiesgo.idProcesoSeleccionado}"
+					style="heigh:50px">
+					<f:selectItem itemLabel="Seleccione una opción..."
+						noSelectionOption="true" />
+					<f:selectItems
+						value="#{controladorCrudRoTipoIndicadorRiesgo.procesosUsuario}"
+						var="var" itemValue="#{var.codigoPros}"
+						itemLabel="#{var.nombrePros}">
+					</f:selectItems>
+				</p:selectOneMenu>
+
+
+
+
+
+				<p:outputLabel for="txtNombre" value="Nombre"></p:outputLabel>
+				<p:inputText id="txtNombre"
+					value="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista.nombreTinri}"
+					required="true"
+					requiredMessage="El valor nombre es un campo Obligatorio"
+					maxlength="250" size="50">
+				</p:inputText>
+
+				<p:outputLabel for="onebtnTipoValor" value="Tipo Valor"></p:outputLabel>
+				<p:selectOneRadio id="onebtnTipoValor" required="true"
+					requiredMessage="Escoja un tipo de valor"
+					value="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista.tipoValor}">
+					<f:selectItem itemLabel="Numero" itemValue="numero" />
+					<f:selectItem itemLabel="Porcentaje %" itemValue="porcentaje" />
+				></p:selectOneRadio>
+
+				<p:outputLabel for="txtUnidad" value="Unidad"></p:outputLabel>
+				<p:inputText id="txtUnidad"
+					value="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista.unidad}"
+					required="false"
+					requiredMessage="El valor unidad es un campo Obligatorio"
+					maxlength="250" size="15">
+				</p:inputText>
+
+				<p:outputLabel for="numAlerta" value="Alerta" />
+				<h:panelGrid columns="1">
+					<p:inputText id="numAlerta"
+						value="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista.alerta}"
+						required="true"
+						requiredMessage="El valor de alerta es un campo Obligatorio"
+						size="5" />
+				</h:panelGrid>
+
+				<p:outputLabel for="numLimite" value="Límite" />
+
+				<h:panelGrid>
+					<p:inputText id="numLimite"
+						value="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista.limite}"
+						required="true"
+						requiredMessage="El valor de límite es un campo Obligatorio"
+						maxlength="250" size="5" />
+
+				</h:panelGrid>
+
+				<p:outputLabel for="txtObservacion" value="Observacion"></p:outputLabel>
+				<p:inputTextarea id="txtObservacion"
+					value="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista.observacionInri}"
+					rows="5" cols="60" maxlength="250" counter="counter"
+					counterTemplate="{0} caracteres restantes.">
+				</p:inputTextarea>
+				<h:outputText id="counter" />
+
+				<!-- BOTONES -->
+				<p:commandButton value="Guardar"
+					action="#{controladorCrudRoTipoIndicadorRiesgo.guardarIndicadorRiesgo()}"
+					update="@form" process="@this pnlEditarIndicadorRiesgo">
+				</p:commandButton>
+
+
+				<p:commandButton value="Cancelar"
+					action="#{controladorCrudRoTipoIndicadorRiesgo.cancelar()}"
+					update="@form" process="@this">
+					<f:setPropertyActionListener
+						target="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista}"
+						value="#{varIndicadorRiesgo}">
+					</f:setPropertyActionListener>
+				</p:commandButton>
+			</h:panelGrid>
+
+			<!-- TABLA -->
+
+
+			<p:dataTable id="dtlIndicadorRiesgo"
+				value="#{controladorCrudRoTipoIndicadorRiesgo.listaRoTipoIndicadorRiesgo}"
+				var="varIndicadorRiesgo" paginator="true" rows="4"
+				rowsPerPageTemplate="4,8,12">
+
+				<p:column style="width:20px;"
+					sortBy="#{varIndicadorRiesgo.codigoTinri}">
+					<f:facet name="header">Código</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.codigoTinri}" />
+				</p:column>
+
+
+
+				<p:column style="width:60px;"
+					sortBy="#{varIndicadorRiesgo.nombreTinri}"
+					filterBy="#{varIndicadorRiesgo.nombreTinri}"
+					filterStyle="width:80%">
+					<f:facet name="header">Nombre</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.nombreTinri}" />
+				</p:column>
+
+				<p:column style="width:40px;"
+					sortBy="#{varIndicadorRiesgo.tipoValor}"
+					filterBy="#{varIndicadorRiesgo.tipoValor}" filterStyle="width:80%">
+					<f:facet name="header">Tipo Valor</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.tipoValor}" />
+				</p:column>
+
+				<p:column style="width:120px"
+					sortBy="#{varIndicadorRiesgo.roProceso.nombrePros}"
+					filterBy="#{varIndicadorRiesgo.roProceso.nombrePros}"
+					filterStyle="width:80%">
+					<f:facet name="header">Proceso</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.roProceso.nombrePros}" />
+				</p:column>
+
+
+
+				<p:column style="width:30px" sortBy="#{varIndicadorRiesgo.unidad}"
+					filterBy="#{varIndicadorRiesgo.unidad}" filterStyle="width:80%">
+					<f:facet name="header">Unidad</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.unidad}" />
+				</p:column>
+
+
+				<p:column style="width:8px" sortBy="#{varIndicadorRiesgo.alerta}">
+					<f:facet name="header">Alerta</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.alerta}" />
+				</p:column>
+
+				<p:column style="width:8px" sortBy="#{varIndicadorRiesgo.limite}">
+					<f:facet name="header">Límite</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.limite}" />
+				</p:column>
+
+
+
+				<p:column style="width:100px"
+					sortBy="#{varIndicadorRiesgo.observacionInri}">
+					<f:facet name="header">Observacion</f:facet>
+					<h:outputText value="#{varIndicadorRiesgo.observacionInri}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES 
+				************************************************************* -->
+
+				<p:column exportable="false" style="width:30px">
+
+					<f:facet name="header">Acciones</f:facet>
+
+					<p:commandButton id="btnModificar"
+						action="#{controladorCrudRoTipoIndicadorRiesgo.modificarIndicadorRiesgo()}"
+						update=":formIndicadorRiesgo" icon="ui-icon-pencil"
+						process="@this">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoSeleccionado}"
+							value="#{varIndicadorRiesgo}">
+						</f:setPropertyActionListener>
+						<p:tooltip for="btnModificar"
+							value="Haga click para MODIFICAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						action="#{controladorCrudRoTipoIndicadorRiesgo.eliminarIndicadorRiesgo()}"
+						update=":formIndicadorRiesgo" icon="ui-icon-trash" process="@this">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoIndicadorRiesgo.roTipoIndicadorRiesgoVista}"
+							value="#{varIndicadorRiesgo}">
+						</f:setPropertyActionListener>
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+						<p:confirm header="Eliminar Tipo de Indicador"
+							message="¿Desea eliminar este tipo de indicador?"
+							icon="ui-icon-disk" />
+					</p:commandButton>
+
+				</p:column>
+
+			</p:dataTable>
+
+
+			<h:panelGrid id="pnlExportar" columns="2">
+				<p:panel header="Exportar Todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter target="dtlIndicadorRiesgo" type="xls"
+							fileName="tipoIndicador" />
+					</h:commandLink>
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter target="dtlIndicadorRiesgo" type="pdf"
+							fileName="tipoIndicador" />
+					</h:commandLink>
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter target="dtlIndicadorRiesgo" type="xml"
+							fileName="tipoIndicador" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exporta Página">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter target="dtlIndicadorRiesgo" type="xls"
+							fileName="tipoIndicador" pageOnly="true" />
+					</h:commandLink>
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter target="dtlIndicadorRiesgo" type="pdf"
+							fileName="tipoIndicador" pageOnly="true" />
+					</h:commandLink>
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter target="dtlIndicadorRiesgo" type="xml"
+							fileName="tipoIndicador" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Tipo de Ejecución</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	
+	<ui:define name="contenido">
+		<h:form id="formTipoEjecucion">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		
+			<p:commandButton id="btnNuevaTipoEjecucion"
+				value="Añadir Nuevo Tipo de Ejecución"
+				action="#{controladorCrudRoTipoEjecucion.nuevoTipoEjecucionVista()}"
+				icon="ui-icon-plus" update="formTipoEjecucion"
+				disabled="#{controladorCrudRoTipoEjecucion.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlTipoEjecucion"
+				rendered="#{controladorCrudRoTipoEjecucion.pnlTipoEjecucion}">
+
+				<p:outputLabel for="txtNombreTipoEjecucion" value="Nombre del Tipo de Ejecución" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreTipoEjecucion"
+						value="#{controladorCrudRoTipoEjecucion.roTipoEjecucionVista.nombreTiej}"
+						required="true"
+						requiredMessage="El Nombre de TipoEjecucion es un campo Obligatorio"
+						maxlength="250" size="50"/>
+					<p:message for="txtNombreTipoEjecucion" />
+				</h:panelGrid>
+
+			
+				<p:commandButton id="btnGuardarTipoEjecucion" value="Guardar"
+					actionListener="#{controladorCrudRoTipoEjecucion.guardarTipoEjecucion()}"
+					icon="ui-icon-disk"
+					update="formTipoEjecucion">
+					<p:confirm header="Guardar TipoEjecucion"
+						message="¿Desea guardar esta TipoEjecución?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarTipoEjecucion" value="Cancelar"
+					action="#{controladorCrudRoTipoEjecucion.cancelar()}" icon="ui-icon-disk"
+					update="formTipoEjecucion" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlTipoEjecucion"
+				value="#{controladorCrudRoTipoEjecucion.tipoEjecucionsTodos}"
+				var="varTipoEjecucion"
+				style="width:40%"
+				
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+					 
+						<f:facet name="header">Nombre</f:facet>
+					 
+					<h:outputText value="#{varTipoEjecucion.nombreTiej}" />
+				</p:column>
+
+
+						
+
+
+				<!-- *********************************************************
+				 			ACCIONES TipoEjecucion
+				************************************************************* -->
+
+				<p:column exportable="false" style="width:30%">
+					 
+						<f:facet name="header">Acciones</f:facet>
+					 
+
+					<p:commandButton id="btnEditar" update=":formTipoEjecucion"
+						action="#{controladorCrudRoTipoEjecucion.editarTipoEjecucionVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoEjecucion.roTipoEjecucionVista}"
+							value="#{varTipoEjecucion}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formTipoEjecucion" icon="ui-icon-trash"
+						action="#{controladorCrudRoTipoEjecucion.eliminarTipoEjecucion()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoEjecucion.roTipoEjecucionVista}"
+							value="#{varTipoEjecucion}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar TipoEjecucion"
+							message="¿Desea eliminar este TipoEjecucion?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			
+				<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoEjecucion"
+							fileName="tipoEjecucion" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoEjecucion" fileName="tipoEjecucion" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoEjecucion"
+							fileName="tipoEjecucion" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoEjecucion"
+							fileName="tipoEjecucion" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoEjecucion" fileName="tipoEjecucion" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoEjecucion"
+							fileName="tipoEjecucion" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

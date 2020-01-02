@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Parámetro</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formParametro">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaCaractEvento"
+				value="Añadir Nuevo Parametro"
+				action="#{controladorCrudSisParametro.nuevoCaractEventoVista()}"
+				icon="ui-icon-plus" update="formParametro"
+				disabled="#{controladorCrudSisParametro.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlCaractEvento"
+				rendered="#{controladorCrudSisParametro.pnlCaractEvento}">
+
+				<p:outputLabel for="txtNombreCaractEvento"
+					value="Nombre del Parámetro" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreCaractEvento"
+						value="#{controladorCrudSisParametro.parametroVista.nombrePara}"
+						required="true"
+						requiredMessage="El Nombre del parámetro es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtNombreCaractEvento" />
+				</h:panelGrid>
+
+				<p:outputLabel
+					value="Valor del Parámetro" />
+				<p:inputTextarea id="txtObservacionCaractEvento"
+					value="#{controladorCrudSisParametro.parametroVista.valorPara}"
+					maxlength="500" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarCaractEvento" value="Guardar"
+					actionListener="#{controladorCrudSisParametro.guardarCaractEvento()}"
+					icon="ui-icon-disk" update="formParametro">
+					<p:confirm header="Guardar CaractEvento"
+						message="¿Desea guardar este Parámetro?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarCaractEvento" value="Cancelar"
+					action="#{controladorCrudSisParametro.cancelar()}"
+					icon="ui-icon-disk" update="formParametro" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlCaractEvento"
+				value="#{controladorCrudSisParametro.parametrosTodos}"
+				var="varCaractEvento"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+					<center>
+						<f:facet name="header">Nombre</f:facet>
+					</center>
+					<h:outputText value="#{varCaractEvento.nombrePara}" />
+				</p:column>
+
+
+				<p:column>
+					<center>
+						<f:facet name="header">Evento</f:facet>
+					</center>
+					<h:outputText value="#{varCaractEvento.valorPara}" />
+				</p:column>
+
+
+
+				<!-- *********************************************************
+				 			ACCIONES CaractEvento
+				************************************************************* -->
+
+				<p:column exportable="false">
+					<center>
+						<f:facet name="header">Acciones</f:facet>
+					</center>
+
+					<p:commandButton id="btnEditar" update=":formParametro"
+						action="#{controladorCrudSisParametro.editarCaractEventoVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudSisParametro.parametroVista}"
+							value="#{varCaractEvento}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formParametro"
+						icon="ui-icon-trash"
+						action="#{controladorCrudSisParametro.eliminarCaractEvento()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudSisParametro.parametroVista}"
+							value="#{varCaractEvento}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar CaractEvento"
+							message="¿Desea eliminar este CaractEvento?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlCaractEvento" fileName="caracteristicadeevento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlCaractEvento" fileName="caracteristicadeevento"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

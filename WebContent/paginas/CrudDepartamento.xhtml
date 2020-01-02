@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templateProDual.xhtml">
+	<ui:define name="tituloPagina">Departamento</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	<ui:define name="arbolRecursivo">
+		<h:form id="formArbolDepartamento">
+			<h1>DEPARTAMENTOS:</h1>
+			
+<!-- 			<p:selectBooleanButton onLabel="Expandir" offLabel="No expandir" id="btnExpandirTodo" -->
+<!-- 				value="#{controladorCrudRoDepartamento.expandirTodoArbol}" -->
+				
+<!-- 				icon="ui-icon-plus" update="formArbolDepartamento" -->
+<!-- 				 > -->
+				 
+<!-- 				 </p:selectBooleanButton> -->
+			
+			
+			<p:tree
+				value="#{controladorCrudRoDepartamento.arbolDepartamentoVista}"
+				var="node" dynamic="true" selectionMode="single"
+				selection="#{controladorCrudRoDepartamento.arbolDepartamentoSeleccionado}"
+				id="arbDepartamento" filterBy="#{node}" style="width:270px;">
+				<p:ajax event="select" update=":formDepartamento"
+					listener="#{controladorCrudRoDepartamento.seleccionarDepartamento()}" />
+
+				<p:treeNode >
+					<h:outputText value="#{node}" />
+				</p:treeNode>
+			</p:tree>
+		</h:form>
+	</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formDepartamento">
+
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaDepartamento"
+				value="Añadir Nuevo Departamento a #{controladorCrudRoDepartamento.nombreSeleccionado}"
+				action="#{controladorCrudRoDepartamento.nuevoDepartamentoVista()}"
+				icon="ui-icon-plus" update="formDepartamento"
+				disabled="#{controladorCrudRoDepartamento.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlDepartamento"
+				rendered="#{controladorCrudRoDepartamento.pnlDepartamento}">
+
+				<p:outputLabel for="txtNombreDepartamento"
+					value="Nombre del Departamento" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreDepartamento"
+						value="#{controladorCrudRoDepartamento.roDepartamentoVista.nombreDept}"
+						required="true"
+						requiredMessage="El Nombre de Departamento es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreDepartamento" />
+				</h:panelGrid>
+
+				<p:outputLabel value="Código" />
+				<p:inputText
+					value="#{controladorCrudRoDepartamento.roDepartamentoVista.numeroDept}"
+					maxlength="10" />
+
+				<p:outputLabel for="cmbEstadoDepartamento" value="Estado" />
+				<p:selectOneMenu id="cmbEstadoDepartamento"
+					value="#{controladorCrudRoDepartamento.idEstadoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado del Departamento">
+					<f:selectItems
+						value="#{controladorCrudRoDepartamento.estadosTodos}"
+						var="varEstados" itemValue="#{varEstados.codigoEsta}"
+						itemLabel="#{varEstados.nombreEsta}" />
+				</p:selectOneMenu>
+
+
+				<p:outputLabel for="cmbNivelDepartamento" value="Nivel" />
+				<p:selectOneMenu id="cmbNivelDepartamento"
+					value="#{controladorCrudRoDepartamento.idNivelArbolSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el nivel del Departamento">
+					<f:selectItems
+						value="#{controladorCrudRoDepartamento.nivelesArbolTodos}"
+						var="varNiveles" itemValue="#{varNiveles.codigoGniv}"
+						itemLabel="#{varNiveles.nombreGniv}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbResponsablesSeleccionados"
+					value="Responsables" />
+				<p:selectManyMenu id="cmbResponsablesSeleccionados"
+					value="#{controladorCrudRoDepartamento.responsablesSeleccionados}"
+					required="True"
+					filter="true" filterMatchMode="contains"
+					requiredMessage="Debe seleccionar uno o mas responsables para el Proceso"
+					style="width:200px;height:230px" showCheckbox="true">
+					<f:selectItems
+						value="#{controladorCrudRoDepartamento.responsablesTodos}"
+						var="responsable"
+						itemLabel="#{responsable.apellidoResp} #{responsable.nombreResp} - #{responsable.roTipoResp.nombreTres}"
+						itemValue="#{responsable.codigoResp}" />
+				</p:selectManyMenu>
+
+
+				<p:commandButton id="btnGuardarDepartamento" value="Guardar"
+					actionListener="#{controladorCrudRoDepartamento.guardarDepartamento()}"
+					icon="ui-icon-disk"
+					update="formDepartamento :formArbolDepartamento:arbDepartamento">
+					<p:confirm header="Guardar Departamento"
+						message="¿Desea guardar este Departamento?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarDepartamento" value="Cancelar"
+					action="#{controladorCrudRoDepartamento.cancelar()}"
+					icon="ui-icon-disk" update="formDepartamento" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlDepartamento"
+				value="#{controladorCrudRoDepartamento.subDepartamentosTodos}"
+				var="varDepartamento"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column sortBy="#{varDepartamento.nombreDept}" filterBy="#{varDepartamento.nombreDept}">
+					<f:facet name="header">Nombre</f:facet>
+					<h:outputText value="#{varDepartamento.nombreDept}" />
+				</p:column>
+
+				<p:column sortBy="#{varDepartamento.numeroDept}">
+					<f:facet name="header">Código</f:facet>
+					<h:outputText value="#{varDepartamento.numeroDept}" />
+				</p:column>
+
+				<p:column sortBy="#{varDepartamento.genEstado.nombreEsta}">
+					<f:facet name="header">Estado</f:facet>
+					<h:outputText value="#{varDepartamento.genEstado.nombreEsta}" />
+				</p:column>
+
+
+				<p:column sortBy="#{varDepartamento.genNivelArbol.nombreGniv}">
+					<f:facet name="header">Nivel</f:facet>
+					<h:outputText value="#{varDepartamento.genNivelArbol.nombreGniv}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES Departamento
+				************************************************************* -->
+
+				<p:column exportable="false">
+					<f:facet name="header">Acciones</f:facet>
+
+					<p:commandButton id="btnEditar" update=":formDepartamento"
+						action="#{controladorCrudRoDepartamento.editarDepartamentoVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoDepartamento.roDepartamentoVista}"
+							value="#{varDepartamento}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formDepartamento :formArbolDepartamento"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoDepartamento.eliminarDepartamento()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoDepartamento.roDepartamentoVista}"
+							value="#{varDepartamento}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Departamento"
+							message="¿Desea eliminar este Departamento?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlDepartamento"
+							fileName="departamento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlDepartamento" fileName="departamento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlDepartamento"
+							fileName="departamento" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlDepartamento"
+							fileName="departamento" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlDepartamento" fileName="departamento" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlDepartamento"
+							fileName="departamento" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

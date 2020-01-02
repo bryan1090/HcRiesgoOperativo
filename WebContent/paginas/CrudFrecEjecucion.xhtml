@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Frecuencia de Ejecución</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	
+	<ui:define name="contenido">
+		<h:form id="formFrecEjecucion">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		
+			<p:commandButton id="btnNuevaFrecEjecucion"
+				value="Añadir Nueva Frecuencia de Ejecución"
+				action="#{controladorCrudRoFrecEjecucion.nuevoFrecEjecucionVista()}"
+				icon="ui-icon-plus" update="formFrecEjecucion"
+				disabled="#{controladorCrudRoFrecEjecucion.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlFrecEjecucion"
+				rendered="#{controladorCrudRoFrecEjecucion.pnlFrecEjecucion}">
+
+				<p:outputLabel for="txtNombreFrecEjecucion" value="Nombre" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreFrecEjecucion"
+						value="#{controladorCrudRoFrecEjecucion.roFrecEjecucionVista.nombreFrej}"
+						required="true"
+						requiredMessage="El Nombre es un campo Obligatorio"
+						maxlength="250" size="50"/>
+					<p:message for="txtNombreFrecEjecucion" />
+				</h:panelGrid>
+
+			
+				<p:commandButton id="btnGuardarFrecEjecucion" value="Guardar"
+					actionListener="#{controladorCrudRoFrecEjecucion.guardarFrecEjecucion()}"
+					icon="ui-icon-disk"
+					update="formFrecEjecucion">
+					<p:confirm header="Guardar"
+						message="¿Desea guardar esta Frecuencia de Ejecución?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarFrecEjecucion" value="Cancelar"
+					action="#{controladorCrudRoFrecEjecucion.cancelar()}" icon="ui-icon-disk"
+					update="formFrecEjecucion" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlFrecEjecucion"
+				value="#{controladorCrudRoFrecEjecucion.frecEjecucionsTodos}"
+				style="width:30%"
+				var="varFrecEjecucion"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+					 
+						<f:facet name="header">Nombre</f:facet>
+					 
+					<h:outputText value="#{varFrecEjecucion.nombreFrej}" />
+				</p:column>
+
+
+						
+
+
+				<!-- *********************************************************
+				 			ACCIONES FrecEjecucion
+				************************************************************* -->
+
+				<p:column exportable="false">
+					 
+						<f:facet name="header">Acciones</f:facet>
+					 
+
+					<p:commandButton id="btnEditar" update=":formFrecEjecucion"
+						action="#{controladorCrudRoFrecEjecucion.editarFrecEjecucionVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoFrecEjecucion.roFrecEjecucionVista}"
+							value="#{varFrecEjecucion}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formFrecEjecucion" icon="ui-icon-trash"
+						action="#{controladorCrudRoFrecEjecucion.eliminarFrecEjecucion()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoFrecEjecucion.roFrecEjecucionVista}"
+							value="#{varFrecEjecucion}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar FrecEjecucion"
+							message="¿Desea eliminar este FrecEjecucion?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			
+				<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlFrecEjecucion"
+							fileName="tipoEjecucion" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlFrecEjecucion" fileName="tipoEjecucion" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlFrecEjecucion"
+							fileName="tipoEjecucion" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlFrecEjecucion"
+							fileName="tipoEjecucion" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlFrecEjecucion" fileName="tipoEjecucion" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlFrecEjecucion"
+							fileName="tipoEjecucion" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

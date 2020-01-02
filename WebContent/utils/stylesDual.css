@@ -1,0 +1,78 @@
+/* -----------------------------------------------------------------------------
+    R E S E T
+----------------------------------------------------------------------------- */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+	blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,
+	em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
+	b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+	table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas,
+	details, embed, figure, figcaption, footer, header, hgroup, menu, nav,
+	output, ruby, section, summary, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+}
+
+/*----
+Barra
+-----*/
+body {
+	font: 11px Arial, Helvetica, Sans-Serif;
+	color: #454545;
+}
+
+h1, h2, h3, h4 {
+	font: bold 1em/1.5em Arial, Helvetica, Sans-Serif;
+	margin-bottom: 24px;
+	color: #000000;
+}
+
+#barraTemplate {
+	background-color: rgb(11, 15, 77);
+	height: 50px;
+	width: 100%;
+	position: fixed;
+	z-index: 5;
+	top: 0;
+}
+
+#menuprime {
+	position: relative;
+	top: 50px;
+	float: left;
+}
+
+#content {
+	top: 50px;
+	width: 850px;
+	float: left;
+	position: absolute;
+	left: 450px;
+	margin: 10px;
+	padding: 5px;
+	margin: 10px;
+}
+
+.ui-widget-content {
+	border: 1px solid rgba(90, 70, 131, 0.19) !important;
+	background: rgba(117, 116, 119, 0.15) !important;
+}
+
+#arbol {
+	top: 50px;
+	float: left;
+	position: absolute;
+	left: 160px;
+	margin: 10px;
+	padding: 5px;
+	margin: 10px;
+	width: 270px;
+}
+
+#account {
+	position: absolute;
+	right: 0;
+	width: 250px;
+}

@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Responsable</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formResponsable">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaResponsable"
+				value="Añadir Nuevo Responsable"
+				action="#{controladorCrudRoResponsable.nuevoResponsableVista()}"
+				icon="ui-icon-plus" update="formResponsable"
+				disabled="#{controladorCrudRoResponsable.btnAnadir}">
+				<p:ajax event="click" update="@form"
+					listener="#{controladorCrudRoResponsable.habilitarBtnsSU()}" />
+
+			</p:commandButton>
+
+			<h:panelGrid columns="2" id="pnlResponsable"
+				rendered="#{controladorCrudRoResponsable.pnlResponsable}">
+
+
+
+				<p:outputLabel for="cmbUsuarioResponsable" value="Usuario" />
+				<p:selectOneMenu id="cmbUsuarioResponsable"
+					value="#{controladorCrudRoResponsable.idUsuarioSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el Usuario Responsable">
+					<f:selectItem itemLabel="Seleccione uno" itemValue="" />
+
+					<f:selectItems
+						value="#{controladorCrudRoResponsable.usuariosTodos}"
+						var="varUsuarios" itemValue="#{varUsuarios.codigoUsua}"
+						itemLabel="#{varUsuarios.nombreUsua}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbEstadoResponsable" value="Estado" />
+				<p:selectOneMenu id="cmbEstadoResponsable"
+					value="#{controladorCrudRoResponsable.idEstadoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado del Responsable">
+
+					<f:selectItems value="#{controladorCrudRoResponsable.estadosTodos}"
+						var="varEstados" itemValue="#{varEstados.codigoEsta}"
+						itemLabel="#{varEstados.nombreEsta}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbTipoResponsabilidad"
+					value="Tipo de Responsabilidad *" required="true"
+					requiredMessage="Debe seleccionar el tipo de Responsabilidad" />
+				<p:selectOneMenu id="cmbTipoResponsabilidad"
+					value="#{controladorCrudRoResponsable.idTipoResponsable}">
+					<f:selectItem itemLabel="Seleccione uno" itemValue="" />
+
+					<f:selectItems
+						value="#{controladorCrudRoResponsable.tipoRespTodos}"
+						var="varTipRe" itemValue="#{varTipRe.codigoTres}"
+						itemLabel="#{varTipRe.nombreTres}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtNombreResponsable"
+					value="Nombre del Responsable" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreResponsable"
+						value="#{controladorCrudRoResponsable.roResponsableVista.nombreResp}"
+						required="true"
+						requiredMessage="El Nombre de Responsable es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtNombreResponsable" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtApellidoResponsable"
+					value="Apellido del Responsable" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtApellidoResponsable"
+						value="#{controladorCrudRoResponsable.roResponsableVista.apellidoResp}"
+						required="true"
+						requiredMessage="El Apellido del Responsable es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtApellidoResponsable" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtTelefono1Responsable" value="Teléfono 1" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtTelefono1Responsable"
+						value="#{controladorCrudRoResponsable.roResponsableVista.telefono1Resp}"
+						required="true" maxlength="15"
+						requiredMessage="El Teléfono 1 del Responsable es un campo Obligatorio" />
+					<p:message for="txtTelefono1Responsable" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtTelefono2Responsable" value="Teléfono 2" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtTelefono2Responsable"
+						value="#{controladorCrudRoResponsable.roResponsableVista.telefono2Resp}"
+						required="false" maxlength="15" />
+					<p:message for="txtTelefono2Responsable" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtDireccion1Responsable" value="Dirección 1" />
+				<h:panelGrid columns="2">
+					<p:inputTextarea id="txtDireccion1Responsable"
+						value="#{controladorCrudRoResponsable.roResponsableVista.direccion1Resp}"
+						required="true" maxlength="250" rows="5" cols="60"
+						requiredMessage="La Dirección 1 del Responsable es un campo Obligatorio" />
+					<p:message for="txtDireccion1Responsable" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtDireccion2Responsable" value="Dirección 2" />
+				<h:panelGrid columns="2">
+					<p:inputTextarea id="txtDireccion2Responsable"
+						value="#{controladorCrudRoResponsable.roResponsableVista.direccion2Resp}"
+						required="false" maxlength="250" rows="5" cols="60" />
+
+					<p:message for="txtDireccion2Responsable" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtCorreoResponsable"
+					value="e-mail del Responsable" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtCorreoResponsable"
+						value="#{controladorCrudRoResponsable.roResponsableVista.correoResp}"
+						required="true"
+						requiredMessage="El e-mail del Responsable es un campo Obligatorio"
+						maxlength="100" />
+					<p:message for="txtCorreoResponsable" />
+				</h:panelGrid>
+
+
+				<p:selectBooleanButton id="btnPermisosSU" onLabel="Permisos SU"
+					offLabel="Sin permisos de SU" onIcon="ui-icon-minusthick"
+					offIcon="ui-icon-radio-on"
+					value="#{controladorCrudRoResponsable.btnPermisosSU}">
+
+					<p:ajax event="change" update="@form:pnlBtnsSu"
+						listener="#{controladorCrudRoResponsable.habilitarBtnsSU()}" />
+
+				</p:selectBooleanButton>
+
+				<h:panelGrid id="pnlBtnsSu">
+
+					<p:selectBooleanButton
+						rendered="#{controladorCrudRoResponsable.mostrarBtnSUProcesos}"
+						onLabel="Activado - Permiso SuperUsuario(Procesos)"
+						offLabel="NO Activado - Permiso SuperUsuario(Procesos)"
+						id="btnSuperUsuarioProcesos" onIcon="ui-icon-minusthick"
+						offIcon="ui-icon-radio-on"
+						value="#{controladorCrudRoResponsable.btnAgregarTodosProceso}">
+					</p:selectBooleanButton>
+
+					<p:selectBooleanButton
+						rendered="#{controladorCrudRoResponsable.mostrarBtnSUDepartamentos}"
+						onLabel="Activado - Permiso SuperUsuario(Departamentos)"
+						offLabel="NO Activado - Permiso SuperUsuario(Departamentos)"
+						id="btnSuperUsuarioDepartamentos" onIcon="ui-icon-minusthick"
+						offIcon="ui-icon-radio-on"
+						value="#{controladorCrudRoResponsable.btnAgregarTodosDepartamento}">
+					</p:selectBooleanButton>
+
+
+
+					<p:selectBooleanButton
+						rendered="#{controladorCrudRoResponsable.mostrarBtnSUAgencias}"
+						onLabel="Activado - Permiso SuperUsuario(Agencias)"
+						offLabel="NO Activado - Permiso SuperUsuario(Agencias)"
+						id="btnSuperUsuarioAgencias" onIcon="ui-icon-minusthick"
+						offIcon="ui-icon-radio-on"
+						value="#{controladorCrudRoResponsable.btnAgregarTodosAgencia}">
+					</p:selectBooleanButton>
+
+				</h:panelGrid>
+
+
+
+				
+					<p:commandButton id="btnGuardarResponsable" value="Guardar"
+						actionListener="#{controladorCrudRoResponsable.guardarResponsable()}"
+						icon="ui-icon-disk" update="formResponsable">
+						<p:confirm header="Guardar Responsable"
+							message="¿Desea guardar esta Responsable?" icon="ui-icon-disk" />
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarResponsable" value="Cancelar"
+						action="#{controladorCrudRoResponsable.cancelar()}"
+						icon="ui-icon-disk" update="formResponsable" process="@this" />
+
+				</h:panelGrid>
+			
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlResponsable"
+				value="#{controladorCrudRoResponsable.responsablesTodos}"
+				var="varResponsable"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column sortBy="#{varResponsable.sisUsuario.nombreUsua}"
+					filterBy="#{varResponsable.sisUsuario.nombreUsua}">
+
+					<f:facet name="header">Usuario</f:facet>
+
+					<h:outputText value="#{varResponsable.sisUsuario.nombreUsua}" />
+				</p:column>
+
+				<p:column sortBy="#{varResponsable.nombreResp}"
+					filterBy="#{varResponsable.nombreResp}">
+
+					<f:facet name="header">Nombre</f:facet>
+
+					<h:outputText
+						value="#{varResponsable.nombreResp} #{varResponsable.apellidoResp}" />
+				</p:column>
+
+				<p:column sortBy="#{varResponsable.genEstado.nombreEsta}">
+
+					<f:facet name="header">Estado</f:facet>
+
+					<h:outputText value="#{varResponsable.genEstado.nombreEsta}" />
+				</p:column>
+
+				<p:column sortBy="#{varResponsable.roTipoResp.nombreTres}"
+					filterBy="#{varResponsable.roTipoResp.nombreTres}">
+
+					<f:facet name="header">Tipo de Responsabilidad</f:facet>
+
+					<h:outputText value="#{varResponsable.roTipoResp.nombreTres}" />
+				</p:column>
+				<p:column sortBy="#{varResponsable.permisoSuPros}">
+
+					<f:facet name="header">SU-Proceso</f:facet>
+
+					<h:outputText value="#{varResponsable.permisoSuPros}" />
+				</p:column>
+				<p:column sortBy="#{varResponsable.permisoSuDept}">
+
+					<f:facet name="header">SU-Departamento</f:facet>
+
+					<h:outputText value="#{varResponsable.permisoSuDept}" />
+				</p:column>
+				<p:column sortBy="#{varResponsable.permisoSuAgia}">
+
+					<f:facet name="header">SU-Agencia</f:facet>
+
+					<h:outputText value="#{varResponsable.permisoSuAgia}" />
+				</p:column>
+
+
+
+
+				<!-- *********************************************************
+				 			ACCIONES Responsable
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar" update=":formResponsable"
+						action="#{controladorCrudRoResponsable.editarResponsableVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoResponsable.roResponsableVista}"
+							value="#{varResponsable}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formResponsable"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoResponsable.eliminarResponsable()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoResponsable.roResponsableVista}"
+							value="#{varResponsable}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Responsable"
+							message="¿Desea eliminar este Responsable?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlResponsable"
+							fileName="responsable" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlResponsable" fileName="responsable" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlResponsable"
+							fileName="responsable" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlResponsable"
+							fileName="responsable" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlResponsable" fileName="responsable" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlResponsable"
+							fileName="responsable" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,357 @@
+/*
+Design by Metamorphosis Design
+http://www.metamorphozis.com
+Released for free under a Creative Commons Attribution 2.5 License
+*/
+
+*
+{
+border: 0;
+margin: 0;
+} 
+
+img
+{
+border: 0px;
+}
+
+
+a{
+	color: #C05100;
+	text-decoration:none;
+}
+
+a:hover{
+	text-decoration: underline;
+	color: #C05100;
+}
+
+body{
+	font: 12px Arial, Helvetica, sans-serif;
+	color: #000000;
+	line-height:20px;
+}
+
+/* #bg {
+	background: url(images/bg.jpg) center fixed #2C5080;
+	margin: 0px auto;
+} */
+
+#main{
+	width: 994px;
+	margin: 0px auto;
+	padding: 0px 0px 0px 0px;
+}
+
+#main_bot {
+	width: 994px;
+}
+
+
+#header { width:994px;
+padding: 0px 0px 0px 0px;
+height: 198px;
+background:url(images/header.jpg) left top no-repeat;
+}
+
+#logo {	font-family:Georgia, "Times New Roman", Times, serif;
+		color:#FFFFFF;
+		font-size:18px;
+		font-style:italic;
+		padding: 28px 0px 0px 4px;
+		height: 45px;
+		text-align: right;
+}
+
+
+#logo h1, #logo p {
+	margin: 0;
+	line-height: normal;
+}
+
+#logo h1 {
+	padding: 0px;
+	font-size: 24px;
+	color: #ffffff;
+	text-align: right;
+	padding-right: 30px;
+}
+#logo h2 {
+	padding: 0px;
+	padding-right: 30px;
+	font-size: 10px;
+	text-transform: uppercase;
+	color: #ffffff;
+    text-align: right;
+}
+
+#logo a {
+	text-decoration: none;
+	color: #ffffff;
+}
+
+#menuprime{
+	padding: 3px 3px 3px 3px;
+	background: url(images/cont_bg.png);
+	margin: 5px 0px 5px 0px;
+	
+	/*para Firefox*/
+-moz-border-radius: 15px 15px 15px 15px;
+/*para Safari y Chrome*/
+-webkit-border-radius: 15px 15px 15px 15px;
+/* para Opera */
+border-radius: 15px 15px 15px 15px;
+border-width:4px;
+border-color:#996633;
+}
+
+#content{
+	width: 670px;
+	padding: 3px 3px 3px 3px;
+	background: url(images/cont_bg.png);
+	margin: 0px 0px 15px 0px;
+	min-height: 500px;
+	float:left;
+	/*para Firefox*/
+-moz-border-radius: 15px 15px 15px 15px;
+/*para Safari y Chrome*/
+-webkit-border-radius: 15px 15px 15px 15px;
+/* para Opera */
+border-radius: 15px 15px 15px 15px;
+border-width:4px;
+border-color:#996633;
+}
+
+#arbol{
+	width: 290px;
+	padding: 3px 3px 3px 3px;
+	background: url(images/cont_bg.png);
+	margin: 0px 5px 15px 0px;
+	min-height: 500px;
+	float:left;
+	/*para Firefox*/
+-moz-border-radius: 15px 15px 15px 15px;
+/*para Safari y Chrome*/
+-webkit-border-radius: 15px 15px 15px 15px;
+/* para Opera */
+border-radius: 15px 15px 15px 15px;
+border-width:4px;
+border-color:#996633;
+}
+
+/* #razd {	background:url(images/razd.gif) 532px repeat-y; 
+
+} */
+
+#cont_top {	background:	url(images/cont_top.png) top repeat;
+width: 973px;
+height: 8px;
+margin-left: 10px;}
+
+#cont_bot {	background:	url(images/cont_bot.png) bottom repeat;
+width: 973px;
+height:8px;
+margin-left: 10px;}
+
+#left{
+	width: 934px;
+	margin: 0px 0px 0px 7px;
+	float: left;
+}
+
+.text{
+	padding: 10px 0px 0px 8px;
+}
+
+.img {	float:left;
+		margin: 5px 16px 5px 0px;
+}
+
+span {	color:#C05100;
+		font-weight:bold;
+}
+
+.dat { text-decoration: none;
+		color:#C05100;}
+		
+.col_b {color:#C05100;}
+.col_black {color:#000000;}
+a:hover .col_black {color:#000000;}
+
+H1{
+	font-family: tahoma, "Times New Roman", Times, serif;
+	font-size:18px;
+	font-weight: 100;
+	color: #C05100;
+	padding-bottom: 5px;
+	text-align:center;
+	background: url(images/tit.gif) bottom repeat-x;
+}
+
+H2{
+	font-family: tahoma, "Times New Roman", Times, serif;
+	font-size:18px;
+	font-weight: 100;
+	color: #C05100;
+	padding-bottom: 4px;
+	padding-left: 12px;
+	text-align: left;
+	background: url(images/tit.gif) bottom repeat-x;
+}
+
+/* .tit_bot {	background:url(images/tit_bot.png) left top no-repeat;
+
+} */
+
+.read_l{
+	text-align:right;
+	padding-right:10px;
+	padding-top: 5px;
+	font-weight:bold;
+
+}
+
+.read_pap{
+	text-align:right;
+	padding-right:0px;
+	font-weight:bold;
+}
+
+
+
+
+
+#footer{
+	height: 56px;
+	width: 993px;
+	font-size: 10px;
+	padding-top: 8px;
+	text-align: center;
+	clear:both;
+	padding: 17px 0px 0px 0px;
+	
+	margin: 0px 0px 0px 0px;
+	
+	/*para Firefox*/
+-moz-border-radius: 15px 15px 15px 15px;
+/*para Safari y Chrome*/
+-webkit-border-radius: 15px 15px 15px 15px;
+/* para Opera */
+border-radius: 15px 15px 15px 15px;
+border-width:4px;
+border-color:#996633;
+}
+
+#izqfooter{
+	float:left;
+}
+#cenfooter{
+	float:left;
+}
+#derfooter{
+	float:left;
+}
+
+#footer a{
+	font-size: 10px;
+	text-decoration: none;
+}
+
+#footer a:hover{
+	font-size: 10px;
+	text-decoration: underline;
+}
+
+
+
+.clear {clear: both}
+
+.header_bg
+{
+background: url(images/header_back.png) no-repeat;
+width: 973px;
+height: 359px;
+padding-top: 8px;	
+margin: 0 auto;
+/*para Firefox*/
+-moz-border-radius: 15px 15px 15px 15px;
+/*para Safari y Chrome*/
+-webkit-border-radius: 15px 15px 15px 15px;
+/* para Opera */
+border-radius: 15px 15px 15px 15px;
+border-width:4px;
+border-color:#996633;
+}
+
+/*=================================*/
+/* Nivo Slider Demo
+/* November 2010
+/* By: Gilbert Pellegrom
+/* http://dev7studios.com
+/*=================================*/
+
+
+#slider-wrapper {
+    width: 954px;
+    height: 331px;
+    margin:0 auto;
+}
+
+#slider {
+	position:absolute;
+    width: 954px;
+    height: 331px;
+    padding-right: 19px;
+	background:url(images/header1.jpg) no-repeat 50% 50%;
+	
+}
+
+#slider a {
+	border:0;
+	display:block;
+}
+
+.nivo-controlNav {
+	position:absolute;
+	left:260px;
+	bottom:-42px;
+	display: none;
+}
+.nivo-controlNav a {
+	display:block;
+	width:22px;
+	height:22px;
+	background:url(images/bullets.png) no-repeat;
+	text-indent:-9999px;
+	border:0;
+	margin-right:3px;
+	float:left;
+}
+.nivo-controlNav a.active {
+	background-position:0 -22px;
+}
+
+.nivo-directionNav a {
+	display:block;
+	width:30px;
+	height:30px;
+	background:url(images/arrows.png) no-repeat;
+	text-indent:-9999px;
+	border:0;
+}
+a.nivo-nextNav {
+	background-position:-30px 0;
+	right:15px;
+}
+a.nivo-prevNav {
+	left:15px;
+}
+
+.nivo-caption {
+    text-shadow:none;
+    font-family: Helvetica, Arial, sans-serif;
+}
+.nivo-caption a { 
+    color:#efe9d1;
+    text-decoration:underline;
+}

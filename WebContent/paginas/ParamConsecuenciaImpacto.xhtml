@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">PARAMETRO CONCECUENCIA - IMPACTO</ui:define>
+	<ui:define name="tituloFormulario">PARAMETRO CONCECUENCIA - IMPACTO</ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formParamConsecuenciaImpacto">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaParamConsecuenciaImpacto"
+				value="Añadir Nueva Consecuencia-Impacto"
+				action="#{controladorCrudParamConsecuenciaImpacto.nuevo()}"
+				icon="ui-icon-plus" update="formParamConsecuenciaImpacto"
+				disabled="#{controladorCrudParamConsecuenciaImpacto.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlParamConsecuenciaImpacto"
+				rendered="#{controladorCrudParamConsecuenciaImpacto.pnlParam}">
+
+				<p:outputLabel for="txtNombreParamConsecuenciaImpacto"
+					value="Nombre" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreParamConsecuenciaImpacto"
+						value="#{controladorCrudParamConsecuenciaImpacto.paramConsecuenciaImpactoVista.nombrePconi}"
+						required="true"
+						requiredMessage="El Nombre es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreParamConsecuenciaImpacto" />
+				</h:panelGrid>
+
+
+				<p:commandButton id="btnAgregarParamConsecuenciaImpacto"
+					value="Guardar"
+					actionListener="#{controladorCrudParamConsecuenciaImpacto.agregar()}"
+					icon="ui-icon-disk" update="formParamConsecuenciaImpacto">
+					<p:confirm header="Agregar" message="¿Desea agregar este registro?"
+						icon="ui-icon-plus" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarParamConsecuenciaImpacto"
+					value="Cancelar"
+					action="#{controladorCrudParamConsecuenciaImpacto.cancelar()}"
+					icon="ui-icon-disk" update="formParamConsecuenciaImpacto"
+					process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlParamConsecuenciaImpacto"
+				value="#{controladorCrudParamConsecuenciaImpacto.paramsProbasTodos}"
+				var="varParamConsecuenciaImpacto"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="10" rowsPerPageTemplate="10,15,20">
+
+				<p:column>
+					<f:facet name="header">Nombre</f:facet>
+					<h:outputText value="#{varParamConsecuenciaImpacto.nombrePconi}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">Orden</f:facet>
+					<h:outputText value="#{varParamConsecuenciaImpacto.numeroPconi}" />
+				</p:column>
+
+
+				<!-- *********************************************************
+				 			ACCIONES ParamConsecuenciaImpacto
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar"
+						update=":formParamConsecuenciaImpacto"
+						action="#{controladorCrudParamConsecuenciaImpacto.editar()}"
+						icon="ui-icon-pencil"
+						disabled="#{controladorCrudParamConsecuenciaImpacto.btnEditar}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudParamConsecuenciaImpacto.paramConsecuenciaImpactoVista}"
+							value="#{varParamConsecuenciaImpacto}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnSubir"
+						update=":formParamConsecuenciaImpacto"
+						icon="ui-icon-arrowthick-1-n"
+						disabled="#{controladorCrudParamConsecuenciaImpacto.btnSubir}"
+						action="#{controladorCrudParamConsecuenciaImpacto.subir()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudParamConsecuenciaImpacto.paramConsecuenciaImpactoVista}"
+							value="#{varParamConsecuenciaImpacto}"></f:setPropertyActionListener>
+
+						<p:tooltip for="btnSubir"
+							value="Haga click para SUBIR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnBajar"
+						update=":formParamConsecuenciaImpacto"
+						icon="ui-icon-arrowthick-1-s"
+						disabled="#{controladorCrudParamConsecuenciaImpacto.btnBajar}"
+						action="#{controladorCrudParamConsecuenciaImpacto.bajar()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudParamConsecuenciaImpacto.paramConsecuenciaImpactoVista}"
+							value="#{varParamConsecuenciaImpacto}"></f:setPropertyActionListener>
+
+						<p:tooltip for="btnBajar"
+							value="Haga click para BAJAR este registro" />
+					</p:commandButton>
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlParamConsecuenciaImpacto"
+							fileName="ParamConsecuenciaImpacto" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlParamConsecuenciaImpacto"
+							fileName="ParamConsecuenciaImpacto" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlParamConsecuenciaImpacto"
+							fileName="ParamConsecuenciaImpacto" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlParamConsecuenciaImpacto"
+							fileName="ParamConsecuenciaImpacto" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlParamConsecuenciaImpacto"
+							fileName="ParamConsecuenciaImpacto" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlParamConsecuenciaImpacto"
+							fileName="ParamConsecuenciaImpacto" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

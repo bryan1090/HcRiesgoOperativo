@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Característica de Evento</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formCaractEvento">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaCaractEvento"
+				value="Añadir Nueva Caracteristica de Evento"
+				action="#{controladorCrudRoCaractEvento.nuevoCaractEventoVista()}"
+				icon="ui-icon-plus" update="formCaractEvento"
+				disabled="#{controladorCrudRoCaractEvento.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlCaractEvento"
+				rendered="#{controladorCrudRoCaractEvento.pnlCaractEvento}">
+
+				<p:outputLabel for="cmbEventoCaractEvento" value="Evento" />
+				<p:selectOneMenu id="cmbEventoCaractEvento"
+					value="#{controladorCrudRoCaractEvento.idEventoSeleccionado}"
+					required="true" requiredMessage="Debe seleccionar el Evento">
+					<f:selectItems
+						value="#{controladorCrudRoCaractEvento.eventosTodos}"
+						var="varEventos" itemValue="#{varEventos.codigoEven}"
+						itemLabel="#{varEventos.nombreEven}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtNombreCaractEvento"
+					value="Nombre de la Característica de Evento" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreCaractEvento"
+						value="#{controladorCrudRoCaractEvento.roCaractEventoVista.nombreCaev}"
+						required="true"
+						requiredMessage="El Nombre de la Característica de Evento es un campo Obligatorio"
+						maxlength="100" />
+					<p:message for="txtNombreCaractEvento" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtObservacionCaractEvento" value="Observación" />
+				<p:inputTextarea id="txtObservacionCaractEvento"
+					value="#{controladorCrudRoCaractEvento.roCaractEventoVista.observacionCaev}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+				
+				<p:commandButton id="btnGuardarCaractEvento" value="Guardar"
+					actionListener="#{controladorCrudRoCaractEvento.guardarCaractEvento()}"
+					icon="ui-icon-disk" update="formCaractEvento">
+					<p:confirm header="Guardar CaractEvento"
+						message="¿Desea guardar este Característica de Evento?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarCaractEvento" value="Cancelar"
+					action="#{controladorCrudRoCaractEvento.cancelar()}"
+					icon="ui-icon-disk" update="formCaractEvento" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlCaractEvento"
+				value="#{controladorCrudRoCaractEvento.caractEventosTodos}"
+				var="varCaractEvento"
+				
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+					<center>
+						<f:facet name="header">Nombre</f:facet>
+					</center>
+					<h:outputText value="#{varCaractEvento.nombreCaev}" />
+				</p:column>
+
+
+				<p:column>
+					<center>
+						<f:facet name="header">Evento</f:facet>
+					</center>
+					<h:outputText value="#{varCaractEvento.roEvento.nombreEven}" />
+				</p:column>
+
+
+
+				<!-- *********************************************************
+				 			ACCIONES CaractEvento
+				************************************************************* -->
+
+				<p:column exportable="false">
+					<center>
+						<f:facet name="header">Acciones</f:facet>
+					</center>
+
+					<p:commandButton id="btnEditar" update=":formCaractEvento"
+						action="#{controladorCrudRoCaractEvento.editarCaractEventoVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoCaractEvento.roCaractEventoVista}"
+							value="#{varCaractEvento}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formCaractEvento"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoCaractEvento.eliminarCaractEvento()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoCaractEvento.roCaractEventoVista}"
+							value="#{varCaractEvento}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar CaractEvento"
+							message="¿Desea eliminar este CaractEvento?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlCaractEvento" fileName="caracteristicadeevento" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlCaractEvento" fileName="caracteristicadeevento"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlCaractEvento"
+							fileName="caracteristicadeevento" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

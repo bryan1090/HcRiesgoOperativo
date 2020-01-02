@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Probabilidad de Ocurrencia</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formResponsable">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaResponsable"
+				value="Añadir Nueva Asignación de Probabilidad de Ocurrencia"
+				action="#{controladorCrudRoProbabilidadEvento.nuevoProbabilidadEventoVista()}"
+				icon="ui-icon-plus" update="formResponsable"
+				disabled="#{controladorCrudRoProbabilidadEvento.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlResponsable"
+				rendered="#{controladorCrudRoProbabilidadEvento.pnlTipoAfecta}">
+
+				<p:outputLabel for="cmbNegocioCons" value="Negocio" />
+				<p:selectOneMenu id="cmbNegocioCons"
+					value="#{controladorCrudRoProbabilidadEvento.idNegocioSeleccionado}"
+					required="true" requiredMessage="Debe seleccionar el Negocio">
+					<f:selectItems
+						value="#{controladorCrudRoProbabilidadEvento.negocioTodos}"
+						var="varNegocio" itemValue="#{varNegocio.codigoNego}"
+						itemLabel="#{varNegocio.nombreNego}" />
+					<p:ajax update="pnlResponsable"
+						listener="#{controladorCrudRoProbabilidadEvento.cambiarNegocioPanel}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbParamCons" value="Probabilidad de Ocurrencia" />
+				<p:inputText id="cmbParamCons"
+					value="#{controladorCrudRoProbabilidadEvento.paramProbabilidadRiesgoVista.letraPprr} - #{controladorCrudRoProbabilidadEvento.paramProbabilidadRiesgoVista.nombrePprr}"
+					readonly="true" />
+					
+				<p:outputLabel for="cmbCalProb" value="Calculo de Probabilidad" />
+				<p:inputText id="cmbCalProb"
+					value="#{controladorCrudRoProbabilidadEvento.roProbabilidadVista.calculoProb}" />
+
+				<p:outputLabel for="txtDesdeCons" value="Desde" />
+				<p:inputText id="txtDesdeCons"
+					value="#{controladorCrudRoProbabilidadEvento.roConsecuenciaVista.desdeProb}"
+					readonly="true" />
+
+				<p:outputLabel for="txtHastaCons" value="Hasta" />
+				<p:inputText id="txtHastaCons"
+					value="#{controladorCrudRoProbabilidadEvento.roConsecuenciaVista.hastaProb}"
+					required="true" requiredMessage="HASTA es un campo Obligatorio"
+					maxlength="9" />
+
+				<p:outputLabel for="txtObservacionCons" value="Observación" />
+				<p:inputTextarea id="txtObservacionCons"
+					value="#{controladorCrudRoProbabilidadEvento.roConsecuenciaVista.obsrvPbo}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarResponsable" value="Guardar"
+					actionListener="#{controladorCrudRoProbabilidadEvento.guardarTipoAfecta()}"
+					icon="ui-icon-disk" update="formResponsable">
+					<p:confirm
+						header="Guardar Asignación de Probabilidad de Ocurrencia"
+						message="¿Desea guardar esta Probabilidad de Ocurrencia?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarResponsable" value="Cancelar"
+					action="#{controladorCrudRoProbabilidadEvento.cancelar()}"
+					icon="ui-icon-disk" update="formResponsable" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlResponsable"
+				value="#{controladorCrudRoProbabilidadEvento.probabilidadEventoTodos}"
+				var="varConsecuencia"
+				style="width:50%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+				<f:facet name="header">
+					<p:outputLabel value="Negocio" />
+					<br />
+					<p:selectOneMenu id="cmbNegocioTabla"
+						value="#{controladorCrudRoProbabilidadEvento.idNegocioSeleccionadoTabla}">
+						<f:selectItem itemValue="0" itemLabel="Todos" />
+						<f:selectItems
+							value="#{controladorCrudRoProbabilidadEvento.negocioTodos}"
+							var="varNegocio" itemValue="#{varNegocio.codigoNego}"
+							itemLabel="#{varNegocio.nombreNego}" />
+						<p:ajax update="dtlResponsable"
+							listener="#{controladorCrudRoProbabilidadEvento.cambiarNegocioTabla}" />
+					</p:selectOneMenu>
+				</f:facet>
+				<p:column>
+
+					<f:facet name="header">Probabilidad de Ocurrencia</f:facet>
+
+					<h:outputText
+						value="#{varConsecuencia.letraPprr} - #{varConsecuencia.nombrePprr}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">
+							Negocio
+						</f:facet>
+
+					<h:outputText value="#{varConsecuencia.roNegocio.nombreNego}" />
+				</p:column>
+				
+				<p:column>
+					<f:facet name="header">
+							Calculo Probabilidad
+						</f:facet>
+
+					<h:outputText value="#{varConsecuencia.calculoProb}" />
+				</p:column>
+
+				<p:column>
+
+					<f:facet name="header">Desde</f:facet>
+
+					<h:outputText value="#{varConsecuencia.desdeProb}" />
+				</p:column>
+
+				<p:column>
+
+					<f:facet name="header">Hasta</f:facet>
+
+					<h:outputText value="#{varConsecuencia.hastaProb}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES Consecuencia
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+					<p:commandButton id="btnEditar" update=":formResponsable"
+						action="#{controladorCrudRoProbabilidadEvento.editarTipoAfectaVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoProbabilidadEvento.roConsecuenciaVista}"
+							value="#{varConsecuencia}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+					
+					<p:commandButton id="btnEliminar" update=":formResponsable"
+						icon="ui-icon-trash"
+						action="#{controladorCrudRoProbabilidadEvento.eliminarTipoAfecta()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoProbabilidadEvento.roConsecuenciaVista}"
+							value="#{varConsecuencia}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Probabilidad de Ocurrencia"
+							message="¿Desea eliminar esta probabilidad de ocurrencia" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlResponsable"
+							fileName="probabilidadocurrencia" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlResponsable" fileName="probabilidadocurrencia" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlResponsable"
+							fileName="probabilidadocurrencia" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlResponsable"
+							fileName="probabilidadocurrencia" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlResponsable" fileName="probabilidadocurrencia"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlResponsable"
+							fileName="probabilidadocurrencia" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

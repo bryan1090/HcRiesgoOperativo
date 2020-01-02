@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<!-- tags
+tituloPagina  
+menuPagina
+tituloFormulario
+contenido
+ -->
+<h:head>
+
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>HC Consultores - Riesgo Operativo - <ui:insert
+			name="tituloPagina"></ui:insert></title>
+	<link href="#{request.contextPath}/utils/styles.css" rel="stylesheet"
+		type="text/css" />
+	<style type="text/css">
+.verde {
+	background-color: green !important;
+	color: #FFFFFF !important;
+}
+
+.amarillo {
+	background-color: yellow !important;
+	color: black !important;
+}
+
+.sixty-percent {
+	width: 60%;
+}
+
+.thirty-percent {
+	width: 30%;
+}
+.fourty-percent {
+	width: 40%;
+}
+
+	</style>
+</h:head>
+
+<h:body>
+	<p:idleMonitor timeout="#{dataManagerSesion.tiemp()}">
+		<p:ajax event="active" listener="#{dataManagerSesion.control()}" />
+	</p:idleMonitor>
+	<!-- 		<pe:ajaxErrorHandler button="Volver a Ingresar!" -->
+	<!-- 			widgetVar="myAjaxErrorHandler" title="Error: " -->
+	<!-- 			body="Lo sentimos su sesión ha caducado o ha experimentado algún error, porfavor ingrese nuevamente" /> -->
+
+	<p:ajaxExceptionHandler
+		type="javax.faces.application.ViewExpiredException"
+		update="exceptionDialog" onexception="PF('exceptionDialog').show();" />
+
+	<p:ajaxExceptionHandler type="java.lang.NullPointerException"
+		update="exceptionDialog" onexception="PF('exceptionDialog').show();" />
+
+
+
+	<p:ajaxExceptionHandler update="exceptionDialog"
+		onexception="PF('exceptionDialog').show();" />
+
+	<!-- rendered="#{pfExceptionHandler.type == 'javax.faces.application.ViewExpiredException'}" -->
+	<p:dialog id="exceptionDialog" header="Ups!, ocurrió un problema..."
+		widgetVar="exceptionDialog"
+		onShow="PF('exceptionDialog').initPosition()" height="150px"
+		width="60%" closable="false" draggable="true" modal="true"
+		resizable="true">
+		<br />
+		<h:panelGrid columns="2">
+			<p:graphicImage url="/utils/images/error_sign.png">
+			</p:graphicImage>
+		Lo sentimos su sesión ha caducado o ha experimentado algún error, por favor ingrese nuevamente.
+		</h:panelGrid>
+
+
+		<center>
+			<p:button icon="ui-icon-arrowreturnthick-1-w" value="Regresar!"
+				rendered="true" />
+		</center>
+		<br />
+
+		<p:panel id="asd" header="Descripción del Error" toggleable="true"
+			collapsed="true">
+		
+		 Message: #{pfExceptionHandler.message} <br />
+        StackTrace: <h:outputText
+				value="#{pfExceptionHandler.formattedStackTrace}" escape="false" />
+		</p:panel>
+
+		<br />
+
+
+	</p:dialog>
+
+	<!-- 	<p:dialog id="exceptionDialog" -->
+	<!-- 		header="Exception '#{pfExceptionHandler.type}' occured!" -->
+	<!-- 		widgetVar="exceptionDialog" height="500px" closable="false" -->
+	<!-- 		draggable="false" modal="true"> -->
+	<!--         Message: #{pfExceptionHandler.message} <br /> -->
+	<!--         StackTrace: <h:outputText -->
+	<!-- 			value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /> -->
+	<!-- 		<br /> -->
+
+	<!-- 		<p:button onclick="document.location.href = document.location.href;" -->
+	<!-- 			value="Reload!" -->
+	<!-- 			rendered="#{pfExceptionHandler.type == 'javax.faces.application.ViewExpiredException'}" /> -->
+	<!-- 	</p:dialog> -->
+
+	<div id="barraTemplate">
+	<p:commandLink actionListener="#{dataManagerSesion.clicLogoHc()}">
+	<img src="#{request.contextPath}/utils/images/hcLogo.png"
+			alt="HC-CONSULTORES"
+			style="width: 150px; height: 40px; margin: 5px; float: left;" />
+	</p:commandLink>
+		<!-- 		<img src="#{request.contextPath}/utils/images/hcLogo.png" -->
+		<!-- 			alt="HC-CONSULTORES" -->
+		<!-- 			style="width: 150px; height: 40px; margin: 5px; float: left;" /> -->
+
+		<h1 align="center"
+			style="color: rgb(214, 213, 213); font-size: x-large; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">Software
+			de Riesgo Operativo</h1>
+		<div id="account">
+			<img src="#{request.contextPath}/utils/images/user.png"
+				alt="HC-CONSULTORES"
+				style="height: 26px; margin: 13px; float: left;" />
+			<h:form style="margin: 15px;color: rgb(214, 213, 213);">
+				<h:panelGrid columns="2">
+					<p:outputLabel
+						value="#{dataManagerSesion.usuarioSesion.nombreCompletoUsua}" />
+					<p:commandLink value="Cerrar Sesión"
+						action="#{dataManagerSesion.logout()}" />
+				</h:panelGrid>
+
+			</h:form>
+		</div>
+
+	</div>
+	<div id="menuprime">
+		<ui:insert name="menuPagina">
+			<ui:include src="/paginas/MenuPrincipal.xhtml" />
+		</ui:insert>
+	</div>
+	<div id="content">
+
+		<h2>
+			<ui:insert name="tituloFormulario">Titulo Formulario</ui:insert>
+		</h2>
+
+		<ui:insert name="contenido">
+							Aqui va el contenido
+						</ui:insert>
+	</div>
+</h:body>
+</html>

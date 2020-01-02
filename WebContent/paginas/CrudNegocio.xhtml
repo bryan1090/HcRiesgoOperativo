@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templateProDual.xhtml">
+	<ui:define name="tituloPagina">Negocio</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	<ui:define name="arbolRecursivo">
+		<h:form id="formArbolNegocio">
+			<h1>NEGOCIOS:</h1>
+			<p:tree value="#{controladorCrudRoNegocio.arbolNegocioVista}"
+				var="node" dynamic="true" selectionMode="single"
+				selection="#{controladorCrudRoNegocio.arbolNegocioSeleccionado}"
+				id="arbNegocio" style="width:270px;">
+				<p:ajax event="select" update=":formNegocio"
+					listener="#{controladorCrudRoNegocio.seleccionarNegocio()}" />
+
+				<p:treeNode>
+					<h:outputText value="#{node}" />
+				</p:treeNode>
+			</p:tree>
+		</h:form>
+	</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formNegocio">
+
+			<p:growl id="growl" for="growl1" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:messages id="messages" for="mensaje" showDetail="true"
+				closable="false" >
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:commandButton id="btnNuevaNegocio"
+				value="Añadir Nuevo Negocio a #{controladorCrudRoNegocio.nombreSeleccionado}"
+				action="#{controladorCrudRoNegocio.nuevoNegocioVista()}"
+				icon="ui-icon-plus" update="formNegocio"
+				disabled="#{controladorCrudRoNegocio.btnAnadir}" process="@this" />
+
+			<h:panelGrid columns="2" id="pnlNegocio"
+				rendered="#{controladorCrudRoNegocio.pnlNegocio}">
+
+				<p:outputLabel for="txtNombreNegocio" value="Nombre del Negocio" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreNegocio"
+						value="#{controladorCrudRoNegocio.roNegocioVista.nombreNego}"
+						required="true"
+						requiredMessage="El Nombre de Negocio es un campo Obligatorio"
+						maxlength="250" size="50" />
+					<p:message for="txtNombreNegocio" />
+				</h:panelGrid>
+
+				<p:outputLabel value="Código" />
+				<p:inputText
+					value="#{controladorCrudRoNegocio.roNegocioVista.numeroNego}"
+					maxlength="10" />
+
+				<p:outputLabel for="cmbEstadoNegocio" value="Estado" />
+				<p:selectOneMenu id="cmbEstadoNegocio"
+					value="#{controladorCrudRoNegocio.idEstadoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado del negocio">
+					<f:selectItems value="#{controladorCrudRoNegocio.estadosTodos}"
+						var="varEstados" itemValue="#{varEstados.codigoEsta}"
+						itemLabel="#{varEstados.nombreEsta}" />
+				</p:selectOneMenu>
+
+
+				<p:outputLabel for="cmbTipoNegocio" value="Tipo de Negocio" />
+				<p:selectOneMenu id="cmbTipoNegocio"
+					value="#{controladorCrudRoNegocio.idTipoNegocioSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar un tipo de Negocio">
+					<f:selectItems
+						value="#{controladorCrudRoNegocio.tipoNegociosTodos}"
+						var="varTipoNegocios" itemValue="#{varTipoNegocios.codigoTneg}"
+						itemLabel="#{varTipoNegocios.nombreTneg}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cmbNivelNegocio" value="Nivel" />
+				<p:selectOneMenu id="cmbNivelNegocio"
+					value="#{controladorCrudRoNegocio.idNivelArbolSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el nivel de Negocio">
+					<f:selectItems
+						value="#{controladorCrudRoNegocio.nivelesArbolTodos}"
+						var="varNiveles" itemValue="#{varNiveles.codigoGniv}"
+						itemLabel="#{varNiveles.nombreGniv}" />
+				</p:selectOneMenu>
+
+
+				<p:outputLabel for="arbProceso" value="Procesos" />
+
+				<p:tree value="#{controladorCrudRoNegocio.arbolProcesoVista}"
+					var="node" dynamic="true" selectionMode="multiple"
+					selection="#{controladorCrudRoNegocio.arbolProcesosSeleccionados}"
+					id="arbProceso" style="width:288px;">
+					<p:treeNode>
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+				</p:tree>
+
+				<p:outputLabel for="txtObservacionNegocio" value="Observación" />
+				<p:inputTextarea id="txtObservacionNegocio"
+					value="#{controladorCrudRoNegocio.roNegocioVista.observacionNego}"
+					maxlength="250" rows="5" cols="60" counter="counter"
+					counterTemplate="{0} caracteres restantes." />
+				<div />
+				<h:outputText id="counter" />
+
+
+				<p:commandButton id="btnGuardarNegocio" value="Guardar"
+					actionListener="#{controladorCrudRoNegocio.guardarNegocio()}"
+					icon="ui-icon-disk"
+					update="formNegocio :formArbolNegocio:arbNegocio">
+					<p:confirm header="Guardar Negocio"
+						message="¿Desea guardar esta Negocio?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarNegocio" value="Cancelar"
+					action="#{controladorCrudRoNegocio.cancelar()}" icon="ui-icon-disk"
+					update="formNegocio" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlNegocio"
+				value="#{controladorCrudRoNegocio.subNegociosTodos}"
+				var="varNegocio"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column sortBy="#{varNegocio.nombreNego}">
+
+					<f:facet name="header">Nombre</f:facet>
+
+					<h:outputText value="#{varNegocio.nombreNego}" />
+				</p:column>
+
+				<p:column sortBy="#{varNegocio.numeroNego}">
+
+					<f:facet name="header">Código</f:facet>
+
+					<h:outputText value="#{varNegocio.numeroNego}" />
+				</p:column>
+
+				<p:column sortBy="#{varNegocio.genEstado.nombreEsta}">
+
+					<f:facet name="header">Estado</f:facet>
+
+					<h:outputText value="#{varNegocio.genEstado.nombreEsta}" />
+				</p:column>
+
+				<p:column sortBy="#{varNegocio.roTipoNegocio.nombreTneg}">
+
+					<f:facet name="header">Tipo</f:facet>
+
+					<h:outputText value="#{varNegocio.roTipoNegocio.nombreTneg}" />
+				</p:column>
+
+				<p:column sortBy="#{varNegocio.genNivelArbol.nombreGniv}">
+
+					<f:facet name="header">Nivel</f:facet>
+
+					<h:outputText value="#{varNegocio.genNivelArbol.nombreGniv}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES Negocio
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar" update=":formNegocio"
+						action="#{controladorCrudRoNegocio.editarNegocioVista()}"
+						icon="ui-icon-pencil" process="@this">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoNegocio.roNegocioVista}"
+							value="#{varNegocio}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formNegocio :formArbolNegocio" icon="ui-icon-trash"
+						action="#{controladorCrudRoNegocio.eliminarNegocio()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoNegocio.roNegocioVista}"
+							value="#{varNegocio}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Negocio"
+							message="¿Desea eliminar esta Negocio?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlNegocio" fileName="negocio" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlNegocio" fileName="negocio" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlNegocio" fileName="negocio" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlNegocio" fileName="negocio"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlNegocio" fileName="negocio" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlNegocio" fileName="negocio"
+							pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

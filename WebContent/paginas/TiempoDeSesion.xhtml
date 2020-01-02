@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Riesgo Clave</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formTiempoSesion">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+			<h:panelGrid columns="2" id="pnlTiempoSesion"
+				rendered="#{controladorSisTiempoSesion.pnlTiempoSesion}" style="margin-top:20px" >
+
+				<p:outputLabel for="txtTiempoDeSesion"  value="Tiempo de Sesion (segundos)" />
+				
+				<h:panelGrid columns="2">
+					<p:inputText id="txtTiempoDeSesion"  
+						value="#{controladorSisTiempoSesion.sisTiempoSesion.tiempoSesion}"
+						required="true"
+						requiredMessage="El Tiempo de Sesion es un campo Obligatorio"
+						 size="20" />
+					<p:message for="txtTiempoDeSesion"  />
+				</h:panelGrid>				
+				
+				<p:commandButton value="Guardar"
+				action="#{controladorSisTiempoSesion.guardarTiempoDeSesion()}"
+				update="formTiempoSesion">				
+				</p:commandButton>
+				
+				<p:commandButton value="Cancelar"
+				action="#{controladorSisTiempoSesion.exitoGuardar()}"
+				update="formTiempoSesion">				
+				</p:commandButton>
+				
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlRiesgoClave"
+				value="#{controladorSisTiempoSesion.listaSisTiempoSesion}"
+				var="varTiempoSesionClave"
+				paginator="true" rows="4" style="width:35%;margin-top:20px" >
+
+				<p:column>
+
+					<f:facet name="header">Tiempo de Sesion</f:facet>
+					
+					<center>
+					<h:outputText value="#{varTiempoSesionClave.tiempoSesion}" />
+					</center>
+					
+				</p:column>
+
+
+				<!-- *********************************************************
+				 			ACCIONES RiesgoClave
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+					
+					<center>
+					<p:commandButton id="btnModificar"
+						action="#{controladorSisTiempoSesion.modificarTiempo()}"
+						update=":formTiempoSesion" icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorSisTiempoSesion.sisTiempoSesion}"
+							value="#{varTiempoSesionClave}">
+						</f:setPropertyActionListener>
+						<p:tooltip for="btnModificar"
+							value="Haga click para MODIFICAR este registro" />
+					</p:commandButton>
+					</center>
+						
+				</p:column>
+				
+			</p:dataTable>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

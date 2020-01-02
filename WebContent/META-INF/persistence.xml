@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="hcroModelo">
+
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:/hcNew</jta-data-source>
+		<!-- java: ro -->
+
+		<!-- HC Base Riesgo -->
+		<!-- java:/hcNew -->
+
+		<!-- HC Base RiesgoOperativo -->
+		<!-- java:/RiesgoOperativo -->
+
+		<!-- HOME -->
+		<!--java:jboss/datasources/hcNew -->
+
+		<!-- Oracle -->
+		<!-- hcropu -->
+
+		<!-- Oracle -->
+		<!-- hcropuHC -->
+
+		<!-- Jeep -->
+		<!-- java:jboss/datasources/RIESGOOPERATIVO -->
+
+
+<!-- Base de pruebas de riesgo operativo(procesos,usuarios, responsables, detalles-evento) -->
+<!-- java:/HCpruebas -->
+
+		<!-- SQL Server 2008 -->
+		<!--hcropumssql2008 -->
+
+		<!-- SQL Server 2012 -->
+		<!--hcropumssql -->
+
+		<!-- SQL Server 2014 -->
+		<!--hcropumssql2014 -->
+
+		<class>com.hc.ro.modelo.GenDetallePeriodo</class>
+		<class>com.hc.ro.modelo.GenEstado</class>
+		<class>com.hc.ro.modelo.GenMoneda</class>
+		<class>com.hc.ro.modelo.GenNivelArbol</class>
+		<class>com.hc.ro.modelo.GenNivelProceso</class>
+		<class>com.hc.ro.modelo.GenPeriodo</class>
+		<class>com.hc.ro.modelo.GenSemana</class>
+		<class>com.hc.ro.modelo.GenTipoIdentific</class>
+		<class>com.hc.ro.modelo.GenTipoUbiGeog</class>
+		<class>com.hc.ro.modelo.GenUbicGeo</class>
+		<class>com.hc.ro.modelo.RoArchivoAccion</class>
+		<class>com.hc.ro.modelo.RoArchivoDetalleAccion</class>
+		<class>com.hc.ro.modelo.RoAccion</class>
+		<class>com.hc.ro.modelo.RoDetalleAccion</class>
+		<class>com.hc.ro.modelo.RoCumplimiento</class>
+		<class>com.hc.ro.modelo.RoAgencia</class>
+		<class>com.hc.ro.modelo.RoAriesgo</class>
+		<class>com.hc.ro.modelo.RoAttrbAdicionale</class>
+		<class>com.hc.ro.modelo.RoCalifRiesgo</class>
+		<class>com.hc.ro.modelo.RoCaractEvento</class>
+		<class>com.hc.ro.modelo.RoCatFrecuencia</class>
+		<class>com.hc.ro.modelo.RoCatObjetivo</class>
+		<class>com.hc.ro.modelo.RoCatSeveridad</class>
+		<class>com.hc.ro.modelo.RoConsecuenciaImpacto</class>
+		<class>com.hc.ro.modelo.RoControl</class>
+		<class>com.hc.ro.modelo.RoControlEvento</class>
+		<class>com.hc.ro.modelo.RoControlProc</class>
+		<class>com.hc.ro.modelo.RoControlValor</class>
+		<class>com.hc.ro.modelo.RoControlParamImpRep</class>
+		<class>com.hc.ro.modelo.RoCriticidad</class>
+		<class>com.hc.ro.modelo.RoDepartamento</class>
+		<class>com.hc.ro.modelo.RoDeptAgencia</class>
+		<class>com.hc.ro.modelo.RoDetalleControl</class>
+		<class>com.hc.ro.modelo.RoDetalleEvento</class>
+		<class>com.hc.ro.modelo.RoDetalleNegocio</class>
+		<class>com.hc.ro.modelo.RoDetalleProceso</class>
+		<class>com.hc.ro.modelo.RoDetCarctEvent</class>
+		<class>com.hc.ro.modelo.RoDetCriticProc</class>
+		<class>com.hc.ro.modelo.RoDetRiclProc</class>
+		<class>com.hc.ro.modelo.RoDetValCartEvent</class>
+		<class>com.hc.ro.modelo.RoDeveFaro</class>
+		<class>com.hc.ro.modelo.RoEvento</class>
+		<class>com.hc.ro.modelo.RoEventoAfecta</class>
+		<class>com.hc.ro.modelo.RoEventoCosto</class>
+		<class>com.hc.ro.modelo.RoEventoObjetivo</class>
+		<class>com.hc.ro.modelo.RoEventoRecupera</class>
+		<class>com.hc.ro.modelo.RoFactorRiesgo</class>
+		<class>com.hc.ro.modelo.RoFiltroProceso</class>
+		<class>com.hc.ro.modelo.RoFrecEjecucion</class>
+		<class>com.hc.ro.modelo.RoIndicaRsClave</class>
+		<class>com.hc.ro.modelo.RoNegocio</class>
+		<class>com.hc.ro.modelo.RoNegoPro</class>
+		<class>com.hc.ro.modelo.RoNivelEfecCtrl</class>
+		<class>com.hc.ro.modelo.RoNivelRiesgo</class>
+		<class>com.hc.ro.modelo.RoPermisosDetalleEvento</class>
+		<class>com.hc.ro.modelo.RoProbabilidadEvento</class>
+		<class>com.hc.ro.modelo.RoProceso</class>
+		<class>com.hc.ro.modelo.RoRespAgencia</class>
+		<class>com.hc.ro.modelo.RoRespDepa</class>
+		<class>com.hc.ro.modelo.RoResponsable</class>
+		<class>com.hc.ro.modelo.RoRespPro</class>
+		<class>com.hc.ro.modelo.RoRiesgoClave</class>
+		<class>com.hc.ro.modelo.RoTipoAfecta</class>
+		<class>com.hc.ro.modelo.RoTipoAgencia</class>
+		<class>com.hc.ro.modelo.RoTipoControl</class>
+		<class>com.hc.ro.modelo.RoTipoCosto</class>
+		<class>com.hc.ro.modelo.RoTipoDetalle</class>
+		<class>com.hc.ro.modelo.RoTipoEjecucion</class>
+		<class>com.hc.ro.modelo.RoTipoNegocio</class>
+		<class>com.hc.ro.modelo.RoTipoPerdida</class>
+		<class>com.hc.ro.modelo.RoTipoProceso</class>
+		<class>com.hc.ro.modelo.RoTipoRecupera</class>
+		<class>com.hc.ro.modelo.RoTipoResp</class>
+		<class>com.hc.ro.modelo.RoValAttrb</class>
+		<class>com.hc.ro.modelo.RoTipoIndicadorRiesgo</class>
+		<class>com.hc.ro.modelo.SisAlertaUsuario</class>
+		<class>com.hc.ro.modelo.SisAuditoria</class>
+		<class>com.hc.ro.modelo.SisControlProceso</class>
+		<class>com.hc.ro.modelo.SisDetalleMenu</class>
+		<class>com.hc.ro.modelo.SisDetalleProceso</class>
+		<class>com.hc.ro.modelo.SisDetalleReporte1</class>
+		<class>com.hc.ro.modelo.SisEmpresa</class>
+		<class>com.hc.ro.modelo.SisMensaje</class>
+		<class>com.hc.ro.modelo.SisMenu</class>
+		<class>com.hc.ro.modelo.SisModulo</class>
+		<class>com.hc.ro.modelo.SisObjeto</class>
+		<class>com.hc.ro.modelo.SisParametro</class>
+		<class>com.hc.ro.modelo.SisPerfil</class>
+		<class>com.hc.ro.modelo.SisPermiso</class>
+		<class>com.hc.ro.modelo.SisPermisoValor</class>
+		<class>com.hc.ro.modelo.SisProcedimiento</class>
+		<class>com.hc.ro.modelo.SisReporte</class>
+		<class>com.hc.ro.modelo.SisSucursal</class>
+		<class>com.hc.ro.modelo.SisTipoObjeto</class>
+		<class>com.hc.ro.modelo.SisUsuario</class>
+		<class>com.hc.ro.modelo.SisTiempoSesion</class>
+		<class>com.hc.ro.modelo.ParamProbabilidadRiesgo</class>
+		<class>com.hc.ro.modelo.ParamConsecuenciaImpacto</class>
+		<class>com.hc.ro.modelo.RoTipoCargo</class>
+		<class>com.hc.ro.modelo.RoControles</class>
+		<class>com.hc.ro.modelo.RoEventoIndicador</class>
+		<class>com.hc.ro.modelo.RoConstanteControl</class>
+
+		<properties>
+
+			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+			<!-- org.hibernate.dialect.MySQLDialect -->
+			<!-- org.hibernate.dialect.Oracle10gDialect -->
+			<!-- org.hibernate.dialect.SQLServerDialect -->
+			<!-- org.hibernate.dialect.SQLServer2008Dialect -->
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="true" />
+
+		</properties>
+
+	</persistence-unit>
+
+</persistence>

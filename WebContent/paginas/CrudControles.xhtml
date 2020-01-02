@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Controles</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formControl">
+			<p:growl id="growl" showDetail="true">
+			</p:growl>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+
+
+
+
+			<h:panelGrid columns="3">
+
+				<p:panel  id="pnlTipoControl" style="width:300px" header="Tipo de Control">
+
+					<p:commandButton id="btnNuevaControl"
+						value="Añadir Nuevo Tipo de Control"
+						action="#{controladorCrudRoControl.nuevoControlVista()}"
+						icon="ui-icon-plus" update="pnlTipoControl"
+						disabled="#{controladorCrudRoControl.btnAnadir}" process="@this" />
+
+
+					<h:panelGrid columns="2" 
+						rendered="#{controladorCrudRoControl.pnlControl}">
+
+						<p:outputLabel for="txtNombreControl" value="Nombre" />
+						<h:panelGrid columns="2">
+							<p:inputText id="txtNombreControl"
+								value="#{controladorCrudRoControl.roControlVista.nombreControl}"
+								required="true"
+								requiredMessage="El Nombre del Control es un campo Obligatorio"
+								maxlength="150" />
+							<p:message for="txtNombreControl" />
+						</h:panelGrid>
+
+						<p:outputLabel for="txtObservacionControl" value="Observación" />
+						<p:inputTextarea id="txtObservacionControl"
+							value="#{controladorCrudRoControl.roControlVista.observacionControl}"
+							maxlength="500" rows="5" counter="counter"
+							counterTemplate="{0} caracteres restantes." />
+
+						<h:outputText id="counter" />
+						<div />
+
+						<p:commandButton id="btnGuardarControl" value="Guardar"
+							action="#{controladorCrudRoControl.guardarControl()}"
+							icon="ui-icon-disk" update="pnlTipoControl" process="pnlTipoControl">
+							<p:confirm header="Guardar Control"
+								message="¿Desea guardar este Control?" icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton id="btnCancelarControl" value="Cancelar"
+							action="#{controladorCrudRoControl.cancelar()}"
+							icon="ui-icon-disk" update="pnlTipoControl" process="@this" />
+					</h:panelGrid>
+					<!-- TABLA -->
+					<p:dataTable id="dtlControl"
+						value="#{controladorCrudRoControl.controlsTodos}" var="varControl"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="5" rowsPerPageTemplate="5,10,15"
+						selection="#{controladorCrudRoControl.roControlControlador}"
+						selectionMode="single" rowKey="#{varControl.codigoCtrl}"
+						>
+						<p:ajax event="rowSelect"
+							listener="#{controladorCrudRoControl.seleccionar()}"
+							update="@form" onstart="PF('dlg2').show();"
+							oncomplete="PF('dlg2').hide;" />
+
+						<p:column sortBy="#{varControl.nombreControl}">
+							<center>
+								<f:facet name="header">Nombre</f:facet>
+							</center>
+							<h:outputText value="#{varControl.nombreControl}" />
+						</p:column>
+
+
+						<!-- *********************************************************
+				 			ACCIONES Control
+				************************************************************* -->
+
+						<p:column >
+							<center>
+								<f:facet name="header">Acciones</f:facet>
+							</center>
+
+							<p:commandButton id="btnEditar" update="@form:pnlTipoControl"
+								action="#{controladorCrudRoControl.editarControlVista()}"
+								icon="ui-icon-pencil" process="@this">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoControl.roControlVista}"
+									value="#{varControl}"></f:setPropertyActionListener>
+								<p:tooltip for="btnEditar"
+									value="Haga click para EDITAR este registro" />
+							</p:commandButton>
+
+							<p:commandButton id="btnEliminar" process="@this"
+								update="@form:pnlTipoControl" icon="ui-icon-trash"
+								action="#{controladorCrudRoControl.eliminarControl()}">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoControl.roControlVista}"
+									value="#{varControl}"></f:setPropertyActionListener>
+								<p:confirm header="Eliminar Control"
+									message="¿Desea eliminar este Control?" icon="ui-icon-disk" />
+								<p:tooltip for="btnEliminar"
+									value="Haga click para ELIMINAR este registro" />
+							</p:commandButton>
+
+
+						</p:column>
+					</p:dataTable>
+
+					<!-- PANEL VARIABLES DE ATRIBUTO(AL SELECCIONAR TIPO DE CONTROL -->
+					<p:panel header="Variables del Atributo" id="pnlVarAttrb"
+						rendered="#{controladorCrudRoControl.mostrarPnlControlValor}">
+
+						<p:commandButton id="btnNuevaVarAttrb" value="Añadir Variable"
+							actionListener="#{controladorCrudRoControl.nuevoControlValor()}"
+							icon="ui-icon-plus" update="@form:pnlVarAttrb"
+							process="@this"
+							disabled="#{controladorCrudRoControl.btnAnadirControlValor}" />
+
+						<h:panelGrid columns="2" id="pngEditarControlValor"
+							rendered="#{controladorCrudRoControl.pnlEditarControlValor}"
+							style="width:80%">
+
+
+							<p:outputLabel for="txtNombreControlValor"
+								value="Nombre del Control" />
+							<p:inputText id="txtNombreControlValor"
+								value="#{controladorCrudRoControl.roControlValorVista.tipoCtva}"
+								maxlength="150"
+								requiredMessage="El Nombre del Control es un campo Obligatorio"
+								required="true" />
+
+							<p:outputLabel for="txtValorDelControl" value="Control" />
+							<p:inputTextarea id="txtValorDelControl"
+								value="#{controladorCrudRoControl.roControlValorVista.controlCtva}"
+								maxlength="500" rows="5" counter="counter2"
+								counterTemplate="{0} caracteres restantes." />
+
+							<h:outputText id="counter2" />
+
+							<div />
+
+							<p:commandButton id="btnGuardarTipoCosto" value="Guardar"
+								action="#{controladorCrudRoControl.guardarControlValor()}"
+								icon="ui-icon-disk" process=":formControl:pnlVarAttrb"
+								update="@form:pnlVarAttrb">
+								<p:confirm header="Guardar Variable"
+									message="¿Desea guardar esta variable?" icon="ui-icon-disk" />
+							</p:commandButton>
+
+							<p:commandButton id="btnCancelarTipoCosto" value="Cancelar"
+								action="#{controladorCrudRoControl.cancelarControlValor()}"
+								icon="ui-icon-disk" update="@form:pnlVarAttrb"
+								process="@this" />
+
+						</h:panelGrid>
+						
+					<!-- TABLA -->
+						<p:dataTable id="dtlValAdicionale"
+							value="#{controladorCrudRoControl.roControlValorsTodos}"
+							var="varControlValor"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							paginator="true" rows="5" rowsPerPageTemplate="5,10,15"
+							>
+
+							<p:column sortBy="#{varControlValor.tipoCtva}">
+								<center>
+									<f:facet name="header">Variable</f:facet>
+								</center>
+								<h:outputText value="#{varControlValor.tipoCtva}" />
+							</p:column>
+
+							<!-- *********************************************************
+				 			ACCIONES ValAdicionale
+				************************************************************* -->
+
+							<p:column>
+								<center>
+									<f:facet name="header">Acciones</f:facet>
+								</center>
+
+								<p:commandButton process="@this" id="btnEditarVal"
+									update="@form:pnlVarAttrb"
+									action="#{controladorCrudRoControl.editarControlValor()}"
+									icon="ui-icon-pencil">
+									<f:setPropertyActionListener
+										target="#{controladorCrudRoControl.roControlValorVista}"
+										value="#{varControlValor}"></f:setPropertyActionListener>
+									<p:tooltip for="btnEditarVal"
+										value="Haga click para EDITAR este registro" />
+								</p:commandButton>
+
+								<p:commandButton id="btnEliminarVal" process="@this"
+									update="@form:dtlValAdicionale" icon="ui-icon-trash"
+									action="#{controladorCrudRoControl.eliminarControlValor()}">
+									<p:confirm header="Eliminar Variable"
+										message="¿Desea eliminar esta variable?" icon="ui-icon-disk" />
+									<f:setPropertyActionListener
+										target="#{controladorCrudRoControl.roControlValorVista}"
+										value="#{varControlValor}"></f:setPropertyActionListener>
+									<p:tooltip for="btnEliminarVal"
+										value="Haga click para ELIMINAR este registro" />
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+					</p:panel>
+
+				</p:panel>
+
+
+
+				<p:panel id="pnlImpRep" style="width:300px" header="Impacto-Reputación">
+					<p:commandButton id="btnNuevaParamImpRep"
+						value="Añadir Nuevo Impacto Reputación"
+						action="#{controladorCrudRoControl.nuevoParamImpRepVista()}"
+						icon="ui-icon-plus" update="formControl formControl:pnlVarAttrb"
+						disabled="#{controladorCrudRoControl.btnAnadir}" process="@this" />
+					<h:panelGrid columns="2" id="pnlParamImpRep"
+						rendered="#{controladorCrudRoControl.pnlParamImpRep}"
+						title="Parámetro Impacto-Reputación">
+
+						<p:outputLabel for="txtNombreRep" value="Nombre" />
+						<h:panelGrid columns="2">
+							<p:inputText id="txtNombreRep"
+								value="#{controladorCrudRoControl.roControlParamImpRepVista.nombreRep}"
+								required="true"
+								requiredMessage="El Nombre es un campo Obligatorio"
+								maxlength="150" />
+							<p:message for="txtNombreRep" />
+						</h:panelGrid>
+
+						<p:outputLabel for="txtValorRep" value="Valor Rep" />
+						<h:panelGrid columns="2">
+							<p:inputText id="txtValorRep"
+								value="#{controladorCrudRoControl.roControlParamImpRepVista.valorRep}"
+								required="true"
+								requiredMessage="El Valor es un campo Obligatorio"
+								maxlength="150" />
+							<p:message for="txtValorRep" />
+						</h:panelGrid>
+
+
+
+						<p:commandButton id="btnGuardarParamImpRep" value="Guardar" 
+							action="#{controladorCrudRoControl.guardarParamImpactoReputacion()}"
+							icon="ui-icon-disk" update="@form" process="pnlImpRep">
+							<p:confirm header="Guardar Parámetro Impacto-Reputación"
+								message="¿Desea guardar este Parámetro?" icon="ui-icon-disk" />
+						</p:commandButton>
+
+
+
+						<p:commandButton id="btnCancelarParamImpRep" value="Cancelar"
+							action="#{controladorCrudRoControl.cancelarParamImpactoReputacion()}"
+							icon="ui-icon-disk" update="@form" process="@this" />
+					</h:panelGrid>
+					<!-- TABLA -->
+					<p:dataTable id="dtlControlParamImpRep"
+						value="#{controladorCrudRoControl.paramImpRepTodos}"
+						var="varParamImpRep" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="5" rowsPerPageTemplate="5,10,15"
+						 >
+
+						<p:column sortBy="#{varParamImpRep.nombreRep}">
+							<center>
+								<f:facet name="header">Nombre</f:facet>
+							</center>
+							<h:outputText value="#{varParamImpRep.nombreRep}" />
+						</p:column>
+
+						<p:column sortBy="#{varParamImpRep.valorRep}">
+							<center>
+								<f:facet name="header">Valor REP</f:facet>
+							</center>
+							<h:outputText value="#{varParamImpRep.valorRep}" />
+						</p:column>
+						<!-- *********************************************************
+				 			ACCIONES Control
+				************************************************************* -->
+
+						<p:column>
+							<center>
+								<f:facet name="header">Acciones</f:facet>
+							</center>
+
+							<p:commandButton id="btnEditar" update="@form"
+								action="#{controladorCrudRoControl.editarParamImpactoReputacion()}"
+								icon="ui-icon-pencil" process="@this">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoControl.roControlParamImpRepVista}"
+									value="#{varParamImpRep}"></f:setPropertyActionListener>
+								<p:tooltip for="btnEditar"
+									value="Haga click para EDITAR este registro" />
+							</p:commandButton>
+
+							<p:commandButton id="btnEliminar" process="@this"
+								update="@form" icon="ui-icon-trash"
+								action="#{controladorCrudRoControl.eliminarParamImpactoReputacion}">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoControl.roControlParamImpRepVista}"
+									value="#{varParamImpRep}"></f:setPropertyActionListener>
+								<p:confirm header="Eliminar Parámetro Impacto Reputación"
+									message="¿Desea eliminar este Parámetro" icon="ui-icon-disk" />
+								<p:tooltip for="btnEliminar"
+									value="Haga click para ELIMINAR este registro" />
+							</p:commandButton>
+
+
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+
+<!-- 				<p:panel style="width:300px"> -->
+
+<!-- 				</p:panel> -->
+
+<!-- 				<p:panel style="width:300px"> -->
+
+<!-- 				</p:panel> -->
+
+			</h:panelGrid>
+
+
+
+			<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+				modal="true" height="30" width="100" resizable="false">
+				<h:outputText value="Espere....." />
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

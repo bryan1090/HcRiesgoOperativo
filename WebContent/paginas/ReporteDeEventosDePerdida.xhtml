@@ -1,0 +1,445 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Reporte de Eventos de Perdida</ui:define>
+	<ui:define name="tituloFormulario">Reporte de Eventos de Perdida</ui:define>
+	<ui:define name="contenido">
+		<h:form id="formReporteDeEventosDePerdida">
+
+			<p:growl id="growl" showDetail="true" for="notificacion" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<div align="center">
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+					<p:outputLabel for="console" value="Filtrar por:" />
+					<p:selectOneRadio id="console"
+						value="#{controladorReporteDeEventosDePerdida.tipoFiltro}">
+						<f:selectItem itemLabel="Fecha de Registro" itemValue="1" />
+						<f:selectItem itemLabel="Fecha de Ocurrencia" itemValue="2" />
+						<f:selectItem itemLabel="Fecha de Descubrimiento" itemValue="3" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+				<h:panelGrid columns="5">
+
+					<h:outputText value="Fecha de Inicio" />
+					<p:calendar
+						value="#{controladorReporteDeEventosDePerdida.fechaInicio}"
+						navigator="true" locale="es" />
+
+					<h:outputText value="Fecha de Fin" />
+					<p:calendar
+						value="#{controladorReporteDeEventosDePerdida.fechaFin}"
+						navigator="true" locale="es" />
+					<h:outputText value="" />
+
+					<h:outputText value="Agencias:" />
+					<h:outputText value="Departamentos:" />
+					<h:outputText value="Procesos:" />
+					<h:outputText value="Negocios:" />
+					<h:outputText value="Usuarios:" />
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteDeEventosDePerdida.agenciasVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDeEventosDePerdida.agenciasSeleccionadas}"
+							id="arbAgencia">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteDeEventosDePerdida.departamentosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDeEventosDePerdida.departamentosSeleccionadas}"
+							id="arbDepartamento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteDeEventosDePerdida.procesosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDeEventosDePerdida.procesosSeleccionadas}"
+							id="arbProceso">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteDeEventosDePerdida.negociosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDeEventosDePerdida.negociosSeleccionadas}"
+							id="arbNegocio">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollUsuarios">
+						<p:selectBooleanButton id="selTodosUsuarios"
+							value="#{controladorReporteDeEventosDePerdida.btodosUsuarios}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollUsuarios"
+								listener="#{controladorReporteDeEventosDePerdida.seleccionarTodosUsuarios}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorReporteDeEventosDePerdida.usuariosFiltro}"
+							layout="grid" columns="1" style="white-space: nowrap" >
+
+							<f:selectItems
+								value="#{controladorReporteDeEventosDePerdida.usuariosTodos}"
+								var="responsable"
+								itemLabel="#{responsable.nombreUsua} - #{responsable.nombreCompletoUsua}"
+								itemValue="#{responsable.codigoUsua}" />
+
+						</p:selectManyCheckbox>
+
+					</p:scrollPanel>
+
+
+					<h:outputText value="Eventos:" />
+
+					<h:outputText value="Factor de Riesgos:" />
+					<h:outputText value="Tipo de Pérdida:" />
+					<h:outputText value="Tipo de Registro:" />
+					<h:outputText value="" />
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:tree filterBy="#{node}"
+							value="#{controladorReporteDeEventosDePerdida.eventosVista}"
+							var="node" dynamic="true" selectionMode="checkbox"
+							selection="#{controladorReporteDeEventosDePerdida.eventosSeleccionadas}"
+							id="arbEvento">
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollFactor">
+						<p:selectBooleanButton id="selTodosFactor"
+							value="#{controladorReporteDeEventosDePerdida.btodosFactorRiesgo}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollFactor"
+								listener="#{controladorReporteDeEventosDePerdida.seleccionarTodosFactorRiesgo()}" />
+						</p:selectBooleanButton>
+
+						<p:selectManyCheckbox
+							value="#{controladorReporteDeEventosDePerdida.factorRiesgosFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorReporteDeEventosDePerdida.factorRiesgosTodos}"
+								var="factorRiesgo" itemLabel="#{factorRiesgo.nombreFaro}"
+								itemValue="#{factorRiesgo.codigoFaro}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px"
+						id="scrollTipo">
+						<p:selectBooleanButton
+							value="#{controladorReporteDeEventosDePerdida.btodosTipoPerdida}"
+							onLabel="Quitar Selección" offLabel="Seleccionar Todos"
+							onIcon="ui-icon-close" offIcon="ui-icon-check">
+							<p:ajax update="@form:scrollTipo"
+								listener="#{controladorReporteDeEventosDePerdida.seleccionarTodosTipoPerdida()}" />
+						</p:selectBooleanButton>
+						<p:selectManyCheckbox
+							value="#{controladorReporteDeEventosDePerdida.tipoPerdidasFiltro}"
+							layout="grid" columns="1">
+							<f:selectItems
+								value="#{controladorReporteDeEventosDePerdida.tipoPerdidasTodos}"
+								var="tipoPerdida" itemLabel="#{tipoPerdida.nombreTipe}"
+								itemValue="#{tipoPerdida.codigoTipe}" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+					<p:scrollPanel mode="native" style="width:205px;height:188px">
+						<p:selectManyCheckbox
+							value="#{controladorReporteDeEventosDePerdida.tipoRegistroFiltros}"
+							layout="grid" columns="1">
+							<f:selectItem itemLabel="Cualitativo" itemValue="Cualitativo" />
+							<f:selectItem itemLabel="Cuantitativo" itemValue="Cuantitativo" />
+						</p:selectManyCheckbox>
+					</p:scrollPanel>
+
+				</h:panelGrid>
+
+				<p:commandButton id="btnGenerarReporte" value="Generar Reporte"
+					actionListener="#{controladorReporteDeEventosDePerdida.generaReporte()}"
+					icon="ui-icon-check" update="@form" onstart="PF('dlg2').show();"
+					oncomplete="PF('dlg2').hide;">
+
+				</p:commandButton>
+
+
+				<!-- PANEL CRUCES -->
+
+				<p:panel id="pnlCrucesAgencia" header="DATOS" toggleable="TRUE">
+					<p:dataGrid columns="1"
+						value="#{controladorReporteDeEventosDePerdida.crucesPorAgenciaTodos}"
+						var="cruceAgencia">
+						<p:accordionPanel activeIndex="null">
+							<p:tab title="#{cruceAgencia.agencia.nombreAgia}">
+
+								<p:dataTable value="#{cruceAgencia.crucesPorAgencia}"
+									var="cruce" resizableColumns="true">
+
+									<p:column headerText="Evento" style="width:20%;"
+										styleClass="wrap" sortBy="#{cruce.roEvento.nombreEven}"
+										filterBy="#{cruce.roEvento.nombreEven}">
+										<h:outputText value="#{cruce.roEvento.nombreEven}" />
+									</p:column>
+
+									<p:column headerText="Sub-Evento" style="width:100%">
+										<p:dataGrid columns="1" value="#{cruce.eventosHijo}"
+											var="eventoNivel4">
+											<h:outputText value="#{eventoNivel4.nombreEven}" />
+										</p:dataGrid>
+									</p:column>
+
+									<p:column headerText="Ocurrencias"
+										style="text-align:center;width:15%;">
+										<p:dataGrid columns="1" value="#{cruce.eventosHijo}"
+											var="eventoNivel4">
+											<h:outputText value="#{eventoNivel4.numeroOcurrencias}" />
+										</p:dataGrid>
+									</p:column>
+
+									<p:column headerText="Pérdida"
+										style="text-align:center;width:15%">
+										<p:dataGrid columns="1" value="#{cruce.eventosHijo}"
+											var="eventoNivel4">
+											<h:outputText value="#{eventoNivel4.totalSeveridad}" />
+										</p:dataGrid>
+									</p:column>
+
+									<p:column headerText="Total Ocurrencias"
+										style="text-align:center;width:15%;">
+										<h:outputText value="#{cruce.numeroOcurrencias}" />
+									</p:column>
+
+									<p:column headerText="Total Perdida"
+										style="text-align:center;width:15%">
+										<h:outputText value="#{cruce.perdida}" />
+									</p:column>
+
+								</p:dataTable>
+
+							</p:tab>
+						</p:accordionPanel>
+					</p:dataGrid>
+				</p:panel>
+
+
+
+
+				<!-- 				<h:panelGrid columns="2"> -->
+				<!-- 					<f:facet name="header">Eventos Por Agencia</f:facet> -->
+
+				<!-- 					<h:outputText value="" /> -->
+
+				<!-- 					<p:dataGrid -->
+				<!-- 						value="#{controladorReporteDeEventosDePerdida.agenciasFiltro}" -->
+				<!-- 						var="agencia" -->
+				<!-- 						columns="#{controladorReporteDeEventosDePerdida.agenciasFiltro.size()}"> -->
+				<!-- 						<h:panelGrid columns="1"> -->
+
+				<!-- 							<h:outputText value="#{agencia.toString()}" /> -->
+				<!-- 						</h:panelGrid> -->
+
+				<!-- 					</p:dataGrid> -->
+
+				<!-- 					<p:dataGrid -->
+				<!-- 						value="#{controladorReporteDeEventosDePerdida.roEventosFiltro}" -->
+				<!-- 						rendered="#{evento.nivel==1}" -->
+				<!-- 						var="evento" columns="1"> -->
+
+
+				<!-- 							<h:outputText value="#{evento.nombreEven}"  /> -->
+
+
+				<!-- 					</p:dataGrid> -->
+
+				<!-- 				</h:panelGrid> -->
+
+
+
+				<!-- 												<p:dataTable -->
+				<!-- 													value="#{controladorReporteDeEventosDePerdida.crucesTodos}" -->
+				<!-- 													var="cruce"> -->
+
+				<!-- 													<p:column headerText="Evento" style="width:10%;"> -->
+				<!-- 														<h:outputText value="#{cruce.roEvento.nombreEven}" /> -->
+				<!-- 													</p:column> -->
+
+				<!-- 													<p:column headerText="Sub-Evento" style="width:100%"> -->
+				<!-- 														<p:dataGrid columns="1" value="#{cruce.eventosHijo}" -->
+				<!-- 															var="eventoNivel4"> -->
+				<!-- 															<h:outputText value="#{eventoNivel4.nombreEven}" /> -->
+				<!-- 														</p:dataGrid> -->
+				<!-- 													</p:column> -->
+
+				<!-- 													<p:column headerText="Ocurrencias" -->
+				<!-- 														style="text-align:center;width:15%"> -->
+				<!-- 														<p:dataGrid columns="1" value="#{cruce.eventosHijo}" -->
+				<!-- 															var="eventoNivel4"> -->
+				<!-- 															<h:outputText value="#{eventoNivel4.numeroOcurrencias}" /> -->
+				<!-- 														</p:dataGrid> -->
+				<!-- 													</p:column> -->
+
+				<!-- 													<p:column headerText="Pérdida" style="text-align:center;width:15%"> -->
+				<!-- 														<p:dataGrid columns="1" value="#{cruce.eventosHijo}" -->
+				<!-- 															var="eventoNivel4"> -->
+				<!-- 															<h:outputText value="#{eventoNivel4.totalSeveridad}" /> -->
+				<!-- 														</p:dataGrid> -->
+				<!-- 													</p:column> -->
+
+				<!-- 													<p:column headerText="Total Ocurrencias" -->
+				<!-- 														style="text-align:center;width:11%"> -->
+				<!-- 														<h:outputText value="#{cruce.numeroOcurrencias}" /> -->
+				<!-- 													</p:column> -->
+
+				<!-- 													<p:column headerText="Total Perdida" -->
+				<!-- 														style="text-align:center;width:11%"> -->
+				<!-- 														<h:outputText value="#{cruce.perdida}" /> -->
+				<!-- 													</p:column> -->
+
+				<!-- 												</p:dataTable> -->
+
+
+				<!-- GRAFICO -->
+
+				<div style="height: 10px"></div>
+
+				<p:panel header="GRÁFICO" toggleable="TRUE">
+				<p:messages closable="true" for="msjGrafico" showDetail="true">
+				</p:messages>
+					<p:chart type="bar" id="bar" widgetVar="bar1"
+						model="#{controladorReporteDeEventosDePerdida.modelBar}"
+						style="height:400px" responsive="true">
+						<p:ajax event="itemSelect"
+							listener="#{controladorReporteDeEventosDePerdida.seleccionarItem}"
+							update="growl dtlDetalles" />
+					</p:chart>
+
+					<p:commandButton type="button" value="Export"
+						icon="ui-icon-extlink" onclick="exportChart()" />
+				</p:panel>
+
+				<div style="height: 10px"></div>
+
+
+				<!-- TABLA -->
+				<!-- 				<h:outputText value="Tabla de Detalles Evento " /> -->
+
+				<p:panel header="Tabla Detalles Evento" toggleable="TRUE">
+					<p:dataTable id="dtlDetalles" widgetVar="detalles"
+						value="#{controladorReporteDeEventosDePerdida.detallesEventoItemSeleccionado}"
+						var="detalle" paginator="true" rows="10"
+						rowsPerPageTemplate="10,25,50,100">
+						<p:column headerText="Codigo" sortBy="#{detalle.codigoDeve}">
+							<h:outputText value="#{detalle.codigoDeve}" />
+						</p:column>
+
+						<p:column headerText="Evento"
+							sortBy="#{detalle.roEvento.nombreEven}">
+							<h:outputText value="#{detalle.roEvento.nombreEven}" />
+						</p:column>
+
+						<p:column headerText="Ocurrencias" sortBy="#{detalle.numOcur}">
+							<h:outputText value="#{detalle.numOcur}" />
+						</p:column>
+
+						<p:column headerText="Pérdida" sortBy="#{detalle.valorDeve}">
+							<h:outputText value="#{detalle.valorDeve}" />
+						</p:column>
+
+						<p:column headerText="Perdida Residual"
+							sortBy="#{detalle.perdidaResidualDeve}">
+							<h:outputText value="#{detalle.perdidaResidualDeve}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+
+
+				<!-- Diálogos Modales -->
+
+				<p:dialog widgetVar="dlg" draggable="false" showEffect="fade"
+					modal="true" header="Gráfico" resizable="false"
+					onShow="PF('dlg').initPosition()">
+					<p:commandButton value="Print" type="button" icon="ui-icon-print"
+						style="display:block;margin-bottom: 20px">
+						<p:printer target="image" />
+					</p:commandButton>
+					<p:panel id="image">
+						<center>
+							<h:panelGrid columns="2">
+								<h1>Reporte De Eventos De Pérdida - Gráfico</h1>
+								<h:graphicImage value="/utils/images/logoJEP.png" />
+							</h:panelGrid>
+						</center>
+						<p:outputPanel id="output" layout="block" style="height:500px" />
+					</p:panel>
+				</p:dialog>
+
+				<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+					modal="true" height="30" width="100" resizable="false"
+					draggable="false">
+					<h:outputText value="Espere....." />
+				</p:dialog>
+
+				<!-- JavaScript -->
+
+				<script type="text/javascript">
+					function exportChart() {
+					    //export image
+					//     $('#formReporteDeEventosDePerdida\\:output').empty().append(PF('bar1').exportAsImage());
+					//         $('#formReporteDeEventosDePerdida\\:output').append(PF('detalles').ex);
+					
+					$('#formReporteDeEventosDePerdida\\:output').empty().append(PF('bar1').exportAsImage());
+					//show the dialog
+					PF('dlg').show();
+					}
+
+
+					function extender() 
+					{
+					        this.cfg.seriesDefaults = {
+					        	renderer: $.jqplot.BarRenderer,
+						        pointLabels: {show: true,location:'n'},
+// 					            rendererOptions: {barWidth : 10},
+// 					           	fillColor:{color: '#FCB1B8'},         
+					        };
+
+					}
+				</script>
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

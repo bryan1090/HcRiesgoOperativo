@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Usuarios</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formUsuario">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:commandButton id="btnNuevaUsuario" value="Añadir Nuevo Usuario"
+				action="#{controladorCrudSisUsuario.nuevoSisUsuarioVista()}"
+				icon="ui-icon-plus" update="formUsuario"
+				disabled="#{controladorCrudSisUsuario.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlUsuario"
+				rendered="#{controladorCrudSisUsuario.pnlSisUsuario}">
+
+				<p:outputLabel for="txtNombreUsuario" value="Nombre del Usuario" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreUsuario"
+						value="#{controladorCrudSisUsuario.sisUsuarioVista.nombreUsua}"
+						required="true"
+						requiredMessage="El Nombre de Usuario es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtNombreUsuario" />
+				</h:panelGrid>
+
+
+				<p:outputLabel for="txtContraseniaUsuario"
+					id="oTxtContraseniaUsuario" value="Contraseña del Usuario"
+					rendered="#{controladorCrudSisUsuario.setContraseniaUsuario}" />
+				<h:panelGrid columns="2"
+					rendered="#{controladorCrudSisUsuario.setContraseniaUsuario}"
+					id="pTxtContraseniaUsuario">
+					<p:password id="txtContraseniaUsuario"
+						value="#{controladorCrudSisUsuario.sisUsuarioVista.contraseniaUsua}"
+						required="true"
+						requiredMessage="La contraseña es un campo Obligatorio"
+						maxlength="15" />
+					<p:message for="txtContraseniaUsuario" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtContrasenia2Usuario"
+					id="oTxtContrasenia2Usuario" value="Repetir Contraseña"
+					rendered="#{controladorCrudSisUsuario.setContraseniaUsuario}" />
+				<h:panelGrid columns="2"
+					rendered="#{controladorCrudSisUsuario.setContraseniaUsuario}"
+					id="pTxtContrasenia2Usuario">
+					<p:password id="txtContrasenia2Usuario"
+						value="#{controladorCrudSisUsuario.contraseniaRepetir}"
+						required="true"
+						requiredMessage="Debe repetir la contraseña, es un campo Obligatorio"
+						maxlength="15" />
+					<p:message for="txtContrasenia2Usuario" />
+				</h:panelGrid>
+
+				<p:outputLabel for="cmbPerfilUsuario" value="Perfil" />
+				<p:selectOneMenu id="cmbPerfilUsuario"
+					value="#{controladorCrudSisUsuario.idPerfilSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado del negocio">
+					<f:selectItems
+						value="#{controladorCrudSisUsuario.sisPerfilessTodos}"
+						var="varPerfiles" itemValue="#{varPerfiles.codigoPerf}"
+						itemLabel="#{varPerfiles.nombrePerf}" />
+				</p:selectOneMenu>
+
+
+				<p:commandButton id="btnCambiarContrasenia"
+					value="Cambiar contraseña"
+					action="#{controladorCrudSisUsuario.cambiarContrasenia()}"
+					icon="ui-icon-disk"
+					rendered="#{controladorCrudSisUsuario.btnCambiarContrasenia}"
+					update=":formUsuario" process="@this">
+				</p:commandButton>
+				<h:panelGrid
+					rendered="#{controladorCrudSisUsuario.btnCambiarContrasenia}">
+					<div></div>
+				</h:panelGrid>
+
+				<p:outputLabel for="txtFechaCaducaUsuario"
+					value="Caducidad de la Contraseña" />
+				<h:panelGrid columns="2">
+					<p:calendar id="txtFechaCaducaUsuario"
+						value="#{controladorCrudSisUsuario.sisUsuarioVista.fechaCaducaUsua}"
+						required="true"
+						requiredMessage="La fecha de caducidad es un campo Obligatorio"
+						mode="inline" navigator="true" />
+					<p:message for="txtFechaCaducaUsuario" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtNombreCompletoUsuario"
+					value="Nombre Completo" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreCompletoUsuario"
+						value="#{controladorCrudSisUsuario.sisUsuarioVista.nombreCompletoUsua}"
+						required="true"
+						requiredMessage="El Nombre Completo es un campo Obligatorio"
+						maxlength="50" />
+					<p:message for="txtNombreCompletoUsuario" />
+				</h:panelGrid>
+
+				<p:outputLabel for="txtNumeroIntentosUsuario"
+					value="Número de intentos del usuario" />
+				<h:panelGrid columns="3">
+					<p:inputText id="txtNumeroIntentosUsuario"
+						value="#{controladorCrudSisUsuario.sisUsuarioVista.bloqueadoUsua}">
+					</p:inputText>
+					<p:message for="txtNombreCompletoUsuario" />
+				</h:panelGrid>
+
+				<p:outputLabel for="cmbCargoUsuario" value="Cargo" />
+				<p:selectOneMenu id="cmbCargoUsuario"
+					value="#{controladorCrudSisUsuario.idCargoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el cargo del Usuario">
+					<f:selectItems
+						value="#{controladorCrudSisUsuario.roTipoCargoTodos}"
+						var="varCargos" itemValue="#{varCargos.codigoCargo}"
+						itemLabel="#{varCargos.nombreCargo}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="btnAuditableUsuario" value="Auditable" />
+				<h:panelGrid columns="2">
+					<p:selectBooleanButton onLabel="Auditable" offLabel="No Auditable"
+						id="btnAuditableUsuario" onIcon="ui-icon-pencil"
+						offIcon="ui-icon-close"
+						value="#{controladorCrudSisUsuario.btnAuditable}">
+					</p:selectBooleanButton>
+					<div />
+				</h:panelGrid>
+
+				<p:outputLabel for="btnSuperUsuario" value="Permiso Detalle Eventos" />
+				<h:panelGrid columns="2">
+					<p:selectBooleanButton onLabel="Activo" offLabel="Inactivo"
+						id="btnSuperUsuario" onIcon="ui-icon-minusthick"
+						offIcon="ui-icon-radio-on"
+						value="#{controladorCrudSisUsuario.btnSuper}">
+					</p:selectBooleanButton>
+					<div />
+				</h:panelGrid>
+
+				<p:outputLabel for="btnBloqueadoUsuario" value="Bloqueado" />
+
+				<h:panelGrid columns="2">
+					<p:selectBooleanButton onLabel="Bloqueado" offLabel="Desbloqueado"
+						id="btnBloqueadoUsuario" onIcon="ui-icon-locked"
+						offIcon="ui-icon-unlocked"
+						value="#{controladorCrudSisUsuario.btnBloqueado}">
+					</p:selectBooleanButton>
+					<div />
+				</h:panelGrid>
+
+
+
+
+
+
+				<p:commandButton id="btnGuardarUsuario" value="Guardar"
+					actionListener="#{controladorCrudSisUsuario.guardarSisUsuario()}"
+					icon="ui-icon-disk" update="formUsuario">
+					<p:confirm header="Guardar Usuario"
+						message="¿Desea guardar esta Usuario?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarUsuario" value="Cancelar"
+					action="#{controladorCrudSisUsuario.cancelar()}"
+					icon="ui-icon-arrowrefresh-1-w" update="formUsuario"
+					process="@this">
+				</p:commandButton>
+
+
+			</h:panelGrid>
+<!-- 				<p:outputLabel for="btnClaveReseateada" value="Clave Reseteada" /> -->
+
+<!-- 				<h:panelGrid columns="2"> -->
+<!-- 					<p:selectBooleanButton id="btnClaveReseateada" disabled="true" -->
+<!-- 						onLabel="SI" offLabel="NO" onIcon="ui-icon-check" -->
+<!-- 						offIcon="ui-icon-closethick" -->
+<!-- 						value="#{controladorCrudSisUsuario.btnClaveReseteada}"> -->
+<!-- 					</p:selectBooleanButton> -->
+<!-- 					<div /> -->
+<!-- 				</h:panelGrid> -->
+
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlUsuario"
+				value="#{controladorCrudSisUsuario.sisUsuariosTodos}"
+				var="varUsuario" style="width:70%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column sortBy="#{varUsuario.nombreUsua}"
+					filterBy="#{varUsuario.nombreUsua}" filterMatchMode="contains">
+
+					<f:facet name="header">Nombre de Usuario</f:facet>
+
+					<h:outputText value="#{varUsuario.nombreUsua}" />
+				</p:column>
+
+				<p:column sortBy="#{varUsuario.nombreCompletoUsua}"
+					filterMatchMode="contains"
+					filterBy="#{varUsuario.nombreCompletoUsua}">
+
+					<f:facet name="header">Nombre Completo</f:facet>
+
+					<h:outputText value="#{varUsuario.nombreCompletoUsua}" />
+				</p:column>
+
+
+				<p:column sortBy="#{varUsuario.sisPerfil.nombrePerf}">
+
+					<f:facet name="header">Perfil</f:facet>
+
+					<h:outputText value="#{varUsuario.sisPerfil.nombrePerf}" />
+				</p:column>
+
+				<p:column sortBy="#{varUsuario.roTipoCargo.nombreCargo}">
+
+					<f:facet name="header">Cargo</f:facet>
+
+					<h:outputText value="#{varUsuario.roTipoCargo.nombreCargo}" />
+				</p:column>
+
+				<p:column>
+
+					<f:facet name="header">Numero de Intentos</f:facet>
+					<center>
+						<h:outputText value="#{varUsuario.bloqueadoUsua}" />
+					</center>
+				</p:column>
+
+
+				<!-- *********************************************************
+				 			ACCIONES Usuario
+				************************************************************* -->
+
+				<p:column exportable="false">
+
+					<f:facet name="header">Acciones</f:facet>
+
+
+					<p:commandButton id="btnEditar" update=":formUsuario"
+						action="#{controladorCrudSisUsuario.editarSisUsuario()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudSisUsuario.sisUsuarioVista}"
+							value="#{varUsuario}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar" update=":formUsuario"
+						icon="ui-icon-trash"
+						action="#{controladorCrudSisUsuario.eliminarSisUsuario()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudSisUsuario.sisUsuarioVista}"
+							value="#{varUsuario}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar Usuario"
+							message="¿Desea eliminar este Usuario?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+
+			<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlUsuario" fileName="usuario" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlUsuario" fileName="usuario" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlUsuario" fileName="usuario" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlUsuario" fileName="usuario"
+							pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlUsuario" fileName="usuario" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlUsuario" fileName="usuario"
+							pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

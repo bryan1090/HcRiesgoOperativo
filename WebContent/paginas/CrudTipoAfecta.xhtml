@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Tipo de Afectación</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+	
+	<ui:define name="contenido">
+		<h:form id="formTipoAfecta">
+			<p:growl id="growl" showDetail="true" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+			<p:commandButton id="btnNuevaTipoAfecta"
+				value="Añadir Nuevo Tipo de Afectación"
+				action="#{controladorCrudRoTipoAfecta.nuevoTipoAfectaVista()}"
+				icon="ui-icon-plus" update="formTipoAfecta"
+				disabled="#{controladorCrudRoTipoAfecta.btnAnadir}" />
+
+			<h:panelGrid columns="2" id="pnlTipoAfecta"
+				rendered="#{controladorCrudRoTipoAfecta.pnlTipoAfecta}">
+
+				<p:outputLabel for="txtNombreTipoAfecta" value="Nombre del TipoAfecta" />
+				<h:panelGrid columns="2">
+					<p:inputText id="txtNombreTipoAfecta"
+						value="#{controladorCrudRoTipoAfecta.roTipoAfectaVista.nombreTafc}"
+						required="true"
+						requiredMessage="El Nombre de TipoAfecta es un campo Obligatorio"
+						maxlength="250" size="50"/>
+					<p:message for="txtNombreTipoAfecta" />
+				</h:panelGrid>
+
+				<p:outputLabel for="cmbEstadoTipoAfecta" value="Estado" />
+				<p:selectOneMenu id="cmbEstadoTipoAfecta"
+					value="#{controladorCrudRoTipoAfecta.idEstadoSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar el estado del TipoAfecta">
+					<f:selectItems value="#{controladorCrudRoTipoAfecta.estadosTodos}"
+						var="varEstados" itemValue="#{varEstados.codigoEsta}"
+						itemLabel="#{varEstados.nombreEsta}" />
+				</p:selectOneMenu>
+
+				<p:commandButton id="btnGuardarTipoAfecta" value="Guardar"
+					actionListener="#{controladorCrudRoTipoAfecta.guardarTipoAfecta()}"
+					icon="ui-icon-disk"
+					update="formTipoAfecta">
+					<p:confirm header="Guardar TipoAfecta"
+						message="¿Desea guardar esta TipoAfecta?" icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarTipoAfecta" value="Cancelar"
+					action="#{controladorCrudRoTipoAfecta.cancelar()}" icon="ui-icon-disk"
+					update="formTipoAfecta" process="@this" />
+
+
+			</h:panelGrid>
+
+			<!-- TABLA -->
+			<p:dataTable id="dtlTipoAfecta"
+				value="#{controladorCrudRoTipoAfecta.tipoAfectasTodos}"
+				var="varTipoAfecta"
+				style="width:40%"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+				<p:column>
+				 
+						<f:facet name="header">Nombre</f:facet>
+				 
+					<h:outputText value="#{varTipoAfecta.nombreTafc}" />
+				</p:column>
+
+
+				<p:column>
+			 
+						<f:facet name="header">Estado</f:facet>
+			 
+					<h:outputText value="#{varTipoAfecta.genEstado.nombreEsta}" />
+				</p:column>
+				
+
+
+				<!-- *********************************************************
+				 			ACCIONES TipoAfecta
+				************************************************************* -->
+
+				<p:column exportable="false">
+			 
+						<f:facet name="header">Acciones</f:facet>
+			 
+
+					<p:commandButton id="btnEditar" update=":formTipoAfecta"
+						action="#{controladorCrudRoTipoAfecta.editarTipoAfectaVista()}"
+						icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoAfecta.roTipoAfectaVista}"
+							value="#{varTipoAfecta}"></f:setPropertyActionListener>
+						<p:tooltip for="btnEditar"
+							value="Haga click para EDITAR este registro" />
+					</p:commandButton>
+
+					<p:commandButton id="btnEliminar"
+						update=":formTipoAfecta" icon="ui-icon-trash"
+						action="#{controladorCrudRoTipoAfecta.eliminarTipoAfecta()}">
+						<f:setPropertyActionListener
+							target="#{controladorCrudRoTipoAfecta.roTipoAfectaVista}"
+							value="#{varTipoAfecta}"></f:setPropertyActionListener>
+						<p:confirm header="Eliminar TipoAfecta"
+							message="¿Desea eliminar este TipoAfecta?" icon="ui-icon-disk" />
+						<p:tooltip for="btnEliminar"
+							value="Haga click para ELIMINAR este registro" />
+					</p:commandButton>
+
+
+				</p:column>
+			</p:dataTable>
+			
+				<h:panelGrid columns="2">
+				<p:panel header="Exportar todo">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoAfecta"
+							fileName="tipoAfecta" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoAfecta" fileName="tipoAfecta" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoAfecta"
+							fileName="tipoAfecta" />
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel header="Exportar Pagina">
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/excel.png" />
+						<p:dataExporter type="xls" target="dtlTipoAfecta"
+							fileName="tipoAfecta" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/pdf.png" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1"
+							target="dtlTipoAfecta" fileName="tipoAfecta" pageOnly="true" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage value="/utils/images/xml.png" />
+						<p:dataExporter type="xml" target="dtlTipoAfecta"
+							fileName="tipoAfecta" pageOnly="true" />
+					</h:commandLink>
+				</p:panel>
+			</h:panelGrid>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

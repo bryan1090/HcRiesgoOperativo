@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputScript name="validador.js"></h:outputScript>
+	<title><ui:insert name="tituloPagina">Riesgo Operativo</ui:insert></title>
+	<link href="#{request.contextPath}/utils/loginStyles.css"
+		rel="stylesheet" type="text/css" />
+		
+	<p:growl  showDetail="true" >
+	
+	</p:growl>
+	
+</h:head>
+
+
+<h:body>
+	<p:idleMonitor timeout="60000">
+		<p:ajax event="active" listener="#{dataManagerSesion.control()}" />
+	</p:idleMonitor>
+	<pe:ajaxErrorHandler button="Volver a Ingresar!"
+		widgetVar="myAjaxErrorHandler" title="Inicie Sesión: "
+		body="Bienvenido, porfavor ingrese al sistema" />
+	<div id="boxlogin">
+		<div id="boxheader">
+			<img src="#{request.contextPath}/utils/images/hcLogo.png"
+				alt="HC-CONSULTORES"
+				style="width: 200px; height: 60px; margin: 9px 0px 0px 90px;" />
+		</div>
+		<div id="content">
+			<ui:insert name="contenido">
+							Aqui va el contenido
+						</ui:insert>
+		</div>
+		<img src="#{request.contextPath}/utils/images/users.png" alt="Login"
+			style="position: absolute; right: -40px; top: 90px; width: 150px;" />
+	</div>
+
+
+
+</h:body>
+</html>

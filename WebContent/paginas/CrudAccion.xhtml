@@ -1,0 +1,977 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/utils/templatePro.xhtml">
+	<ui:define name="tituloPagina">Plan de Acción</ui:define>
+	<ui:define name="tituloFormulario"></ui:define>
+
+	<ui:define name="contenido">
+		<h:form id="formAccion">
+			<p:growl id="growl" showDetail="true">
+
+
+			</p:growl>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:dialog header="Descargar Archivo"
+				widgetVar="dlgDescargarRequerimiento" modal="true" resizable="false">
+				<h4>¿Desea descargar el archivo del requerimiento seleccionado?</h4>
+				<center>
+					<p:commandButton value="SI" icon="ui-icon-check"
+						action="#{controladorCrudRoAccion.descargar()}" ajax="false"
+						immediate="true" onclick="PF('dlgDescargarRequerimiento').hide();" />
+					<p:commandButton value="NO" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+						onclick="PF('dlgDescargarRequerimiento').hide();"
+						action="#{controladorCrudRoAccion.cancelarArchivoAccion()}" />
+				</center>
+			</p:dialog>
+
+			<p:dialog header="Descargar Archivo"
+				widgetVar="dlgDescargarRequerimiento2" modal="true"
+				resizable="false">
+				<h4>¿Desea descargar el archivo del requerimiento seleccionado?</h4>
+				<center>
+					<p:commandButton value="SI" icon="ui-icon-check"
+						action="#{controladorCrudRoAccion.descargarDetalleAccion()}"
+						ajax="false" immediate="true"
+						onclick="PF('dlgDescargarRequerimiento2').hide();" />
+					<p:commandButton value="NO" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+						onclick="PF('dlgDescargarRequerimiento2').hide();"
+						action="#{controladorCrudRoAccion.cancelarArchivoDetalleAccion()}" />
+				</center>
+			</p:dialog>
+
+			<p:dataTable id="dtlDetalleEvento"
+				value="#{controladorCrudRoAccion.detalleEventoSeleccionadoLista}"
+				var="varDetalleEvento"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+				scrollable="true" scrollWidth="978" resizableColumns="true">
+
+				<!--Codigo detalle de evento, no editable-->
+				<p:column headerText="Código" style="width:50px;">
+					<h:outputText value="#{varDetalleEvento.codigoDeve}"
+						title="#{varDetalleEvento.codigoDeve}" />
+				</p:column>
+
+				<p:column headerText="Tipo" style="width:200px;">
+
+					<h:outputText value="#{varDetalleEvento.tipoCalifDeve}" />
+
+				</p:column>
+
+				<!--Agencia,editable-->
+				<p:column headerText="Agencia" style="width:200px;">
+
+					<h:outputText value="#{varDetalleEvento.roAgencia.nombreAgia}"
+						title="#{varDetalleEvento.roAgencia.nombreAgia}" />
+
+				</p:column>
+
+				<!-- Evento,editable-->
+				<p:column headerText="Evento" style="width:200px;">
+
+					<h:outputText value="#{varDetalleEvento.roEvento.nombreEven}"
+						title="#{varDetalleEvento.roEvento.nombreEven}" />
+
+				</p:column>
+
+				<!-- Proceso,editable-->
+				<p:column headerText="Proceso" style="width:200px;">
+
+					<h:outputText value="#{varDetalleEvento.roProceso.nombrePros}"
+						title="#{varDetalleEvento.roProceso.nombrePros}" />
+
+				</p:column>
+
+				<!-- Negocio,editable-->
+				<p:column headerText="Negocio" style="width:200px;">
+					<h:outputText value="#{varDetalleEvento.roNegocio1.nombreNego}"
+						title="#{varDetalleEvento.roNegocio1.nombreNego}" />
+				</p:column>
+
+				<!-- Departamento, editable-->
+				<p:column headerText="Departamento" style="width:200px;">
+
+					<h:outputText value="#{varDetalleEvento.roDepartamento.nombreDept}"
+						title="#{varDetalleEvento.roDepartamento.nombreDept}" />
+
+				</p:column>
+
+
+
+				<!-- Factor de Riesgo, editable-->
+				<p:column headerText="Factor de Riesgo" style="width:200px;">
+
+					<h:outputText value="#{varDetalleEvento.roFactorRiesgo.nombreFaro}"
+						title="#{varDetalleEvento.roFactorRiesgo.nombreFaro}" />
+
+				</p:column>
+
+				<p:column headerText="Tipo de Pérdida" style="width:200px;">
+
+					<h:outputText value="#{varDetalleEvento.roTipoPerdida.nombreTipe}"
+						title="#{varDetalleEvento.roTipoPerdida.nombreTipe}" />
+
+				</p:column>
+
+				<!-- Pto Control, editable-->
+				<p:column headerText="Punto de Control" style="width:160px;">
+					<h:outputText value="#{varDetalleEvento.ptoCtrlProcDeve}"
+						title="#{varDetalleEvento.ptoCtrlProcDeve}" />
+
+				</p:column>
+
+				<p:column headerText="Fecha de Ocurrencia" style="width:60px;">
+					<h:outputText value="#{varDetalleEvento.fechaOcurDeve}"
+						title="#{varDetalleEvento.fechaOcurDeve}" />
+				</p:column>
+
+				<p:column headerText="Fecha de Descubrimiento" style="width:60px;">
+					<h:outputText value="#{varDetalleEvento.fechaDescDeve}"
+						title="#{varDetalleEvento.fechaDescDeve}" />
+				</p:column>
+
+				<p:column headerText="Fecha de Registro" style="width:60px;">
+					<h:outputText value="#{varDetalleEvento.fechaRegisDeve}"
+						title="#{varDetalleEvento.fechaRegisDeve}" />
+				</p:column>
+
+				<p:column headerText="Pérdida" style="width:180px;">
+					<h:outputText value="#{varDetalleEvento.valorDeve}"
+						title="#{varDetalleEvento.valorDeve}" />
+				</p:column>
+
+				<!-- Monto Recuperado, editable-->
+				<p:column headerText="Monto Recuperado" style="width:120px;">
+
+					<h:outputText value="#{varDetalleEvento.montoRecupDeve}"
+						title="#{varDetalleEvento.montoRecupDeve}" />
+
+				</p:column>
+
+				<!-- Costo, editable-->
+				<p:column headerText="Costo de Recuperación" style="width:130px;">
+					<h:outputText value="#{varDetalleEvento.costoRecupDeve}"
+						title="#{varDetalleEvento.costoRecupDeve}" />
+				</p:column>
+
+				<!-- Costo, editable-->
+				<p:column headerText="Recuperación Real" style="width:130px;">
+					<h:outputText value="#{varDetalleEvento.realRecupDeve}"
+						title="#{varDetalleEvento.realRecupDeve}" />
+				</p:column>
+
+				<!-- Costo, editable-->
+				<p:column headerText="Perdida Residual" style="width:130px;">
+					<h:outputText value="#{varDetalleEvento.perdidaResidualDeve}"
+						title="#{varDetalleEvento.perdidaResidualDeve}" />
+				</p:column>
+
+
+
+				<!-- Fecha, editable-->
+
+				<p:column headerText="Usuario" style="width:150px;">
+					<h:outputText value="#{varDetalleEvento.sisUsuario.nombreUsua}"
+						title="#{varDetalleEvento.sisUsuario.nombreUsua}" />
+				</p:column>
+
+
+			</p:dataTable>
+
+
+			<p:commandButton id="btnNuevaAccion" value="Añadir Plan de Acción"
+				action="#{controladorCrudRoAccion.nuevoAccion()}"
+				icon="ui-icon-plus" process="@this" update="@form"
+				disabled="#{controladorCrudRoAccion.btnAnadirAccion}" />
+
+
+			<p:panelGrid columns="4" id="pnlAcciones"
+				rendered="#{controladorCrudRoAccion.pnlAccion}" style="width:100%;">
+
+
+				<p:outputLabel value="Linea de Negocio Nivel 1: " />
+				<p:outputLabel value="#{controladorCrudRoAccion.negocioNivel1}" />
+
+				<p:outputLabel value="Linea de Negocio Nivel 2: " />
+				<p:outputLabel value="#{controladorCrudRoAccion.negocioNivel2}" />
+
+				<p:outputLabel value="Evento de Riesgo Nivel 1: " />
+				<p:outputLabel value="#{controladorCrudRoAccion.eventoNivel1}" />
+
+				<p:outputLabel value="Evento de Riesgo Nivel 2: " />
+				<p:outputLabel value="#{controladorCrudRoAccion.eventoNivel2}" />
+
+
+				<p:outputLabel value="Fecha de Ocurrencia" />
+				<p:calendar
+					value="#{controladorCrudRoAccion.roDetalleEventoVista.fechaOcurDeve}"
+					disabled="true" pattern="yyyy-MM-dd" />
+
+				<p:outputLabel value="Fecha de Registro" />
+				<p:calendar
+					value="#{controladorCrudRoAccion.roDetalleEventoVista.fechaRegisDeve}"
+					disabled="true" pattern="yyyy-MM-dd" />
+
+				<p:outputLabel value="Monto de la Pérdida: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.montoPerdida}" />
+
+				<p:outputLabel value="Numero de Ocurrencias: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.numeroOcurrenciasAcci}" />
+
+				<p:outputLabel value="Riesgo Residual: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.riesgoResidual}" />
+
+				<p:outputLabel value="Impacto Residual: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.numConsecResidual} - #{controladorCrudRoAccion.roAccionVista.consecResidual}" />
+
+				<p:outputLabel value="Probabilidad Residual: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.numProbaResidual} - #{controladorCrudRoAccion.roAccionVista.probaResidual}" />
+
+				<p:outputLabel value="Riesgo Inherente: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.riesgoInherente}" />
+
+				<p:outputLabel value="Impacto Inherente: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.numConsecInherente} - #{controladorCrudRoAccion.roAccionVista.consecInherente}" />
+
+				<p:outputLabel value="Probabilidad Inherente: " />
+				<p:outputLabel
+					value="#{controladorCrudRoAccion.roAccionVista.numProbaInherente} - #{controladorCrudRoAccion.roAccionVista.probaInherente}" />
+
+				<p:outputLabel for="cmbResponsableAccion"
+					value="Responsable de Seguimiento General" />
+				<p:selectOneMenu id="cmbResponsableAccion"
+					value="#{controladorCrudRoAccion.idResponsableSeleccionado}"
+					required="true"
+					requiredMessage="Debe seleccionar un Responsable de Seguimiento General">
+					<f:selectItems
+						value="#{controladorCrudRoAccion.roResponsablesTodos}" var="var"
+						itemValue="#{var.codigoResp}"
+						itemLabel="#{var.nombreResp} #{var.apellidoResp}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Fecha de Registro del Plan de Acción" />
+				<p:calendar
+					value="#{controladorCrudRoAccion.roAccionVista.fechaRegistroAcci}"
+					disabled="true" pattern="yyyy-MM-dd" />
+
+				<p:outputLabel value="Fecha de Inicio del Plan de Acción" />
+				<p:calendar
+					value="#{controladorCrudRoAccion.roAccionVista.fechaInicioAcci}"
+					required="true"
+					requiredMessage="La fecha de inicio es un campo Obligatorio"
+					navigator="true" pattern="yyyy-MM-dd" />
+
+				<p:outputLabel value="Fecha de Fin del Plan de Acción" />
+				<p:calendar
+					value="#{controladorCrudRoAccion.roAccionVista.fechaFinAcci}"
+					required="true"
+					requiredMessage="La fecha de fin es un campo Obligatorio"
+					navigator="true" pattern="yyyy-MM-dd" />
+
+				<p:outputLabel value="Finalizado" />
+				<p:selectOneMenu
+					value="#{controladorCrudRoAccion.roAccionVista.finAcci}">
+					<f:selectItem itemValue="0" itemLabel="No Finalizado" />
+					<f:selectItem itemValue="1" itemLabel="Finalizado" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Aprobado" />
+				<p:selectOneMenu
+					value="#{controladorCrudRoAccion.roAccionVista.aprobAcci}">
+					<f:selectItem itemValue="0" itemLabel="No Aprobado" />
+					<f:selectItem itemValue="1" itemLabel="Aprobado" />
+				</p:selectOneMenu>
+
+			</p:panelGrid>
+
+
+			<p:panelGrid columns="2"
+				rendered="#{controladorCrudRoAccion.pnlAccion}" style="width:100%">
+				<p:outputLabel for="txtNombreAccion" value="Plan de Acción" />
+				<p:inputTextarea id="txtNombreAccion"
+					value="#{controladorCrudRoAccion.roAccionVista.nombreAcci}"
+					maxlength="500" rows="5" cols="110" counter="counter3"
+					counterTemplate="{0} caracteres restantes."
+					rendered="#{controladorCrudRoAccion.pnlAccion}" required="true" />
+				<div />
+				<h:outputText id="counter3" />
+
+				<p:outputLabel for="txtObservacionAccion" value="Resumen" />
+				<p:inputTextarea id="txtObservacionAccion"
+					value="#{controladorCrudRoAccion.roAccionVista.resumenAcci}"
+					maxlength="3000" rows="10" cols="110" counter="counter"
+					counterTemplate="{0} caracteres restantes."
+					rendered="#{controladorCrudRoAccion.pnlAccion}" />
+				<div></div>
+				<h:outputText id="counter" />
+
+				<p:commandButton id="btnGuardarAccion" value="Guardar"
+					action="#{controladorCrudRoAccion.guardarAccion()}"
+					icon="ui-icon-disk" update="formAccion">
+					<p:confirm header="Guardar Atributo Adicional"
+						message="¿Desea guardar este Atributo Adicional?"
+						icon="ui-icon-disk" />
+				</p:commandButton>
+
+				<p:commandButton id="btnCancelarAccion" value="Cancelar"
+					action="#{controladorCrudRoAccion.cancelar()}" icon="ui-icon-disk"
+					update="formAccion" process="@this" />
+			</p:panelGrid>
+
+			<!-- TABLA -->
+			<h:panelGrid columns="5" id="pngFiltroAccion">
+
+				<h:outputText value="Mostrar Planes Iniciados desde: " />
+				<p:calendar value="#{controladorCrudRoAccion.fechaInicio}"
+					navigator="true" locale="es" />
+
+				<h:outputText value="hasta: " />
+				<p:calendar value="#{controladorCrudRoAccion.fechaFin}"
+					navigator="true" locale="es" />
+				<p:commandButton id="btnFiltrarAccion" value="Buscar"
+					action="#{controladorCrudRoAccion.finalizarGuardado()}"
+					icon="ui-icon-search" process="@form:pngFiltroAccion"
+					update="@form" />
+			</h:panelGrid>
+
+			<p:dataTable id="dtlAccion"
+				rowStyleClass="#{varAccion.finAcci == 1 ? varAccion.aprobAcci == 1 ? 'verde' : 'amarillo' : null}"
+				value="#{controladorCrudRoAccion.accionesTodos}" var="varAccion"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				paginator="true" rows="4" rowsPerPageTemplate="4,8,12"
+				selection="#{controladorCrudRoAccion.roAccionControlador}"
+				selectionMode="single" rowKey="#{varAccion.codigoAcci}">
+				<p:ajax event="rowSelect"
+					listener="#{controladorCrudRoAccion.seleccionar()}"
+					update=":formAccion" onstart="PF('dlg2').show();"
+					oncomplete="PF('dlg2').hide;" />
+
+				<p:column>
+					<f:facet name="header">Plan de Acción</f:facet>
+
+					<h:outputText value="#{varAccion.nombreAcci}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">Evento</f:facet>
+
+					<h:outputText
+						value="#{varAccion.roDetalleEvento.roEvento.nombreEven}" />
+				</p:column>
+
+
+				<p:column>
+					<center>
+						<f:facet name="header">Fecha de Ocurrencia</f:facet>
+					</center>
+					<h:outputText value="#{varAccion.roDetalleEvento.fechaOcurDeve}" />
+				</p:column>
+
+				<p:column>
+					<center>
+						<f:facet name="header">Responsable General</f:facet>
+					</center>
+					<h:outputText
+						value="#{varAccion.roResponsable.nombreResp} #{varAccion.roResponsable.apellidoResp}" />
+				</p:column>
+
+
+				<p:column>
+					<center>
+						<f:facet name="header">Fecha de Inicio</f:facet>
+					</center>
+					<h:outputText value="#{varAccion.fechaInicioAcci}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">Fecha de Fin</f:facet>
+					<h:outputText value="#{varAccion.fechaFinAcci}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">Observaciones</f:facet>
+					<h:outputText value="#{varAccion.observaciones}" />
+				</p:column>
+
+				<!-- *********************************************************
+				 			ACCIONES Accion
+				************************************************************* -->
+
+				<p:column>
+					<center>
+						<f:facet name="header">Acciones</f:facet>
+					</center>
+					<h:panelGrid columns="3">
+						<p:commandButton process="@this" id="btnEditar"
+							update=":formAccion"
+							action="#{controladorCrudRoAccion.editarAccionVista()}"
+							icon="ui-icon-pencil">
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoAccion.roAccionVista}"
+								value="#{varAccion}"></f:setPropertyActionListener>
+							<p:tooltip for="btnEditar"
+								value="Haga click para EDITAR este registro" />
+						</p:commandButton>
+
+						<p:commandButton process="@this" id="btnArchivos"
+							action="#{controladorCrudRoAccion.mostrarArchivosAccionVista()}"
+							icon="ui-icon-folder-collapsed"
+							oncomplete="PF('dlgArchivos').show();"
+							update=":formAccion:pnlArchivos">
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoAccion.roAccionVista}"
+								value="#{varAccion}"></f:setPropertyActionListener>
+							<p:tooltip for="btnArchivos"
+								value="Haga click para ver los ARCHIVOS de este registro" />
+						</p:commandButton>
+
+						<p:commandButton id="btnEliminar" update=":formAccion"
+							icon="ui-icon-trash" process="@this"
+							action="#{controladorCrudRoAccion.eliminarAccion()}">
+							<f:setPropertyActionListener
+								target="#{controladorCrudRoAccion.roAccionVista}"
+								value="#{varAccion}"></f:setPropertyActionListener>
+							<p:confirm header="Eliminar Accion"
+								message="¿Desea eliminar este Atributo Adicional?"
+								icon="ui-icon-disk" />
+							<p:tooltip for="btnEliminar"
+								value="Haga click para ELIMINAR este registro" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:column>
+			</p:dataTable>
+
+			<p:panel toggleable="false" header="Actividades del Plan de Acción"
+				id="pnlDetalleAccion"
+				rendered="#{controladorCrudRoAccion.mostrarPnlDetalleAccion}">
+
+				<p:commandButton id="btnNuevaDetalleAccion"
+					value="Añadir Actividad del Plan de Acción"
+					action="#{controladorCrudRoAccion.nuevoDetalleAccion()}"
+					icon="ui-icon-plus" process="@this"
+					update=":formAccion:pnlDetalleAccion"
+					disabled="#{controladorCrudRoAccion.btnAnadirDetalleAccion}" />
+
+				<h:panelGrid columns="2" id="pngEditarDetalleAccion"
+					rendered="#{controladorCrudRoAccion.pnlEditarDetalleAccion}">
+
+					<p:outputLabel for="txtNombreDetalleAccion"
+						value="Acción Propuesta" />
+					<p:inputText id="txtNombreDetalleAccion"
+						value="#{controladorCrudRoAccion.roDetalleAccionVista.nombreDeac}"
+						maxlength="200"
+						requiredMessage="Acción Propuesta es un campo Obligatorio"
+						required="true" />
+
+					<p:outputLabel for="cmbResponsableDetalleAccion"
+						value="Responsable de Ejecución" />
+					<p:selectOneMenu id="cmbResponsableDetalleAccion"
+						value="#{controladorCrudRoAccion.idResponsableEjecucionSeleccionado}"
+						required="true"
+						requiredMessage="Debe seleccionar un Responsable de Ejecución">
+						<f:selectItems
+							value="#{controladorCrudRoAccion.roResponsablesTodos}" var="var"
+							itemValue="#{var.codigoResp}"
+							itemLabel="#{var.nombreResp} #{var.apellidoResp}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="cmbSupervisorDetalleAccion" value="Supervisor" />
+					<p:selectOneMenu id="cmbSupervisorDetalleAccion"
+						value="#{controladorCrudRoAccion.idSupervisorEjecucionSeleccionado}"
+						required="true"
+						requiredMessage="Debe seleccionar un Supervisor de Ejecución">
+						<f:selectItems
+							value="#{controladorCrudRoAccion.roResponsablesTodos}" var="var"
+							itemValue="#{var.codigoResp}"
+							itemLabel="#{var.nombreResp} #{var.apellidoResp}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="txtRecursos" value="Recursos" />
+					<p:inputTextarea id="txtRecursos"
+						value="#{controladorCrudRoAccion.roDetalleAccionVista.recursosDeac}"
+						maxlength="2000" rows="10" cols="110" counter="counter2"
+						counterTemplate="{0} caracteres restantes." />
+					<div />
+					<h:outputText id="counter2" />
+
+					<p:outputLabel for="txtEntregables" value="Entregables" />
+					<p:inputTextarea id="txtEntregables"
+						value="#{controladorCrudRoAccion.roDetalleAccionVista.entregableDeac}"
+						maxlength="2000" rows="10" cols="110" counter="counter4"
+						counterTemplate="{0} caracteres restantes." />
+					<div />
+					<h:outputText id="counter4" />
+
+					<p:outputLabel value="Fecha de Inicio" />
+					<p:calendar
+						value="#{controladorCrudRoAccion.roDetalleAccionVista.fechaInicioDeac}"
+						required="true"
+						requiredMessage="La fecha de inicio es un campo Obligatorio"
+						navigator="true" pattern="yyyy-MM-dd" />
+
+					<p:outputLabel value="Fecha de Fin" />
+					<p:calendar
+						value="#{controladorCrudRoAccion.roDetalleAccionVista.fechaFinDeac}"
+						required="true"
+						requiredMessage="La fecha de fin es un campo Obligatorio"
+						navigator="true" pattern="yyyy-MM-dd" />
+
+					<p:outputLabel for="cmbCumplimientoDetalleAccion"
+						value="Nivel de Cumplimiento" />
+					<p:selectOneMenu id="cmbCumplimientoDetalleAccion"
+						value="#{controladorCrudRoAccion.idCumplimiento}"
+						requiredMessage="Debe seleccionar un Nivel de Cumplimiento de Ejecución">
+						<f:selectItems
+							value="#{controladorCrudRoAccion.cumplimientosTodos}" var="var"
+							itemValue="#{var.codigoCump}" itemLabel="#{var.nombreCump}" />
+					</p:selectOneMenu>
+					<p:outputLabel value="Finalizado" />
+					<p:selectOneMenu
+						value="#{controladorCrudRoAccion.roDetalleAccionVista.finDeac}">
+						<f:selectItem itemValue="0" itemLabel="No Finalizado" />
+						<f:selectItem itemValue="1" itemLabel="Finalizado" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Aprobado" />
+					<p:selectOneMenu
+						value="#{controladorCrudRoAccion.roDetalleAccionVista.aprobDeac}">
+						<f:selectItem itemValue="0" itemLabel="No Aprobado" />
+						<f:selectItem itemValue="1" itemLabel="Aprobado" />
+					</p:selectOneMenu>
+
+					<p:commandButton id="btnGuardarDetalleAcción" value="Guardar"
+						actionListener="#{controladorCrudRoAccion.guardarDetalleAccion()}"
+						icon="ui-icon-disk" update=":formAccion:pnlDetalleAccion"
+						process=":formAccion:pnlDetalleAccion">
+						<p:confirm header="Guardar Detalle de Plan de Acción"
+							message="¿Desea guardar esta actividad?" icon="ui-icon-disk" />
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarTipoCosto" value="Cancelar"
+						action="#{controladorCrudRoAccion.cancelarDetalleAccion()}"
+						icon="ui-icon-disk" update=":formAccion:pnlDetalleAccion"
+						process="@this" />
+
+				</h:panelGrid>
+
+				<p:dataTable id="dtlValAdicionale"
+					rowStyleClass="#{varDetalleAccion.finDeac == 1 ? varDetalleAccion.aprobDeac == 1 ? 'verde' : 'amarillo' : null}"
+					value="#{controladorCrudRoAccion.roDetalleAccionTodos}"
+					var="varDetalleAccion"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginator="true" rows="4" rowsPerPageTemplate="4,8,12">
+
+					<p:column>
+						<center>
+							<f:facet name="header">Acciones Propuestas</f:facet>
+						</center>
+						<h:outputText value="#{varDetalleAccion.nombreDeac}" />
+					</p:column>
+
+					<p:column>
+						<center>
+							<f:facet name="header">Responsable de Ejecución</f:facet>
+						</center>
+						<h:outputText
+							value="#{varDetalleAccion.roResponsable.nombreResp} #{varDetalleAccion.roResponsable.apellidoResp}" />
+					</p:column>
+
+					<p:column>
+						<center>
+							<f:facet name="header">Supervisor</f:facet>
+						</center>
+						<h:outputText
+							value="#{varDetalleAccion.roResponsableSupervisor.nombreResp} #{varDetalleAccion.roResponsableSupervisor.apellidoResp}" />
+					</p:column>
+
+					<p:column>
+						<center>
+							<f:facet name="header">Fecha de Inicio</f:facet>
+						</center>
+						<h:outputText value="#{varDetalleAccion.fechaInicioDeac}" />
+					</p:column>
+
+					<p:column>
+						<center>
+							<f:facet name="header">Fecha Fin</f:facet>
+						</center>
+						<h:outputText value="#{varDetalleAccion.fechaFinDeac}" />
+					</p:column>
+
+					<p:column>
+						<center>
+							<f:facet name="header">Nivel de Cumplimiento</f:facet>
+						</center>
+						<h:outputText
+							value="#{varDetalleAccion.roCumplimiento.nombreCump}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">Observaciones</f:facet>
+						<h:outputText value="#{varDetalleAccion.observaciones}" />
+					</p:column>
+
+
+					<!-- *********************************************************
+				 			ACCIONES ValAdicionale
+				************************************************************* -->
+
+					<p:column>
+						<center>
+							<f:facet name="header">Acciones</f:facet>
+						</center>
+						<h:panelGrid columns="3">
+							<p:commandButton process="@this" id="btnEditarDetalleAccion"
+								update=":formAccion:pnlDetalleAccion"
+								action="#{controladorCrudRoAccion.editarDetalleAccion()}"
+								icon="ui-icon-pencil">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roDetalleAccionVista}"
+									value="#{varDetalleAccion}"></f:setPropertyActionListener>
+								<p:tooltip for="btnEditarDetalleAccion"
+									value="Haga click para EDITAR este registro" />
+							</p:commandButton>
+
+							<p:commandButton process="@this" id="btnArchivosDetalle"
+								action="#{controladorCrudRoAccion.mostrarArchivosDetalleAccionVista()}"
+								icon="ui-icon-folder-collapsed"
+								oncomplete="PF('dlgDetalleArchivos').show();"
+								update=":formAccion:pnlDetalleArchivos">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roDetalleAccionVista}"
+									value="#{varDetalleAccion}"></f:setPropertyActionListener>
+								<p:tooltip for="btnArchivosDetalle"
+									value="Haga click para ver los ARCHIVOS de este registro" />
+							</p:commandButton>
+
+							<p:commandButton id="btnEliminarDetalleAccion"
+								update=":formAccion:dtlValAdicionale" icon="ui-icon-trash"
+								action="#{controladorCrudRoAccion.eliminarDetalleAccion()}"
+								process="@this">
+								<p:confirm header="Eliminar Actividad"
+									message="¿Desea eliminar esta actividad y todos sus archivos?"
+									icon="ui-icon-disk" />
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roDetalleAccionVista}"
+									value="#{varDetalleAccion}"></f:setPropertyActionListener>
+								<p:tooltip for="btnEliminarDetalleAccion"
+									value="Haga click para ELIMINAR este registro" />
+							</p:commandButton>
+						</h:panelGrid>
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+			<p:dialog id="modalDialog" widgetVar="dlg2" closable="false"
+				modal="true" height="30" width="100" position="center"
+				resizable="false">
+				<h:outputText value="Espere....." />
+			</p:dialog>
+
+			<p:dialog id="dlgArchivos"
+				header="Lista de documentos del Plan de Acción"
+				widgetVar="dlgArchivos" modal="true" closable="false"
+				resizable="false" position="center center" dynamic="true">
+				<p:outputPanel id="pnlArchivos">
+					<p:commandButton id="btnNuevoArchivo" value="Añadir Nuevo Archivo"
+						action="#{controladorCrudRoAccion.nuevoArchivoAccionVista()}"
+						icon="ui-icon-plus" update=":@form:pnlArchivos" />
+
+					<h:panelGrid columns="2" id="pnlEditarArchivos"
+						rendered="#{controladorCrudRoAccion.pnlEditarArchivos}">
+
+						<p:outputLabel for="txtNombreArchivoAccion" value="Nombre" />
+						<h:panelGrid columns="2">
+							<p:inputText id="txtNombreArchivoAccion"
+								value="#{controladorCrudRoAccion.roArchivoAccionVista.nombreArac}"
+								required="true"
+								requiredMessage="El Nombre es un campo Obligatorio"
+								maxlength="200" />
+							<p:message for="txtNombreArchivoAccion" />
+						</h:panelGrid>
+
+						<p:outputLabel value="Archivo " />
+						<p:commandButton icon="ui-icon-plus"
+							value="Agregar/Cambiar Archivo"
+							onclick="wvDlgRequerimientos.show()"
+							action="#{controladorCrudRoAccion.agregarRequerimiento()}"
+							process="@this" />
+
+						<p:outputLabel for="txtObservacionArchivo" value="Descripción" />
+						<p:inputTextarea id="txtObservacionArchivo"
+							value="#{controladorCrudRoAccion.roArchivoAccionVista.descripcionArac}"
+							maxlength="500" rows="7" cols="70" counter="counter10"
+							counterTemplate="{0} caracteres restantes." />
+						<div />
+						<h:outputText id="counter10" />
+
+
+
+						<p:commandButton id="btnGuardarArchivoAccion" value="Guardar"
+							actionListener="#{controladorCrudRoAccion.guardarArchivoAccion()}"
+							icon="ui-icon-disk"
+							update=":formAccion:pnlArchivos :formAccion:dtlAccion">
+							<p:confirm header="Guardar Archivo"
+								message="¿Desea guardar este Archivo?" icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton id="btnCancelarNivelCumplimiento"
+							value="Cancelar"
+							action="#{controladorCrudRoAccion.cancelarArchivoAccion()}"
+							icon="ui-icon-disk" update="@form:pnlArchivos" process="@this" />
+					</h:panelGrid>
+
+					<p:dataTable id="dtlArchivos" rowsPerPageTemplate="4,8,12"
+						paginatorPosition="bottom"
+						value="#{controladorCrudRoAccion.archivosPlanDeAccion}"
+						var="varArchivo"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="4" sortMode="multiple"
+						emptyMessage="No existen archivos ...">
+
+						<f:facet name="header">
+            					Archivos
+        			    </f:facet>
+
+						<p:column headerText="Nombre del Recurso"
+							filterMatchMode="contains" filterBy="#{varArchivo.nombreArac}"
+							sortBy="#{varArchivo.nombreArac}">
+							<h:outputText value="#{varArchivo.nombreArac}" />
+						</p:column>
+
+						<p:column headerText="Acciones">
+
+							<p:commandButton
+								onclick="PF('dlgDescargarRequerimiento').show();"
+								process="@this" icon="ui-icon-arrowthickstop-1-s"
+								id="btnDescargarArchivo">
+
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roArchivoAccionVista}"
+									value="#{varArchivo}" />
+								<p:tooltip for="btnDescargarArchivo"
+									value="Haga click para DESCARGAR este archivo" />
+
+							</p:commandButton>
+
+							<p:commandButton process="@this" update=":formAccion:pnlArchivos"
+								id="btnEditarArchivo"
+								action="#{controladorCrudRoAccion.seleccionarParaEditarArchivoAccion()}"
+								icon="ui-icon-pencil">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roArchivoAccionVista}"
+									value="#{varArchivo}" />
+								<p:tooltip for="btnEditarArchivo"
+									value="Haga click para EDITAR este registro" />
+							</p:commandButton>
+
+							<p:commandButton
+								update=":formAccion:pnlArchivos :formAccion:dtlAccion"
+								id="btnEliminarArchivo" icon="ui-icon-trash"
+								action="#{controladorCrudRoAccion.eliminarArchivoAccion()}"
+								process="@this">
+								<p:confirm header="Eliminar Archivo"
+									message="¿Desea eliminar este Archivo?" icon="ui-icon-trash" />
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roArchivoAccionVista}"
+									value="#{varArchivo}"></f:setPropertyActionListener>
+								<p:tooltip for="btnEliminarArchivo"
+									value="Haga click para ELIMINAR este registro" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</p:outputPanel>
+
+				<f:facet name="footer">
+
+
+					<p:commandButton id="btnRegresar" value="Finalizar"
+						onclick="dlgArchivos.hide();" icon="ui-icon-close"
+						title="Cierra el Dialogo" process="@this" />
+
+				</f:facet>
+
+			</p:dialog>
+
+			<!-- dialogo archivos detalle -->
+
+			<p:dialog id="dlgDetalleArchivos"
+				header="Lista de documentos de la Actividad"
+				widgetVar="dlgDetalleArchivos" modal="true" closable="false"
+				resizable="false" position="center center" dynamic="true">
+				<p:outputPanel id="pnlDetalleArchivos">
+					<p:commandButton value="Añadir Nuevo Archivo"
+						action="#{controladorCrudRoAccion.nuevoArchivoDetalleAccionVista()}"
+						icon="ui-icon-plus" update=":@form:pnlDetalleArchivos" />
+
+					<h:panelGrid columns="2" id="pnlEditarDetalleArchivos"
+						rendered="#{controladorCrudRoAccion.pnlEditarDetalleArchivos}">
+
+						<p:outputLabel for="txtNombreArchivoDetalleAccion" value="Nombre" />
+						<h:panelGrid columns="2">
+							<p:inputText id="txtNombreArchivoDetalleAccion"
+								value="#{controladorCrudRoAccion.roArchivoDetalleAccionVista.nombreArde}"
+								required="true"
+								requiredMessage="El Nombre es un campo Obligatorio"
+								maxlength="200" />
+							<p:message for="txtNombreArchivoDetalleAccion" />
+						</h:panelGrid>
+
+						<p:outputLabel value="Archivo " />
+						<p:commandButton icon="ui-icon-plus"
+							value="Agregar/Cambiar Archivo"
+							onclick="wvDlgRequerimientos2.show()"
+							action="#{controladorCrudRoAccion.agregarRequerimiento()}"
+							process="@this" />
+
+						<p:outputLabel for="txtObservacionArchivoDetalle"
+							value="Descripción" />
+						<p:inputTextarea id="txtObservacionArchivoDetalle"
+							value="#{controladorCrudRoAccion.roArchivoDetalleAccionVista.descripcionArde}"
+							maxlength="500" rows="7" cols="70" counter="counter100"
+							counterTemplate="{0} caracteres restantes." />
+						<div />
+						<h:outputText id="counter100" />
+
+
+
+						<p:commandButton id="btnGuardarArchivoDetalleAccion"
+							value="Guardar"
+							actionListener="#{controladorCrudRoAccion.guardarArchivoDetalleAccion()}"
+							icon="ui-icon-disk"
+							update=":formAccion:pnlDetalleArchivos :formAccion:dtlValAdicionale :formAccion:dtlAccion">
+							<p:confirm header="Guardar Archivo"
+								message="¿Desea guardar este Archivo?" icon="ui-icon-disk" />
+						</p:commandButton>
+
+						<p:commandButton value="Cancelar"
+							action="#{controladorCrudRoAccion.cancelarArchivoDetalleAccion()}"
+							icon="ui-icon-disk" update="@form:pnlDetalleArchivos"
+							process="@this" />
+					</h:panelGrid>
+
+					<p:dataTable id="dtlDetalleArchivos" rowsPerPageTemplate="4,8,12"
+						paginatorPosition="bottom"
+						value="#{controladorCrudRoAccion.archivosPlanDetalleAccion}"
+						var="varArchivoDetalle"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						paginator="true" rows="4" sortMode="multiple"
+						emptyMessage="No existen archivos ...">
+
+						<f:facet name="header">
+            					Archivos
+        			    </f:facet>
+
+						<p:column headerText="Nombre del Recurso"
+							filterMatchMode="contains"
+							filterBy="#{varArchivoDetalle.nombreArde}"
+							sortBy="#{varArchivoDetalle.nombreArde}">
+							<h:outputText value="#{varArchivoDetalle.nombreArde}" />
+						</p:column>
+
+						<p:column headerText="Acciones">
+
+							<p:commandButton
+								onclick="PF('dlgDescargarRequerimiento2').show();"
+								process="@this" icon="ui-icon-arrowthickstop-1-s"
+								id="btnDescargarArchivoDetalle">
+
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roArchivoDetalleAccionVista}"
+									value="#{varArchivoDetalle}" />
+								<p:tooltip for="btnDescargarArchivoDetalle"
+									value="Haga click para DESCARGAR este archivo" />
+
+							</p:commandButton>
+
+							<p:commandButton process="@this"
+								update=":formAccion:pnlDetalleArchivos"
+								id="btnEditarArchivoDetalle"
+								action="#{controladorCrudRoAccion.seleccionarParaEditarArchivoDetalleAccion()}"
+								icon="ui-icon-pencil">
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roArchivoDetalleAccionVista}"
+									value="#{varArchivoDetalle}" />
+								<p:tooltip for="btnEditarArchivoDetalle"
+									value="Haga click para EDITAR este registro" />
+							</p:commandButton>
+
+							<p:commandButton id="btnEliminarArchivoDetalle"
+								icon="ui-icon-trash"
+								action="#{controladorCrudRoAccion.eliminarArchivoDetalleAccion()}"
+								process="@this"
+								update=":formAccion:pnlDetalleArchivos :formAccion:dtlValAdicionale :formAccion:dtlAccion">
+								<p:confirm header="Eliminar Archivo"
+									message="¿Desea eliminar este Archivo? " icon="ui-icon-trash" />
+								<f:setPropertyActionListener
+									target="#{controladorCrudRoAccion.roArchivoDetalleAccionVista}"
+									value="#{varArchivoDetalle}"></f:setPropertyActionListener>
+								<p:tooltip for="btnEliminarArchivoDetalle"
+									value="Haga click para ELIMINAR este registro" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</p:outputPanel>
+
+				<f:facet name="footer">
+
+
+					<p:commandButton value="Finalizar"
+						onclick="dlgDetalleArchivos.hide();" icon="ui-icon-close"
+						title="Cierra el Dialogo" process="@this" />
+
+				</f:facet>
+
+			</p:dialog>
+
+			<!-- Dialogo carga de archivos -->
+
+			<p:dialog id="dialogoRequerimientos" widgetVar="wvDlgRequerimientos"
+				modal="true" header="Cargar Archivo" resizable="false">
+				<p:fileUpload invalidFileMessage="Formato de Archivo no permitido"
+					label="Examinar"
+					fileUploadListener="#{controladorCrudRoAccion.prepararArchivo}"
+					allowTypes="/(\.|\/)(gif|jpe?g|png|docx?|pdf|txt|zip|rar|xlsx?|pptx?)$/"
+					uploadLabel="Cargar Archivo" auto="true"
+					oncomplete="wvDlgRequerimientos.hide()" />
+					*formatos permitidos (gif,jpg,png,doc,docx,pdf,txt,zip,rar,xls,xlsx,ppt,pptx)
+			</p:dialog>
+
+			<p:dialog id="dialogoRequerimientos2"
+				widgetVar="wvDlgRequerimientos2" modal="true"
+				header="Cargar Archivo" resizable="false">
+				<p:fileUpload invalidFileMessage="Formato de Archivo no permitido"
+					label="Examinar"
+					fileUploadListener="#{controladorCrudRoAccion.prepararArchivoDetalleAccion}"
+					allowTypes="/(\.|\/)(gif|jpe?g|png|docx?|pdf|txt|zip|rar|xlsx?|pptx?)$/"
+					uploadLabel="Cargar Archivo" auto="true"
+					oncomplete="wvDlgRequerimientos2.hide()" />
+					*formatos permitidos (gif,jpg,png,doc,docx,pdf,txt,zip,rar,xls,xlsx,ppt,pptx)
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>
